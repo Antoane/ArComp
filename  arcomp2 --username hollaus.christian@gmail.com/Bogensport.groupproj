@@ -1,0 +1,36 @@
+﻿	<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+		<PropertyGroup>
+			<ProjectGuid>{7769FDE7-95B3-4ECD-9238-C9A73D98A96F}</ProjectGuid>
+		</PropertyGroup>
+		<ItemGroup>
+			<Projects Include="ArComp.dproj">
+				<Dependencies/>
+			</Projects>
+		</ItemGroup>
+		<ProjectExtensions>
+			<Borland.Personality>Default.Personality.12</Borland.Personality>
+			<Borland.ProjectType/>
+			<BorlandProject>
+				<Default.Personality/>
+			</BorlandProject>
+		</ProjectExtensions>
+		<Target Name="ArComp">
+			<MSBuild Projects="ArComp.dproj"/>
+		</Target>
+		<Target Name="ArComp:Clean">
+			<MSBuild Projects="ArComp.dproj" Targets="Clean"/>
+		</Target>
+		<Target Name="ArComp:Make">
+			<MSBuild Projects="ArComp.dproj" Targets="Make"/>
+		</Target>
+		<Target Name="Build">
+			<CallTarget Targets="ArComp"/>
+		</Target>
+		<Target Name="Clean">
+			<CallTarget Targets="ArComp:Clean"/>
+		</Target>
+		<Target Name="Make">
+			<CallTarget Targets="ArComp:Make"/>
+		</Target>
+		<Import Condition="Exists('$(BDS)\Bin\CodeGear.Group.Targets')" Project="$(BDS)\Bin\CodeGear.Group.Targets"/>
+	</Project>
