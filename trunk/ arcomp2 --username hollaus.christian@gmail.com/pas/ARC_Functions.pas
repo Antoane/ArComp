@@ -12,6 +12,7 @@ function Explode(const cSeparator, vString: string): TExplodeArray;
 function strToBool(const text: string): boolean;
 function boolToInt(val: boolean): Integer;
 function intToBool(val: Integer): boolean;
+function newGUID: string;
 
 implementation
 
@@ -63,6 +64,16 @@ end;
 function intToBool(val: Integer): boolean;
 begin
   Result := (val = 1);
+end;
+
+function newGUID: string;
+var
+  newGUID: TGUID;
+begin
+  CreateGUID(newGUID);
+  Result := GUIDToString(newGUID);
+  Result := StringReplace(Result, '{', '', [rfReplaceAll]);
+  Result := StringReplace(Result, '}', '', [rfReplaceAll]);
 end;
 
 end.

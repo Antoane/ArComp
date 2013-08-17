@@ -1,7 +1,6 @@
 object FormImportPersonen: TFormImportPersonen
   Left = 0
   Top = 0
-  Align = alClient
   Caption = 'FormImportPersonen'
   ClientHeight = 29
   ClientWidth = 887
@@ -15,15 +14,22 @@ object FormImportPersonen: TFormImportPersonen
   PixelsPerInch = 96
   TextHeight = 13
   object progressBar: TProgressBar
-    Left = 0
+    Left = 119
     Top = 0
-    Width = 887
+    Width = 768
     Height = 29
     Align = alClient
     TabOrder = 0
-    ExplicitLeft = 34
-    ExplicitTop = 4
-    ExplicitWidth = 805
-    ExplicitHeight = 27
+  end
+  object buttonImport: TButton
+    AlignWithMargins = True
+    Left = 3
+    Top = 3
+    Width = 113
+    Height = 23
+    Align = alLeft
+    Caption = 'Import aus CSV'
+    TabOrder = 1
+    OnClick = buttonImportClick
   end
 end
