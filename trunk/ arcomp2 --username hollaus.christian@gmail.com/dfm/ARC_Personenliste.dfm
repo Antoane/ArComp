@@ -1,7 +1,6 @@
 object FormPersonenListe: TFormPersonenListe
   Left = 0
   Top = 0
-  Align = alClient
   Caption = 'FormPersonenListe'
   ClientHeight = 532
   ClientWidth = 876
@@ -12,6 +11,8 @@ object FormPersonenListe: TFormPersonenListe
   Font.Name = 'Tahoma'
   Font.Style = []
   OldCreateOrder = False
+  OnKeyDown = FormKeyDown
+  OnKeyUp = FormKeyUp
   OnShow = FormShow
   PixelsPerInch = 96
   TextHeight = 13
@@ -50,18 +51,118 @@ object FormPersonenListe: TFormPersonenListe
     Caption = 'Panel2'
     TabOrder = 1
     object DBGrid1: TDBGrid
-      Left = 280
-      Top = 152
-      Width = 320
-      Height = 120
+      Left = 1
+      Top = 30
+      Width = 874
+      Height = 391
+      Align = alClient
       DataSource = DataSource1
-      TabOrder = 0
+      ReadOnly = True
+      TabOrder = 1
       TitleFont.Charset = DEFAULT_CHARSET
       TitleFont.Color = clWindowText
       TitleFont.Height = -11
       TitleFont.Name = 'Tahoma'
       TitleFont.Style = []
       OnTitleClick = DBGrid1TitleClick
+      Columns = <
+        item
+          Expanded = False
+          FieldName = 'PE_VORNAME'
+          Title.Caption = 'Vorname'
+          Visible = True
+        end
+        item
+          Expanded = False
+          FieldName = 'PE_NACHNAME'
+          Title.Caption = 'Nachname'
+          Visible = True
+        end
+        item
+          Expanded = False
+          FieldName = 'PE_NATION'
+          Title.Caption = 'Nation'
+          Visible = True
+        end
+        item
+          Expanded = False
+          FieldName = 'PE_BUNDESLAND'
+          Title.Caption = 'Bundesland'
+          Visible = True
+        end
+        item
+          Expanded = False
+          FieldName = 'PE_BOGENKATEGORIE'
+          Title.Caption = 'Bogenkategorie'
+          Visible = True
+        end
+        item
+          Expanded = False
+          FieldName = 'PE_ALTERSKLASSE'
+          Title.Caption = 'Altersklasse'
+          Visible = True
+        end
+        item
+          Expanded = False
+          FieldName = 'VE_NAME'
+          Title.Caption = 'Verein'
+          Visible = True
+        end
+        item
+          Expanded = False
+          FieldName = 'PE_GEBURTSDATUM'
+          Title.Caption = 'Geburtsdatum'
+          Visible = True
+        end
+        item
+          Expanded = False
+          FieldName = 'PE_GESCHLECHT'
+          Title.Caption = 'Geschlecht'
+          Visible = True
+        end
+        item
+          Expanded = False
+          FieldName = 'PE_LIZENZ'
+          Title.Caption = 'Lizenz'
+          Visible = True
+        end
+        item
+          Expanded = False
+          FieldName = 'PE_LANDESWERTUNG'
+          Title.Caption = 'Landeswertung'
+          Visible = True
+        end>
+    end
+    object Panel5: TPanel
+      Left = 1
+      Top = 1
+      Width = 874
+      Height = 29
+      Align = alTop
+      TabOrder = 0
+      object editSearch: TEdit
+        AlignWithMargins = True
+        Left = 4
+        Top = 4
+        Width = 232
+        Height = 21
+        Align = alLeft
+        TabOrder = 0
+      end
+      object Button2: TButton
+        AlignWithMargins = True
+        Left = 242
+        Top = 4
+        Width = 75
+        Height = 21
+        Align = alLeft
+        Caption = 'Suchen'
+        TabOrder = 1
+        OnClick = Button2Click
+        ExplicitLeft = 212
+        ExplicitTop = 5
+        ExplicitHeight = 33
+      end
     end
   end
   object Panel4: TPanel
@@ -102,20 +203,30 @@ object FormPersonenListe: TFormPersonenListe
     CursorType = ctStatic
     Parameters = <>
     SQL.Strings = (
+      'DECLARE @SEARCHSTRING VARCHAR(50)'
+      ''
+      'SET @SEARCHSTRING = :SEARCHSTRING'
+      ''
       'SELECT'
-      '  PE_ID,'
-      '  PE_VORNAME,'
-      '  PE_NACHNAME,'
-      '  PE_NATION,'
-      '  PE_BUNDESLAND,'
-      '  PE_BOGENKATEGORIE,'
-      '  PE_ALTERSKLASSE,'
-      '  PE_VEREIN,'
-      '  PE_GEBURTSDATUM,'
-      '  PE_GESCHLECHT,'
-      '  PE_LIZENZ,'
-      '  PE_LANDESWERTUNG'
-      'FROM PERSON')
+      '  pe.PE_ID,'
+      '  pe.PE_VORNAME,'
+      '  pe.PE_NACHNAME,'
+      '  pe.PE_NATION,'
+      '  pe.PE_BUNDESLAND,'
+      '  pe.PE_BOGENKATEGORIE,'
+      '  pe.PE_ALTERSKLASSE,'
+      '  ve.VE_NAME,'
+      '  pe.PE_GEBURTSDATUM,'
+      '  pe.PE_GESCHLECHT,'
+      '  pe.PE_LIZENZ,'
+      '  pe.PE_LANDESWERTUNG'
+      'FROM PERSON pe'
+      '  LEFT OUTER JOIN VEREIN ve'
+      '    ON pe.VE_ID = ve.VE_ID'
+      'WHERE pe.PE_VORNAME LIKE @SEARCHSTRING'
+      '  OR pe.PE_NACHNAME LIKE @SEARCHSTRING'
+      '  OR ve.VE_NAME LIKE @SEARCHSTRING'
+      '')
     Left = 432
     Top = 232
   end
@@ -128,7 +239,7 @@ object FormPersonenListe: TFormPersonenListe
     Left = 640
     Top = 152
     Bitmap = {
-      494C010102000800240010001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
+      494C010102000800280010001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
       0000000000003600000028000000400000001000000001002000000000000010
       0000000000000000000000000000000000000000000000000000000000000000
       000000000000FDFDFD00FAFAFA00FEFEFE000000000000000000000000000000
