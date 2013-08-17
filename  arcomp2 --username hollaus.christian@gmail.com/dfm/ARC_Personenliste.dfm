@@ -64,6 +64,7 @@ object FormPersonenListe: TFormPersonenListe
       TitleFont.Height = -11
       TitleFont.Name = 'Tahoma'
       TitleFont.Style = []
+      OnDblClick = DBGrid1DblClick
       OnTitleClick = DBGrid1TitleClick
       Columns = <
         item
@@ -159,9 +160,6 @@ object FormPersonenListe: TFormPersonenListe
         Caption = 'Suchen'
         TabOrder = 1
         OnClick = Button2Click
-        ExplicitLeft = 212
-        ExplicitTop = 5
-        ExplicitHeight = 33
       end
     end
   end
@@ -239,7 +237,7 @@ object FormPersonenListe: TFormPersonenListe
     Left = 640
     Top = 152
     Bitmap = {
-      494C010102000800280010001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
+      494C010102000800300010001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
       0000000000003600000028000000400000001000000001002000000000000010
       0000000000000000000000000000000000000000000000000000000000000000
       000000000000FDFDFD00FAFAFA00FEFEFE000000000000000000000000000000

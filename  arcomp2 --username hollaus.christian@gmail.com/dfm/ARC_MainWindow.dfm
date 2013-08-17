@@ -43,6 +43,12 @@ object MainWindow: TMainWindow
         Caption = 'Bogensch'#252'tzen'
         OnClick = Bogenschtzen1Click
       end
+      object Bogenkategorien1: TMenuItem
+        Caption = 'Bogenkategorien'
+      end
+      object Alterskategorien1: TMenuItem
+        Caption = 'Alterskategorien'
+      end
     end
     object Optionen1: TMenuItem
       Caption = 'Optionen'

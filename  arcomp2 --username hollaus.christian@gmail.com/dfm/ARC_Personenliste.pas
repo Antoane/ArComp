@@ -21,6 +21,7 @@ uses
   Vcl.ImgList,
 
   //ARComp
+  ARC_PersonenDetail,
   ARC_DbGrid;
 
 type
@@ -45,6 +46,7 @@ type
     procedure Button2Click(Sender: TObject);
     procedure FormKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
     procedure FormKeyUp(Sender: TObject; var Key: Word; Shift: TShiftState);
+    procedure DBGrid1DblClick(Sender: TObject);
 
   private
     procedure CreateParams(var Params: TCreateParams);
@@ -115,6 +117,21 @@ procedure TFormPersonenListe.CreateParams(var Params: TCreateParams);
 begin
   inherited CreateParams(Params);
   //Params.Style := WS_CHILD or WS_DLGFRAME or WS_VISIBLE or DS_CONTROL;
+end;
+
+procedure TFormPersonenListe.DBGrid1DblClick(Sender: TObject);
+var
+  aDialog: TFormPersonenDetail;
+begin
+  if querySelectPersonen.Active and (querySelectPersonen.RecordCount > 0) then
+  begin
+    aDialog := TFormPersonenDetail.Create(self, querySelectPersonen.connection, querySelectPersonen.FieldByName('PE_ID')
+      .AsString);
+    if (aDialog.ShowModal = mrOk) then
+    begin
+      searchData(editSearch.Text);
+    end;
+  end;
 end;
 
 procedure TFormPersonenListe.DBGrid1TitleClick(Column: TColumn);

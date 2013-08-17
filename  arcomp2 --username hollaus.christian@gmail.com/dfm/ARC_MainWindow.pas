@@ -19,7 +19,7 @@ uses
 
   //ArComp
   ARC_Personenliste,
-  ARC_ImportCSVPersonen;
+  ARC_ImportPersonen;
 
 type
   TMainWindow = class(TForm)
@@ -35,6 +35,8 @@ type
     Beenden1: TMenuItem;
     Bogenschtzen1: TMenuItem;
     DBConnection: TADOConnection;
+    Bogenkategorien1: TMenuItem;
+    Alterskategorien1: TMenuItem;
     procedure Beenden1Click(Sender: TObject);
     procedure Importieren1Click(Sender: TObject);
     procedure Bogenschtzen1Click(Sender: TObject);
@@ -71,7 +73,7 @@ var
 begin
   aDialog := TFormPersonenListe.Create(nil);
   try
-    aDialog.Parent := self;
+    //aDialog.Parent := self;
     aDialog.setConnection(DBConnection);
     aDialog.Show;
   finally
@@ -86,17 +88,11 @@ end;
 
 procedure TMainWindow.openCSVImportDialog;
 var
-  aImport     : TARC_ImportCsvPersonen;
-  aProgressbar: TProgressBar;
+  aImport: TFormImportPersonen;
 begin
-  aImport      := TARC_ImportCsvPersonen.Create;
-  aProgressbar := TProgressBar.Create(self);
-  try
-    aImport.Import(DBConnection, aProgressbar);
-  finally
-    aImport.Free;
-    aProgressbar.Free;
-  end;
+  aImport := TFormImportPersonen.Create(self);
+  aImport.setconnection(dbconnection);
+  aImport.Show;
 end;
 
 end.

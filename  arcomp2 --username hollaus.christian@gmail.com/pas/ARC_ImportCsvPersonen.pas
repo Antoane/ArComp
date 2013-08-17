@@ -34,20 +34,20 @@ uses
 
   //ArComp
   ARC_Functions,
-  ARC_Types,
-  ARC_Importpersonen;
+  ARC_Types;
 
 type
   TARC_ImportCsvPersonen = class(TObject)
 
   private
-    procedure parseAndAppendRow(query: TAdoQuery; toAppend: string);
+    class procedure parseAndAppendRow(query: TAdoQuery; toAppend: string);
+    class procedure getVereinID(var verein: string; const connection: TADOConnection); static;
 
   public
     constructor Create();
     destructor Destroy; override;
 
-    function Import(connection: TADOConnection; progressBar: TProgressBar): boolean;
+    class function Import(connection: TADOConnection; progressBar: TProgressBar): boolean;
 
   end;
 
@@ -63,12 +63,11 @@ begin
   inherited Destroy;
 end;
 
-function TARC_ImportCsvPersonen.Import(connection: TADOConnection; progressBar: TProgressBar): boolean;
+class function TARC_ImportCsvPersonen.Import(connection: TADOConnection; progressBar: TProgressBar): boolean;
 var
   aRowList   : tStringList;
   i          : integer;
   aOpenDialog: TOpenDialog;
-  aDialog    : TFormImportPersonen;
   aQuery     : TAdoQuery;
 begin
   aOpenDialog        := TOpenDialog.Create(nil);
@@ -78,9 +77,7 @@ begin
   begin
     aRowList := tStringList.Create;
     aQuery   := TAdoQuery.Create(nil);
-    aDialog  := TFormImportPersonen.Create(nil);
     try
-      aDialog.setProgressbar(progressBar);
       aQuery.connection    := connection;
       i                    := 0;
       progressBar.Min      := 0;
@@ -88,7 +85,6 @@ begin
       aRowList.LoadFromFile(aOpenDialog.FileName);
       progressBar.Max     := aRowList.Count;
       progressBar.Visible := true;
-      aDialog.Show;
       while (i < aRowList.Count - 1) do
       begin
         parseAndAppendRow(aQuery, aRowList[i]);
@@ -100,12 +96,10 @@ begin
         aQuery.ExecSQL;
       end;
 
-      aDialog.Close;
       result := true;
     finally
       aRowList.Free;
       aQuery.Free;
-      aDialog.Free;
     end;
   end
   else
@@ -115,7 +109,7 @@ begin
 
 end;
 
-procedure TARC_ImportCsvPersonen.parseAndAppendRow(query: TAdoQuery; toAppend: string);
+class procedure TARC_ImportCsvPersonen.parseAndAppendRow(query: TAdoQuery; toAppend: string);
 var
   aRow          : string;
   aSplit        : TExplodeArray;
@@ -148,6 +142,8 @@ begin
     aLandeswertung := strtobool(aSplit[9]);
     aGeburtsdatum  := aSplit[10];
 
+    getVereinID(aVerein, query.connection);
+
     aStringBuilder := TStringBuilder.Create;
     try
       aStringBuilder.Append('INSERT INTO PERSON(');
@@ -166,7 +162,7 @@ begin
       aStringBuilder.AppendLine();
       aStringBuilder.Append('  PE_ALTERSKLASSE,');
       aStringBuilder.AppendLine();
-      aStringBuilder.Append('  PE_VEREIN,');
+      aStringBuilder.Append('  VE_ID,');
       aStringBuilder.AppendLine();
       aStringBuilder.Append('  PE_GEBURTSDATUM,');
       aStringBuilder.AppendLine();
@@ -213,6 +209,61 @@ begin
       aStringBuilder.Free;
     end;
   end;
+end;
+
+class procedure TARC_ImportCsvPersonen.getVereinID(var verein: string; const connection: TADOConnection);
+var
+  aQuery: TAdoQuery;
+  aGUID : string;
+begin
+  aQuery := TAdoQuery.Create(nil);
+  try
+    aQuery.connection := connection;
+
+    with aQuery.SQL do
+    begin
+      Add('SELECT');
+      Add('  VE_ID');
+      Add('FROM VEREIN');
+      Add('WHERE VE_NAME LIKE :NAME');
+    end;
+
+    aQuery.Parameters.ParseSQL(aQuery.SQL.Text, true);
+    aQuery.Parameters.ParamByName('NAME').value := verein;
+    aQuery.Active                               := true;
+    aQuery.ExecSQL;
+
+    if aQuery.RecordCount > 0 then
+    begin
+      verein := aQuery.FieldByName('VE_ID').AsString;
+    end
+    else
+    begin
+      aGUID         := newGUID();
+      aQuery.Active := false;
+      aQuery.Close;
+      with aQuery.SQL do
+      begin
+        clear;
+        Add('INSERT INTO VEREIN(');
+        Add('  VE_ID,');
+        Add('  VE_NAME');
+        Add(')');
+        Add('VALUES(');
+        Add('  ' + quotedStr(aGUID)+',');
+        Add('  ' + quotedStr(verein));
+        Add(')');
+      end;
+
+  //    aQuery.Active := true;
+      aQuery.ExecSQL;
+
+      verein := aGUID;
+    end;
+  finally
+    aQuery.Free;
+  end;
+
 end;
 
 end.
