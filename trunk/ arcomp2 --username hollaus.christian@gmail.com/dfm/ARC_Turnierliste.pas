@@ -22,7 +22,7 @@ uses
   dialogs,
 
   //ARComp
-  ARC_PersonenDetail,
+  ARC_TurnierDetail,
   ARC_Functions,
   ARC_DbGrid;
 
@@ -60,14 +60,15 @@ type
     procedure CreateParams(var Params: TCreateParams);
     procedure searchData(searchString: string);
     procedure deleteTurnier;
-    procedure addTurnier;
-    procedure openTurnierDetail(PE_ID: string);
+
+    procedure openTurnierDetail(TU_ID: string);
 
     {Private-Deklarationen}
   public
     constructor Create(aOwner: TComponent);
     destructor Destroy; override;
     procedure setConnection(connection: Tadoconnection);
+    procedure addTurnier;
     {Public-Deklarationen}
   end;
 
@@ -213,15 +214,15 @@ procedure TFormTurnierListe.DBGrid1DblClick(Sender: TObject);
 begin
   if querySelectTurnier.Active and (querySelectTurnier.RecordCount > 0) then
   begin
-    openTurnierDetail(querySelectTurnier.FieldByName('PE_ID').AsString);
+    openTurnierDetail(querySelectTurnier.FieldByName('TU_ID').AsString);
   end;
 end;
 
-procedure TFormTurnierListe.openTurnierDetail(PE_ID: string);
+procedure TFormTurnierListe.openTurnierDetail(TU_ID: string);
 var
-  aDialog: TFormPersonenDetail;
+  aDialog: TFormTurnierDetail;
 begin
-  aDialog := TFormPersonenDetail.Create(self, querySelectTurnier.connection, PE_ID);
+  aDialog := TFormTurnierDetail.Create(self, querySelectTurnier.connection, TU_ID);
   if (aDialog.ShowModal = mrOk) then
   begin
     searchData(editSearch.Text);
