@@ -4,6 +4,7 @@ interface
 
 uses
   vcl.dbctrls,
+  vcl.stdctrls,
   Data.Win.ADODB;
 
 type
@@ -31,10 +32,11 @@ begin
     aQuery.connection := connection;
     with aQuery.SQL do
     begin
-      add('SELECT');
+      add('SELECT DISTINCT');
       add('  ' + key + ',');
       add('  ' + value);
       add('FROM ' + table);
+      add('ORDER BY '+value);
     end;
     aQuery.Active := true;
     aQuery.ExecSQL;

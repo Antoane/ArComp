@@ -1,7 +1,7 @@
-object FormPersonenListe: TFormPersonenListe
+object FormVereinsListe: TFormVereinsListe
   Left = 0
   Top = 0
-  Caption = 'FormPersonenListe'
+  Caption = 'FormVereinsListe'
   ClientHeight = 532
   ClientWidth = 876
   Color = clBtnFace
@@ -27,16 +27,18 @@ object FormPersonenListe: TFormPersonenListe
       AlignWithMargins = True
       Left = 31
       Top = 4
-      Width = 206
+      Width = 103
       Height = 67
       Margins.Left = 30
       Align = alLeft
-      Caption = 'Bogensch'#252'tzen'
+      BiDiMode = bdLeftToRight
+      Caption = 'Vereine'
       Font.Charset = DEFAULT_CHARSET
       Font.Color = clWindowText
       Font.Height = -27
       Font.Name = 'Tahoma'
       Font.Style = [fsBold]
+      ParentBiDiMode = False
       ParentFont = False
       Layout = tlCenter
       ExplicitHeight = 33
@@ -69,68 +71,8 @@ object FormPersonenListe: TFormPersonenListe
       Columns = <
         item
           Expanded = False
-          FieldName = 'PE_VORNAME'
-          Title.Caption = 'Vorname'
-          Visible = True
-        end
-        item
-          Expanded = False
-          FieldName = 'PE_NACHNAME'
-          Title.Caption = 'Nachname'
-          Visible = True
-        end
-        item
-          Expanded = False
-          FieldName = 'PE_NATION'
-          Title.Caption = 'Nation'
-          Visible = True
-        end
-        item
-          Expanded = False
-          FieldName = 'PE_BUNDESLAND'
-          Title.Caption = 'Bundesland'
-          Visible = True
-        end
-        item
-          Expanded = False
-          FieldName = 'PE_BOGENKATEGORIE'
-          Title.Caption = 'Bogenkategorie'
-          Visible = True
-        end
-        item
-          Expanded = False
-          FieldName = 'PE_ALTERSKLASSE'
-          Title.Caption = 'Altersklasse'
-          Visible = True
-        end
-        item
-          Expanded = False
           FieldName = 'VE_NAME'
           Title.Caption = 'Verein'
-          Visible = True
-        end
-        item
-          Expanded = False
-          FieldName = 'PE_GEBURTSDATUM'
-          Title.Caption = 'Geburtsdatum'
-          Visible = True
-        end
-        item
-          Expanded = False
-          FieldName = 'PE_GESCHLECHT'
-          Title.Caption = 'Geschlecht'
-          Visible = True
-        end
-        item
-          Expanded = False
-          FieldName = 'PE_LIZENZ'
-          Title.Caption = 'Lizenz'
-          Visible = True
-        end
-        item
-          Expanded = False
-          FieldName = 'PE_LANDESWERTUNG'
-          Title.Caption = 'Landeswertung'
           Visible = True
         end>
     end
@@ -197,8 +139,30 @@ object FormPersonenListe: TFormPersonenListe
       TabOrder = 1
       OnClick = buttonCancelClick
     end
+    object ButtonLoeschen: TButton
+      AlignWithMargins = True
+      Left = 110
+      Top = 4
+      Width = 100
+      Height = 27
+      Align = alLeft
+      Caption = 'L'#246'schen'
+      TabOrder = 2
+      OnClick = ButtonLoeschenClick
+    end
+    object buttonHinzufuegen: TButton
+      AlignWithMargins = True
+      Left = 4
+      Top = 4
+      Width = 100
+      Height = 27
+      Align = alLeft
+      Caption = 'Hinzuf'#252'gen'
+      TabOrder = 3
+      OnClick = buttonHinzufuegenClick
+    end
   end
-  object querySelectPersonen: TADOQuery
+  object querySelectVereine: TADOQuery
     CursorType = ctStatic
     Parameters = <>
     SQL.Strings = (
@@ -207,30 +171,16 @@ object FormPersonenListe: TFormPersonenListe
       'SET @SEARCHSTRING = :SEARCHSTRING'
       ''
       'SELECT'
-      '  pe.PE_ID,'
-      '  pe.PE_VORNAME,'
-      '  pe.PE_NACHNAME,'
-      '  pe.PE_NATION,'
-      '  pe.PE_BUNDESLAND,'
-      '  pe.PE_BOGENKATEGORIE,'
-      '  pe.PE_ALTERSKLASSE,'
-      '  ve.VE_NAME,'
-      '  pe.PE_GEBURTSDATUM,'
-      '  pe.PE_GESCHLECHT,'
-      '  pe.PE_LIZENZ,'
-      '  pe.PE_LANDESWERTUNG'
-      'FROM PERSON pe'
-      '  LEFT OUTER JOIN VEREIN ve'
-      '    ON pe.VE_ID = ve.VE_ID'
-      'WHERE pe.PE_VORNAME LIKE @SEARCHSTRING'
-      '  OR pe.PE_NACHNAME LIKE @SEARCHSTRING'
-      '  OR ve.VE_NAME LIKE @SEARCHSTRING'
+      '  VE_ID,'
+      '  VE_NAME'
+      'FROM VEREIN'
+      'WHERE VE_NAME LIKE @SEARCHSTRING'
       '')
     Left = 432
     Top = 232
   end
   object DataSource1: TDataSource
-    DataSet = querySelectPersonen
+    DataSet = querySelectVereine
     Left = 168
     Top = 208
   end
@@ -238,7 +188,7 @@ object FormPersonenListe: TFormPersonenListe
     Left = 640
     Top = 152
     Bitmap = {
-      494C010102000800340010001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
+      494C0101020008003C0010001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
       0000000000003600000028000000400000001000000001002000000000000010
       0000000000000000000000000000000000000000000000000000000000000000
       000000000000FDFDFD00FAFAFA00FEFEFE000000000000000000000000000000
@@ -376,10 +326,5 @@ object FormPersonenListe: TFormPersonenListe
       FE07C10700000000FE03C38300000000FF0183C100000000FF8087E000000000
       FFC00FF000000000FFE00FFD0000000000000000000000000000000000000000
       000000000000}
-  end
-  object ADODataSet1: TADODataSet
-    Parameters = <>
-    Left = 208
-    Top = 352
   end
 end

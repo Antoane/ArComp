@@ -19,7 +19,8 @@ uses
 
   //ArComp
   ARC_Personenliste,
-  ARC_ImportPersonen;
+  ARC_ImportPersonen,
+  ARC_VereinListe;
 
 type
   TMainWindow = class(TForm)
@@ -35,15 +36,16 @@ type
     Beenden1: TMenuItem;
     Bogenschtzen1: TMenuItem;
     DBConnection: TADOConnection;
-    Bogenkategorien1: TMenuItem;
-    Alterskategorien1: TMenuItem;
+    Vereine1: TMenuItem;
     procedure Beenden1Click(Sender: TObject);
     procedure Importieren1Click(Sender: TObject);
     procedure Bogenschtzen1Click(Sender: TObject);
+    procedure Vereine1Click(Sender: TObject);
 
   private
     procedure openCSVImportDialog;
     procedure openPersonenliste;
+    procedure openVereinsListe;
 
     {Private-Deklarationen}
   public
@@ -81,6 +83,25 @@ begin
   end;
 end;
 
+procedure TMainWindow.Vereine1Click(Sender: TObject);
+begin
+  openVereinsListe();
+end;
+
+procedure TMainWindow.openVereinsListe;
+var
+  aDialog: TFormVereinsListe;
+begin
+  aDialog := TFormVereinsListe.Create(nil);
+  try
+    //aDialog.Parent := self;
+    aDialog.setConnection(DBConnection);
+    aDialog.Show;
+  finally
+    //aDialog.Free;
+  end;
+end;
+
 procedure TMainWindow.Importieren1Click(Sender: TObject);
 begin
   openCSVImportDialog();
@@ -91,7 +112,7 @@ var
   aImport: TFormImportPersonen;
 begin
   aImport := TFormImportPersonen.Create(self);
-  aImport.setconnection(dbconnection);
+  aImport.setConnection(DBConnection);
   aImport.Show;
 end;
 
