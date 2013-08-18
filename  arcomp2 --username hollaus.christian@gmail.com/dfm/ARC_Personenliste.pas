@@ -53,13 +53,16 @@ type
     procedure editSearchKeyUp(Sender: TObject; var Key: Word; Shift: TShiftState);
     procedure ButtonLoeschenClick(Sender: TObject);
     procedure buttonHinzufuegenClick(Sender: TObject);
+    procedure buttonOKClick(Sender: TObject);
 
   private
+    FselectedIDs: TStringList;
     procedure CreateParams(var Params: TCreateParams);
     procedure searchData(searchString: string);
     procedure deletePerson;
     procedure addPerson;
     procedure openPersonDetail(PE_ID: string);
+    procedure setProps;
 
     {Private-Deklarationen}
   public
@@ -67,6 +70,10 @@ type
     destructor Destroy; override;
     procedure setConnection(connection: Tadoconnection);
     {Public-Deklarationen}
+
+    property selectedIDs: TStringList
+      read   FselectedIDs
+      write  FselectedIDs;
   end;
 
 var
@@ -98,7 +105,8 @@ end;
 
 procedure TFormPersonenListe.buttonCancelClick(Sender: TObject);
 begin
-  self.Close;
+  ModalResult := mrCancel;
+  self.CloseModal;
 end;
 
 procedure TFormPersonenListe.buttonHinzufuegenClick(Sender: TObject);
@@ -135,6 +143,30 @@ end;
 procedure TFormPersonenListe.ButtonLoeschenClick(Sender: TObject);
 begin
   deletePerson();
+end;
+
+procedure TFormPersonenListe.buttonOKClick(Sender: TObject);
+begin
+  setProps();
+  ModalResult := mrOk;
+  self.CloseModal;
+end;
+
+procedure TFormPersonenListe.setProps;
+var
+  i: integer;
+begin
+  if DBGrid1.SelectedRows.Count > 0 then
+  begin
+    with DBGrid1.DataSource.DataSet do
+    begin
+      for i := 0 to DBGrid1.SelectedRows.Count - 1 do
+      begin
+        GotoBookmark(pointer(DBGrid1.SelectedRows.Items[i]));
+        FselectedIDs.add(querySelectPersonen.FieldByName('PE_ID').AsString);
+      end;
+    end;
+  end;
 end;
 
 procedure TFormPersonenListe.deletePerson;
@@ -242,6 +274,7 @@ end;
 destructor TFormPersonenListe.Destroy;
 begin
   SetDesigning(false);
+  FselectedIDs.Free;
   inherited Destroy;
 end;
 
@@ -256,6 +289,7 @@ end;
 constructor TFormPersonenListe.Create(aOwner: TComponent);
 begin
   inherited Create(aOwner);
+  FselectedIDs := TStringList.Create;
   //if csDesigning in ComponentState then ReadComponentRes(self.ClassName, self);
 end;
 

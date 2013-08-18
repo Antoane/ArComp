@@ -57,6 +57,7 @@ object FormPersonenListe: TFormPersonenListe
       Height = 391
       Align = alClient
       DataSource = DataSource1
+      Options = [dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgRowSelect, dgConfirmDelete, dgCancelOnExit, dgMultiSelect, dgTitleClick, dgTitleHotTrack]
       ReadOnly = True
       TabOrder = 1
       TitleFont.Charset = DEFAULT_CHARSET
@@ -183,6 +184,7 @@ object FormPersonenListe: TFormPersonenListe
       ImageIndex = 0
       Images = ImageList1
       TabOrder = 0
+      OnClick = buttonOKClick
     end
     object buttonCancel: TButton
       AlignWithMargins = True
@@ -260,7 +262,7 @@ object FormPersonenListe: TFormPersonenListe
     Left = 640
     Top = 152
     Bitmap = {
-      494C010102000800400010001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
+      494C010102000800440010001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
       0000000000003600000028000000400000001000000001002000000000000010
       0000000000000000000000000000000000000000000000000000000000000000
       000000000000FDFDFD00FAFAFA00FEFEFE000000000000000000000000000000

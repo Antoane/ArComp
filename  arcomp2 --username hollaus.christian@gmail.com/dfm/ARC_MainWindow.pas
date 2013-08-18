@@ -56,7 +56,7 @@ type
     ButtonLoeschen: TButton;
     querySelectPersonen: TADOQuery;
     sourcePersonen: TDataSource;
-    Panel3: TPanel;
+    panelTurnierinfo: TPanel;
     Label5: TLabel;
     Label9: TLabel;
     Label8: TLabel;
@@ -77,6 +77,8 @@ type
     procedure ffnen1Click(Sender: TObject);
     procedure Button3Click(Sender: TObject);
     procedure ButtonLoeschenClick(Sender: TObject);
+    procedure buttonHinzufuegenClick(Sender: TObject);
+    procedure FormShow(Sender: TObject);
 
   private
     FTU_ID: string;
@@ -88,6 +90,8 @@ type
     procedure searchPersonen(searchString: string);
     procedure loadTurnierDaten;
     procedure deletePersonenzuteilung;
+    procedure addPersonenzuteilung;
+    procedure disableComponents;
 
     {Private-Deklarationen}
   public
@@ -116,6 +120,50 @@ begin
   searchPersonen(editSearch.Text);
 end;
 
+procedure TMainWindow.buttonHinzufuegenClick(Sender: TObject);
+begin
+  addPersonenzuteilung();
+end;
+
+procedure TMainWindow.addPersonenzuteilung;
+var
+  aDialog: Tformpersonenliste;
+  id     : string;
+  aQuery : TADOQuery;
+begin
+  aDialog := Tformpersonenliste.Create(nil);
+  aQuery  := TADOQuery.Create(nil);
+  try
+    aQuery.Connection := DBConnection;
+    aDialog.setConnection(DBConnection);
+    if (aDialog.ShowModal = mrOK) then
+    begin
+      for id in aDialog.selectedIDs do
+      begin
+        with aQuery.SQL do
+        begin
+          clear;
+          add('INSERT INTO TURNIER_ZUTEILUNG(');
+          add('  TZ_ID,');
+          add('  TU_ID,');
+          add('  PE_ID');
+          add(')');
+          add('VALUES(');
+          add('  newID(),');
+          add('  ' + quotedStr(FTU_ID) + ',');
+          add('  ' + quotedStr(id));
+          add(')');
+        end;
+        aQuery.ExecSQL;
+      end;
+    end;
+  finally
+    aQuery.Free;
+    aDialog.Free;
+  end;
+  searchPersonen(editSearch.Text);
+end;
+
 procedure TMainWindow.ButtonLoeschenClick(Sender: TObject);
 begin
   deletePersonenzuteilung();
@@ -134,13 +182,13 @@ begin
       aQuery := TADOQuery.Create(nil);
       aID    := querySelectPersonen.FieldByName('PE_ID').AsString;
       try
-        aQuery.connection := DBConnection;
+        aQuery.Connection := DBConnection;
         with aQuery.SQL do
         begin
-          Clear;
+          clear;
           add('DELETE FROM TURNIER_ZUTEILUNG');
-          add('WHERE PE_ID = ' + QuotedStr(aID));
-          add('  AND TU_ID = ' + QuotedStr(FTU_ID));
+          add('WHERE PE_ID = ' + quotedStr(aID));
+          add('  AND TU_ID = ' + quotedStr(FTU_ID));
         end;
         aQuery.ExecSQL;
       finally
@@ -154,6 +202,17 @@ end;
 procedure TMainWindow.ffnen1Click(Sender: TObject);
 begin
   openTurnierliste();
+end;
+
+procedure TMainWindow.FormShow(Sender: TObject);
+begin
+  disableComponents();
+end;
+
+procedure TMainWindow.disableComponents;
+begin
+  pageControl.Enabled      := queryTurnier.Active and (queryTurnier.RecordCount > 0);
+  panelTurnierinfo.Enabled := queryTurnier.Active and (queryTurnier.RecordCount > 0);
 end;
 
 procedure TMainWindow.openTurnierliste;
@@ -172,13 +231,14 @@ begin
   finally
     //aDialog.Free;
   end;
+  disableComponents();
 end;
 
 procedure TMainWindow.openPersonenliste;
 var
-  aDialog: TFormPersonenListe;
+  aDialog: Tformpersonenliste;
 begin
-  aDialog := TFormPersonenListe.Create(nil);
+  aDialog := Tformpersonenliste.Create(nil);
   try
     //aDialog.Parent := self;
     aDialog.setConnection(DBConnection);
@@ -229,6 +289,7 @@ end;
 
 procedure TMainWindow.loadTurnierDaten;
 begin
+  queryTurnier.Close;
   queryTurnier.Parameters.ParseSQL(queryTurnier.SQL.Text, True);
   queryTurnier.Parameters.ParamByName('ID').value := FTU_ID;
   queryTurnier.Open;
@@ -242,7 +303,7 @@ begin
     begin
       querySelectPersonen.Active := false;
     end;
-    querySelectPersonen.Parameters.Clear;
+    querySelectPersonen.Parameters.clear;
     querySelectPersonen.Parameters.ParseSQL(querySelectPersonen.SQL.Text, True);
     querySelectPersonen.Parameters.ParamByName('SEARCHSTRING').value := '%' + searchString + '%';
     querySelectPersonen.Parameters.ParamByName('ID').value           := FTU_ID;
