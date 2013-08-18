@@ -70,6 +70,10 @@ type
     procedure setConnection(connection: Tadoconnection);
     procedure addTurnier;
     {Public-Deklarationen}
+
+    property TU_ID: string
+      read   FTU_ID
+      write  FTU_ID;
   end;
 
 var
