@@ -18,6 +18,7 @@ type
     class procedure updateAlterskategorien(connection: TADOConnection); static;
     class procedure updateGeschlecht(connection: TADOConnection); static;
     class function getVereinID(connection: TADOConnection; name: string): string; static;
+    class function getTurnierartID(connection: TADOConnection; name: string): string; static;
   end;
 
 implementation
@@ -225,6 +226,49 @@ begin
     aQuery.Free;
   end;
 
+end;
+
+class function TARC_DAL_DbUpdate.getTurnierartID(connection: TADOConnection; name: string): string;
+var
+  aQuery: TADOQuery;
+begin
+  aQuery := TADOQuery.Create(nil);
+  try
+    aQuery.connection := connection;
+    with aQuery.SQL do
+    begin
+      clear;
+      add('SELECT');
+      add('  TA_ID');
+      add('FROM TURNIERART');
+      add('  WHERE TA_NAME = ' + quotedStr(name));
+    end;
+    aQuery.Open;
+    if aQuery.Active and (aQuery.RecordCount > 0) then
+    begin
+      result := aQuery.FieldByName('TA_ID').AsString;
+    end
+    else
+    begin
+      aQuery.Close;
+      result := newguid();
+      with aQuery.SQL do
+      begin
+        clear;
+        add('INSERT INTO TURNIERART(');
+        add('  TA_ID,');
+        add('  TA_NAME');
+        add(')');
+        add('VALUES(');
+        add('  ' + quotedStr(result) + ',');
+        add('  ' + quotedStr(name));
+        add(')');
+      end;
+      aQuery.ExecSQL;
+    end;
+  finally
+    aQuery.Free;
+  end;
 end;
 
 end.

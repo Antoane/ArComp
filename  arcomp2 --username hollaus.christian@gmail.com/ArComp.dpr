@@ -14,7 +14,8 @@ uses
   ARC_Tools in 'pas\ARC_Tools.pas',
   ARC_DAL_DbUpdate in 'pas\DAL\ARC_DAL_DbUpdate.pas',
   ARC_VereinListe in 'dfm\ARC_VereinListe.pas' {FormVereinsListe},
-  ARC_Turnierliste in 'dfm\ARC_Turnierliste.pas' {FormTurnierListe};
+  ARC_Turnierliste in 'dfm\ARC_Turnierliste.pas' {FormTurnierListe},
+  ARC_TurnierDetail in 'dfm\ARC_TurnierDetail.pas' {FormTurnierDetail};
 
 {$R *.res}
 
@@ -24,6 +25,7 @@ begin
 
   Application.CreateForm(TMainWindow, MainWindow);
   Application.CreateForm(TFormTurnierListe, FormTurnierListe);
+  Application.CreateForm(TFormTurnierDetail, FormTurnierDetail);
   Application.Run;
 
   //Application.CreateForm(TFormPersonenDetail, FormPersonenDetail);
