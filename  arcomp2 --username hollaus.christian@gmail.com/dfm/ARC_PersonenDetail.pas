@@ -22,6 +22,7 @@ uses
   //ArComp
   ARC_Tools,
   ARC_Functions,
+  ARC_DAL_DbUpdate,
   Vcl.ImgList;
 
 type
@@ -54,6 +55,8 @@ type
     ImageList1: TImageList;
     buttonSave: TButton;
     updatePerson: TADOQuery;
+    Label10: TLabel;
+    comboVerein: TDBComboBox;
     procedure FormShow(Sender: TObject);
     procedure buttonSaveClick(Sender: TObject);
     procedure buttonOKClick(Sender: TObject);
@@ -112,6 +115,7 @@ procedure TFormPersonenDetail.loadData();
 begin
   TARC_Tools.fillDBComboFromTable(comboAlterskategorie, 'ALTERSKATEGORIE', 'AK_ID', 'AK_NAME', queryPerson.connection);
   TARC_Tools.fillDBComboFromTable(comboBogenkategorie, 'BOGENKATEGORIE', 'BK_ID', 'BK_NAME', queryPerson.connection);
+  TARC_Tools.fillDBComboFromTable(comboVerein, 'VEREIN', 'VE_ID', 'VE_NAME', queryPerson.connection);
   TARC_Tools.fillDBComboFromTable(comboGeschlecht, 'GESCHLECHT', 'GE_ID', 'GE_NAME', queryPerson.connection);
 
   queryPerson.Parameters.ParseSQL(queryPerson.SQL.Text, True);
@@ -136,8 +140,14 @@ begin
     ParamByName('PE_LIZENZ').value         := boolToInt(checkLizenz.Checked);
     ParamByName('PE_LANDESWERTUNG').value  := boolToInt(checkLandeswertung.Checked);
     ParamByName('ID').value                := FPE_ID;
+    ParamByName('VE_ID').value             := TARC_DAL_DbUpdate.getVereinID(queryPerson.connection, comboVerein.Text);
   end;
   updatePerson.ExecSQL;
+
+  TARC_DAL_DbUpdate.updateBogenkategorien(updatePerson.connection);
+  TARC_DAL_DbUpdate.updateAlterskategorien(updatePerson.connection);
+  TARC_DAL_DbUpdate.updateGeschlecht(updatePerson.connection);
+
 end;
 
 end.

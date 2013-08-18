@@ -47,6 +47,7 @@ type
     procedure FormKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
     procedure FormKeyUp(Sender: TObject; var Key: Word; Shift: TShiftState);
     procedure DBGrid1DblClick(Sender: TObject);
+    procedure editSearchKeyUp(Sender: TObject; var Key: Word; Shift: TShiftState);
 
   private
     procedure CreateParams(var Params: TCreateParams);
@@ -75,16 +76,16 @@ end;
 
 procedure TFormPersonenListe.searchData(searchString: string);
 begin
+  querySelectPersonen.Close;
   if querySelectPersonen.Active and (querySelectPersonen.RecordCount > 0) then
   begin
-    querySelectPersonen.Close;
     querySelectPersonen.Active := false;
   end;
   querySelectPersonen.Parameters.Clear;
   querySelectPersonen.Parameters.ParseSQL(querySelectPersonen.SQL.Text, True);
   querySelectPersonen.Parameters.ParamByName('SEARCHSTRING').value := '%' + editSearch.Text + '%';
   querySelectPersonen.Active                                       := True;
-  querySelectPersonen.ExecSQL;
+  querySelectPersonen.Open;
 end;
 
 procedure TFormPersonenListe.buttonCancelClick(Sender: TObject);
@@ -165,6 +166,14 @@ destructor TFormPersonenListe.Destroy;
 begin
   SetDesigning(false);
   inherited Destroy;
+end;
+
+procedure TFormPersonenListe.editSearchKeyUp(Sender: TObject; var Key: Word; Shift: TShiftState);
+begin
+  if Key = VK_RETURN then
+  begin
+    searchData(editSearch.Text);
+  end;
 end;
 
 constructor TFormPersonenListe.Create(aOwner: TComponent);

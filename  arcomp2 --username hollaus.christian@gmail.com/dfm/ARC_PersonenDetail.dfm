@@ -21,87 +21,102 @@ object FormPersonenDetail: TFormPersonenDetail
     Height = 322
     Align = alClient
     TabOrder = 0
-    ExplicitLeft = 24
-    ExplicitTop = 47
-    ExplicitHeight = 310
+    ExplicitLeft = 8
+    ExplicitTop = 39
     object Label2: TLabel
       Left = 24
       Top = 71
-      Width = 55
+      Width = 100
       Height = 13
+      AutoSize = False
       Caption = 'Bundesland'
     end
     object Label3: TLabel
       Left = 24
       Top = 44
-      Width = 50
+      Width = 100
       Height = 13
+      AutoSize = False
       Caption = 'Nachname'
     end
     object Label7: TLabel
       Left = 24
       Top = 98
-      Width = 23
+      Width = 100
       Height = 13
+      AutoSize = False
       Caption = 'Land'
     end
     object Label8: TLabel
       Left = 24
       Top = 17
-      Width = 42
+      Width = 100
       Height = 13
+      AutoSize = False
       Caption = 'Vorname'
     end
     object Label4: TLabel
-      Left = 292
+      Left = 374
       Top = 17
-      Width = 73
+      Width = 100
       Height = 13
+      AutoSize = False
       Caption = 'Alterskategorie'
     end
     object Label5: TLabel
-      Left = 292
+      Left = 374
       Top = 44
-      Width = 75
+      Width = 100
       Height = 13
+      AutoSize = False
       Caption = 'Bogenkategorie'
     end
     object Label6: TLabel
       Left = 24
       Top = 126
-      Width = 68
+      Width = 100
       Height = 13
+      AutoSize = False
       Caption = 'Geburtsdatum'
     end
     object Label9: TLabel
-      Left = 292
+      Left = 374
       Top = 71
-      Width = 52
+      Width = 100
       Height = 13
+      AutoSize = False
       Caption = 'Geschlecht'
+    end
+    object Label10: TLabel
+      Left = 23
+      Top = 155
+      Width = 100
+      Height = 13
+      AutoSize = False
+      Caption = 'Verein'
     end
     object editNachname: TDBEdit
       Left = 120
       Top = 41
-      Width = 121
+      Width = 200
       Height = 21
       DataField = 'PE_NACHNAME'
       DataSource = dataSource
-      TabOrder = 0
+      TabOrder = 1
     end
     object editLand: TDBEdit
       Left = 120
       Top = 95
-      Width = 121
+      Width = 200
       Height = 21
       DataField = 'PE_NATION'
       DataSource = dataSource
-      TabOrder = 1
+      TabOrder = 3
     end
     object editBundesland: TDBEdit
       Left = 120
       Top = 68
-      Width = 121
+      Width = 200
       Height = 21
       DataField = 'PE_BUNDESLAND'
       DataSource = dataSource
@@ -110,71 +125,80 @@ object FormPersonenDetail: TFormPersonenDetail
     object editVorname: TDBEdit
       Left = 120
       Top = 14
-      Width = 121
+      Width = 200
       Height = 21
       DataField = 'PE_VORNAME'
       DataSource = dataSource
-      TabOrder = 3
+      TabOrder = 0
     end
     object comboAlterskategorie: TDBComboBox
-      Left = 383
+      Left = 470
       Top = 14
       Width = 145
       Height = 21
       DataField = 'PE_ALTERSKLASSE'
       DataSource = dataSource
-      TabOrder = 4
+      TabOrder = 6
     end
     object comboBogenkategorie: TDBComboBox
-      Left = 383
+      Left = 470
       Top = 41
       Width = 145
       Height = 21
       DataField = 'PE_BOGENKATEGORIE'
       DataSource = dataSource
-      TabOrder = 5
+      TabOrder = 7
     end
     object editGeburtsdatum: TDBEdit
       Left = 120
       Top = 123
-      Width = 121
+      Width = 200
       Height = 21
       DataField = 'PE_GEBURTSDATUM'
       DataSource = dataSource
-      TabOrder = 6
+      TabOrder = 4
     end
     object comboGeschlecht: TDBComboBox
-      Left = 383
+      Left = 470
       Top = 68
       Width = 145
       Height = 21
       DataField = 'PE_GESCHLECHT'
       DataSource = dataSource
-      TabOrder = 7
+      TabOrder = 8
     end
     object checkLandeswertung: TDBCheckBox
-      Left = 292
+      Left = 374
       Top = 97
       Width = 97
       Height = 17
       Caption = 'Landeswertung'
       DataField = 'PE_LANDESWERTUNG'
       DataSource = dataSource
-      TabOrder = 8
+      TabOrder = 9
       ValueChecked = '1'
       ValueUnchecked = '0'
     end
     object checkLizenz: TDBCheckBox
-      Left = 292
+      Left = 374
       Top = 125
       Width = 97
       Height = 17
       Caption = 'Lizenz'
       DataField = 'PE_LIZENZ'
       DataSource = dataSource
-      TabOrder = 9
+      TabOrder = 10
       ValueChecked = '1'
       ValueUnchecked = '0'
+    end
+    object comboVerein: TDBComboBox
+      Left = 120
+      Top = 151
+      Width = 200
+      Height = 21
+      DataField = 'VE_NAME'
+      DataSource = dataSource
+      TabOrder = 5
     end
   end
   object Panel3: TPanel
@@ -184,9 +208,6 @@ object FormPersonenDetail: TFormPersonenDetail
     Height = 41
     Align = alTop
     TabOrder = 1
-    ExplicitLeft = 280
-    ExplicitTop = 200
-    ExplicitWidth = 185
   end
   object Panel4: TPanel
     Left = 0
@@ -208,8 +229,6 @@ object FormPersonenDetail: TFormPersonenDetail
       Images = ImageList1
       TabOrder = 0
       OnClick = buttonOKClick
-      ExplicitLeft = 815
-      ExplicitHeight = 27
     end
     object buttonCancel: TButton
       AlignWithMargins = True
@@ -223,8 +242,6 @@ object FormPersonenDetail: TFormPersonenDetail
       Images = ImageList1
       TabOrder = 1
       OnClick = buttonCancelClick
-      ExplicitLeft = 845
-      ExplicitHeight = 27
     end
     object buttonSave: TButton
       AlignWithMargins = True
@@ -239,8 +256,6 @@ object FormPersonenDetail: TFormPersonenDetail
       Images = ImageList1
       TabOrder = 2
       OnClick = buttonSaveClick
-      ExplicitLeft = 815
-      ExplicitHeight = 27
     end
   end
   object queryPerson: TADOQuery
@@ -278,7 +293,7 @@ object FormPersonenDetail: TFormPersonenDetail
     Left = 640
     Top = 152
     Bitmap = {
-      494C010103000800400010001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
+      494C010103000800480010001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
       0000000000003600000028000000400000001000000001002000000000000010
       0000000000000000000000000000000000000000000000000000000000000000
       000000000000FDFDFD00FAFAFA00FEFEFE000000000000000000000000000000
@@ -431,7 +446,8 @@ object FormPersonenDetail: TFormPersonenDetail
       '  PE_GEBURTSDATUM = :PE_GEBURTSDATUM,'
       '  PE_GESCHLECHT = :PE_GESCHLECHT,'
       '  PE_LIZENZ = :PE_LIZENZ,'
-      '  PE_LANDESWERTUNG = :PE_LANDESWERTUNG'
+      '  PE_LANDESWERTUNG = :PE_LANDESWERTUNG,'
+      '  VE_ID = :VE_ID'
       'WHERE PE_ID = :ID'
       ''
       '')
