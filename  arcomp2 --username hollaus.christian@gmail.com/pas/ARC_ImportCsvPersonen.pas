@@ -34,7 +34,8 @@ uses
 
   //ArComp
   ARC_Functions,
-  ARC_Types;
+  ARC_Types,
+  ARC_DAL_DbUpdate;
 
 type
   TARC_ImportCsvPersonen = class(TObject)
@@ -106,7 +107,9 @@ begin
   begin
     result := false;
   end;
-
+  TARC_DAL_DbUpdate.updateBogenkategorien(connection);
+  TARC_DAL_DbUpdate.updateAlterskategorien(connection);
+  TARC_DAL_DbUpdate.updateGeschlecht(connection);
 end;
 
 class procedure TARC_ImportCsvPersonen.parseAndAppendRow(query: TAdoQuery; toAppend: string);
@@ -250,12 +253,12 @@ begin
         Add('  VE_NAME');
         Add(')');
         Add('VALUES(');
-        Add('  ' + quotedStr(aGUID)+',');
+        Add('  ' + quotedStr(aGUID) + ',');
         Add('  ' + quotedStr(verein));
         Add(')');
       end;
 
-  //    aQuery.Active := true;
+      //aQuery.Active := true;
       aQuery.ExecSQL;
 
       verein := aGUID;

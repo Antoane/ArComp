@@ -24,6 +24,7 @@ object MainWindow: TMainWindow
       end
       object ffnen1: TMenuItem
         Caption = #214'ffnen'
+        OnClick = ffnen1Click
       end
       object Speichern1: TMenuItem
         Caption = 'Speichern'

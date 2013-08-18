@@ -1,4 +1,4 @@
-unit ARC_Personenliste;
+unit ARC_Turnierliste;
 
 interface
 
@@ -27,18 +27,17 @@ uses
   ARC_DbGrid;
 
 type
-  TFormPersonenListe = class(TForm)
+  TFormTurnierListe = class(TForm)
     Panel2: TPanel;
     Panel3: TPanel;
     Panel4: TPanel;
-    querySelectPersonen: TADOQuery;
+    querySelectTurnier: TADOQuery;
     DataSource1: TDataSource;
     buttonOK: TButton;
     buttonCancel: TButton;
     ImageList1: TImageList;
     labelCaption: TLabel;
     DBGrid1: ARC_DbGrid.TDBGrid;
-    ADODataSet1: TADODataSet;
     Panel5: TPanel;
     editSearch: TEdit;
     Button2: TButton;
@@ -54,13 +53,15 @@ type
     procedure editSearchKeyUp(Sender: TObject; var Key: Word; Shift: TShiftState);
     procedure ButtonLoeschenClick(Sender: TObject);
     procedure buttonHinzufuegenClick(Sender: TObject);
+    procedure buttonOKClick(Sender: TObject);
 
   private
+    FTU_ID: string;
     procedure CreateParams(var Params: TCreateParams);
     procedure searchData(searchString: string);
-    procedure deletePerson;
-    procedure addPerson;
-    procedure openPersonDetail(PE_ID: string);
+    procedure deleteTurnier;
+    procedure addTurnier;
+    procedure openTurnierDetail(PE_ID: string);
 
     {Private-Deklarationen}
   public
@@ -71,43 +72,43 @@ type
   end;
 
 var
-  FormPersonenListe: TFormPersonenListe;
-  isCtrlPressed    : boolean;
+  FormTurnierListe: TFormTurnierListe;
+  isCtrlPressed   : boolean;
 
 implementation
 
 {$R *.dfm}
 
-procedure TFormPersonenListe.Button2Click(Sender: TObject);
+procedure TFormTurnierListe.Button2Click(Sender: TObject);
 begin
   searchData(editSearch.Text);
 end;
 
-procedure TFormPersonenListe.searchData(searchString: string);
+procedure TFormTurnierListe.searchData(searchString: string);
 begin
-  querySelectPersonen.Close;
-  if querySelectPersonen.Active and (querySelectPersonen.RecordCount > 0) then
+  querySelectTurnier.Close;
+  if querySelectTurnier.Active and (querySelectTurnier.RecordCount > 0) then
   begin
-    querySelectPersonen.Active := false;
+    querySelectTurnier.Active := false;
   end;
-  querySelectPersonen.Parameters.Clear;
-  querySelectPersonen.Parameters.ParseSQL(querySelectPersonen.SQL.Text, True);
-  querySelectPersonen.Parameters.ParamByName('SEARCHSTRING').value := '%' + editSearch.Text + '%';
-  querySelectPersonen.Active                                       := True;
-  querySelectPersonen.Open;
+  querySelectTurnier.Parameters.Clear;
+  querySelectTurnier.Parameters.ParseSQL(querySelectTurnier.SQL.Text, True);
+  querySelectTurnier.Parameters.ParamByName('SEARCHSTRING').value := '%' + editSearch.Text + '%';
+  querySelectTurnier.Open;
 end;
 
-procedure TFormPersonenListe.buttonCancelClick(Sender: TObject);
+procedure TFormTurnierListe.buttonCancelClick(Sender: TObject);
 begin
-  self.Close;
+  self.ModalResult := mrCancel;
+  self.CloseModal;
 end;
 
-procedure TFormPersonenListe.buttonHinzufuegenClick(Sender: TObject);
+procedure TFormTurnierListe.buttonHinzufuegenClick(Sender: TObject);
 begin
-  addPerson();
+  addTurnier();
 end;
 
-procedure TFormPersonenListe.addPerson;
+procedure TFormTurnierListe.addTurnier;
 var
   aQuery: TADOQuery;
   aID   : string;
@@ -115,12 +116,12 @@ begin
   aQuery := TADOQuery.Create(nil);
   try
     aID               := newGUID();
-    aQuery.connection := querySelectPersonen.connection;
+    aQuery.connection := querySelectTurnier.connection;
     with aQuery.SQL do
     begin
       Clear;
-      add('INSERT INTO PERSON(');
-      add('  PE_ID');
+      add('INSERT INTO TURNIER(');
+      add('  TU_ID');
       add(')');
       add('VALUES(');
       add('  ' + QuotedStr(aID));
@@ -130,32 +131,46 @@ begin
   finally
     aQuery.Free;
   end;
-  openPersonDetail(aID);
+  openTurnierDetail(aID);
 end;
 
-procedure TFormPersonenListe.ButtonLoeschenClick(Sender: TObject);
+procedure TFormTurnierListe.ButtonLoeschenClick(Sender: TObject);
 begin
-  deletePerson();
+  deleteTurnier();
 end;
 
-procedure TFormPersonenListe.deletePerson;
+procedure TFormTurnierListe.buttonOKClick(Sender: TObject);
+begin
+  if querySelectTurnier.Active and (querySelectTurnier.RecordCount > 0) then
+  begin
+    FTU_ID      := querySelectTurnier.FieldByName('TU_ID').AsString;
+    ModalResult := mrOk;
+  end
+  else
+  begin
+    ModalResult := mrCancel;
+  end;
+  self.CloseModal;
+end;
+
+procedure TFormTurnierListe.deleteTurnier;
 var
   aQuery: TADOQuery;
   aID   : string;
 begin
-  if querySelectPersonen.Active and (querySelectPersonen.RecordCount > 0) then
+  if querySelectTurnier.Active and (querySelectTurnier.RecordCount > 0) then
   begin
-    if MessageDlg('Wollen Sie den ausgewählten Verein wirklich löschen?', mtConfirmation, mbYesNo, 0) = mrYes then
+    if MessageDlg('Wollen Sie das ausgewählte Turnier wirklich löschen?', mtConfirmation, mbYesNo, 0) = mrYes then
     begin
       aQuery := TADOQuery.Create(nil);
-      aID    := querySelectPersonen.FieldByName('PE_ID').AsString;
+      aID    := querySelectTurnier.FieldByName('TU_ID').AsString;
       try
-        aQuery.connection := querySelectPersonen.connection;
+        aQuery.connection := querySelectTurnier.connection;
         with aQuery.SQL do
         begin
           Clear;
-          add('DELETE FROM PERSON');
-          add('WHERE PE_ID = ' + QuotedStr(aID));
+          add('DELETE FROM TURNIER');
+          add('WHERE TU_ID = ' + QuotedStr(aID));
         end;
 
         aQuery.ExecSQL;
@@ -167,7 +182,7 @@ begin
   end;
 end;
 
-procedure TFormPersonenListe.FormKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
+procedure TFormTurnierListe.FormKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
 begin
   if Key = 17 then isCtrlPressed := True;
 
@@ -178,42 +193,42 @@ begin
   end;
 end;
 
-procedure TFormPersonenListe.FormKeyUp(Sender: TObject; var Key: Word; Shift: TShiftState);
+procedure TFormTurnierListe.FormKeyUp(Sender: TObject; var Key: Word; Shift: TShiftState);
 begin
   isCtrlPressed := false;
 end;
 
-procedure TFormPersonenListe.FormShow(Sender: TObject);
+procedure TFormTurnierListe.FormShow(Sender: TObject);
 begin
   searchData(editSearch.Text);
 end;
 
-procedure TFormPersonenListe.CreateParams(var Params: TCreateParams);
+procedure TFormTurnierListe.CreateParams(var Params: TCreateParams);
 begin
   inherited CreateParams(Params);
   //Params.Style := WS_CHILD or WS_DLGFRAME or WS_VISIBLE or DS_CONTROL;
 end;
 
-procedure TFormPersonenListe.DBGrid1DblClick(Sender: TObject);
+procedure TFormTurnierListe.DBGrid1DblClick(Sender: TObject);
 begin
-  if querySelectPersonen.Active and (querySelectPersonen.RecordCount > 0) then
+  if querySelectTurnier.Active and (querySelectTurnier.RecordCount > 0) then
   begin
-    openPersonDetail(querySelectPersonen.FieldByName('PE_ID').AsString);
+    openTurnierDetail(querySelectTurnier.FieldByName('PE_ID').AsString);
   end;
 end;
 
-procedure TFormPersonenListe.openPersonDetail(PE_ID: string);
+procedure TFormTurnierListe.openTurnierDetail(PE_ID: string);
 var
   aDialog: TFormPersonenDetail;
 begin
-  aDialog := TFormPersonenDetail.Create(self, querySelectPersonen.connection, PE_ID);
+  aDialog := TFormPersonenDetail.Create(self, querySelectTurnier.connection, PE_ID);
   if (aDialog.ShowModal = mrOk) then
   begin
     searchData(editSearch.Text);
   end;
 end;
 
-procedure TFormPersonenListe.DBGrid1TitleClick(Column: TColumn);
+procedure TFormTurnierListe.DBGrid1TitleClick(Column: TColumn);
 {$J+}
 const
   PreviousColumnIndex: integer = -1;
@@ -240,13 +255,13 @@ begin
     end;
 end;
 
-destructor TFormPersonenListe.Destroy;
+destructor TFormTurnierListe.Destroy;
 begin
   SetDesigning(false);
   inherited Destroy;
 end;
 
-procedure TFormPersonenListe.editSearchKeyUp(Sender: TObject; var Key: Word; Shift: TShiftState);
+procedure TFormTurnierListe.editSearchKeyUp(Sender: TObject; var Key: Word; Shift: TShiftState);
 begin
   if Key = VK_RETURN then
   begin
@@ -254,15 +269,15 @@ begin
   end;
 end;
 
-constructor TFormPersonenListe.Create(aOwner: TComponent);
+constructor TFormTurnierListe.Create(aOwner: TComponent);
 begin
   inherited Create(aOwner);
   //if csDesigning in ComponentState then ReadComponentRes(self.ClassName, self);
 end;
 
-procedure TFormPersonenListe.setConnection(connection: Tadoconnection);
+procedure TFormTurnierListe.setConnection(connection: Tadoconnection);
 begin
-  querySelectPersonen.connection := connection;
+  querySelectTurnier.connection := connection;
 end;
 
 end.
