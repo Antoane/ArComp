@@ -12,6 +12,7 @@ object MainWindow: TMainWindow
   Font.Style = []
   Menu = MainMenu1
   OldCreateOrder = False
+  OnShow = FormShow
   PixelsPerInch = 96
   TextHeight = 13
   object Panel2: TPanel
@@ -22,10 +23,6 @@ object MainWindow: TMainWindow
     Align = alClient
     Caption = 'Panel2'
     TabOrder = 0
-    ExplicitLeft = 120
-    ExplicitTop = 160
-    ExplicitWidth = 185
-    ExplicitHeight = 41
     object pageControl: TPageControl
       Left = 1
       Top = 1
@@ -34,8 +31,6 @@ object MainWindow: TMainWindow
       ActivePage = sheetPersonenzuteilung
       Align = alClient
       TabOrder = 0
-      ExplicitWidth = 748
-      ExplicitHeight = 369
       object sheetPersonenzuteilung: TTabSheet
         Caption = 'Bogensch'#252'tzen'
         Font.Charset = DEFAULT_CHARSET
@@ -44,14 +39,13 @@ object MainWindow: TMainWindow
         Font.Name = 'Tahoma'
         Font.Style = []
         ParentFont = False
-        ExplicitWidth = 740
-        ExplicitHeight = 341
         object DBGrid1: TDBGrid
           Left = 0
           Top = 29
           Width = 919
           Height = 308
           Align = alClient
+          DataSource = sourcePersonen
           ReadOnly = True
           TabOrder = 0
           TitleFont.Charset = DEFAULT_CHARSET
@@ -134,7 +128,6 @@ object MainWindow: TMainWindow
           Height = 29
           Align = alTop
           TabOrder = 1
-          ExplicitWidth = 740
           object editSearch: TEdit
             AlignWithMargins = True
             Left = 4
@@ -163,8 +156,6 @@ object MainWindow: TMainWindow
           Height = 35
           Align = alBottom
           TabOrder = 2
-          ExplicitTop = 497
-          ExplicitWidth = 876
           object buttonHinzufuegen: TButton
             AlignWithMargins = True
             Left = 4
@@ -174,6 +165,7 @@ object MainWindow: TMainWindow
             Align = alLeft
             Caption = 'Hinzuf'#252'gen'
             TabOrder = 0
+            OnClick = buttonHinzufuegenClick
           end
           object ButtonLoeschen: TButton
             AlignWithMargins = True
@@ -190,7 +182,7 @@ object MainWindow: TMainWindow
       end
     end
   end
-  object Panel3: TPanel
+  object panelTurnierinfo: TPanel
     Left = 0
     Top = 0
     Width = 929
@@ -351,8 +343,8 @@ object MainWindow: TMainWindow
       'rkstation ID=CPAHOC_PC;Use Encryption for Data=False;Tag with co' +
       'lumn collation when possible=False'
     Provider = 'SQLOLEDB.1'
-    Left = 680
-    Top = 24
+    Left = 832
+    Top = 32
   end
   object querySelectPersonen: TADOQuery
     Connection = DBConnection
