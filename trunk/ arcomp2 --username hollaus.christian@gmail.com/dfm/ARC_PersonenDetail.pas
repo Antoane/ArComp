@@ -66,7 +66,7 @@ type
     {Private-Deklarationen}
     FPE_ID: string;
     procedure loadData;
-    procedure saveData;
+    function saveData: boolean;
 
   public
     constructor create(owner: TComponent; connection: TADOConnection; PE_ID: string);
@@ -88,9 +88,11 @@ end;
 
 procedure TFormPersonenDetail.buttonOKClick(Sender: TObject);
 begin
-  saveData();
-  ModalResult := mrOk;
-  self.CloseModal;
+  if saveData() then
+  begin
+    ModalResult := mrOk;
+    self.CloseModal;
+  end;
 end;
 
 procedure TFormPersonenDetail.buttonSaveClick(Sender: TObject);
@@ -124,29 +126,43 @@ begin
   queryPerson.Open;
 end;
 
-procedure TFormPersonenDetail.saveData;
+function TFormPersonenDetail.saveData: boolean;
+var
+  aDate: TDateTime;
 begin
-  updatePerson.Parameters.ParseSQL(updatePerson.SQL.Text, True);
-  with updatePerson.Parameters do
+  result := True;
+  if TryStrToDate(editGeburtsdatum.Text, aDate) then
   begin
-    ParamByName('PE_VORNAME').value        := editVorname.Text;
-    ParamByName('PE_NACHNAME').value       := editNachname.Text;
-    ParamByName('PE_NATION').value         := editLand.Text;
-    ParamByName('PE_BUNDESLAND').value     := editBundesland.Text;
-    ParamByName('PE_BOGENKATEGORIE').value := comboBogenkategorie.Text;
-    ParamByName('PE_ALTERSKLASSE').value   := comboAlterskategorie.Text;
-    ParamByName('PE_GEBURTSDATUM').value   := editGeburtsdatum.Text;
-    ParamByName('PE_GESCHLECHT').value     := comboGeschlecht.Text;
-    ParamByName('PE_LIZENZ').value         := boolToInt(checkLizenz.Checked);
-    ParamByName('PE_LANDESWERTUNG').value  := boolToInt(checkLandeswertung.Checked);
-    ParamByName('ID').value                := FPE_ID;
-    ParamByName('VE_ID').value             := TARC_DAL_DbUpdate.getVereinID(queryPerson.connection, comboVerein.Text);
-  end;
-  updatePerson.ExecSQL;
 
-  TARC_DAL_DbUpdate.updateBogenkategorien(updatePerson.connection);
-  TARC_DAL_DbUpdate.updateAlterskategorien(updatePerson.connection);
-  TARC_DAL_DbUpdate.updateGeschlecht(updatePerson.connection);
+    updatePerson.Parameters.ParseSQL(updatePerson.SQL.Text, True);
+    with updatePerson.Parameters do
+    begin
+      ParamByName('PE_VORNAME').value        := editVorname.Text;
+      ParamByName('PE_NACHNAME').value       := editNachname.Text;
+      ParamByName('PE_NATION').value         := editLand.Text;
+      ParamByName('PE_BUNDESLAND').value     := editBundesland.Text;
+      ParamByName('PE_BOGENKATEGORIE').value := comboBogenkategorie.Text;
+      ParamByName('PE_ALTERSKLASSE').value   := comboAlterskategorie.Text;
+      ParamByName('PE_GEBURTSDATUM').value   := editGeburtsdatum.Text;
+      ParamByName('PE_GESCHLECHT').value     := comboGeschlecht.Text;
+      ParamByName('PE_LIZENZ').value         := boolToInt(checkLizenz.Checked);
+      ParamByName('PE_LANDESWERTUNG').value  := boolToInt(checkLandeswertung.Checked);
+      ParamByName('ID').value                := FPE_ID;
+      ParamByName('VE_ID').value := TARC_DAL_DbUpdate.getVereinID(queryPerson.connection, comboVerein.Text);
+    end;
+    updatePerson.ExecSQL;
+
+    TARC_DAL_DbUpdate.updateBogenkategorien(updatePerson.connection);
+    TARC_DAL_DbUpdate.updateAlterskategorien(updatePerson.connection);
+    TARC_DAL_DbUpdate.updateGeschlecht(updatePerson.connection);
+
+  end
+  else
+  begin
+    MessageDlg('bitte geben Sie ein gültiges Geburtsdatum ein.', mtError, [mbOK], 0);
+    editGeburtsdatum.SetFocus;
+    result := false;
+  end;
 
 end;
 

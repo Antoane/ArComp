@@ -20,7 +20,8 @@ uses
   //ArComp
   ARC_Personenliste,
   ARC_ImportPersonen,
-  ARC_VereinListe;
+  ARC_VereinListe,
+  ARC_Turnierliste;
 
 type
   TMainWindow = class(TForm)
@@ -41,11 +42,13 @@ type
     procedure Importieren1Click(Sender: TObject);
     procedure Bogenschtzen1Click(Sender: TObject);
     procedure Vereine1Click(Sender: TObject);
+    procedure ffnen1Click(Sender: TObject);
 
   private
     procedure openCSVImportDialog;
     procedure openPersonenliste;
     procedure openVereinsListe;
+    procedure openTurnierliste;
 
     {Private-Deklarationen}
   public
@@ -67,6 +70,28 @@ end;
 procedure TMainWindow.Bogenschtzen1Click(Sender: TObject);
 begin
   openPersonenliste();
+end;
+
+procedure TMainWindow.ffnen1Click(Sender: TObject);
+begin
+  openTurnierliste();
+end;
+
+procedure TMainWindow.openTurnierliste;
+var
+  aDialog: TFormTurnierListe;
+begin
+  aDialog := TFormTurnierListe.Create(nil);
+  try
+    //aDialog.Parent := self;
+    aDialog.setConnection(DBConnection);
+    if (aDialog.ShowModal = mrOK) then
+    begin
+      //
+    end;
+  finally
+    //aDialog.Free;
+  end;
 end;
 
 procedure TMainWindow.openPersonenliste;

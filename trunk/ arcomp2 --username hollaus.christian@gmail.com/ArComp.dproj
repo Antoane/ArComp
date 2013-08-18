@@ -87,7 +87,6 @@
 			</DCCReference>
 			<DCCReference Include="dfm\ARC_MainWindow.pas">
 				<Form>MainWindow</Form>
-				<FormType>dfm</FormType>
 			</DCCReference>
 			<DCCReference Include="dfm\ARC_ImportPersonen.pas">
 				<Form>FormImportPersonen</Form>
@@ -98,12 +97,14 @@
 			<DCCReference Include="components\ARC_DbGrid.pas"/>
 			<DCCReference Include="dfm\ARC_PersonenDetail.pas">
 				<Form>FormPersonenDetail</Form>
-				<FormType>dfm</FormType>
 			</DCCReference>
 			<DCCReference Include="pas\ARC_Tools.pas"/>
 			<DCCReference Include="pas\DAL\ARC_DAL_DbUpdate.pas"/>
 			<DCCReference Include="dfm\ARC_VereinListe.pas">
 				<Form>FormVereinsListe</Form>
+			</DCCReference>
+			<DCCReference Include="dfm\ARC_Turnierliste.pas">
+				<Form>FormTurnierListe</Form>
 			</DCCReference>
 			<BuildConfiguration Include="Release">
 				<Key>Cfg_2</Key>

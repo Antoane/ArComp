@@ -1,7 +1,7 @@
-object FormPersonenListe: TFormPersonenListe
+object FormTurnierListe: TFormTurnierListe
   Left = 0
   Top = 0
-  Caption = 'FormPersonenListe'
+  Caption = 'FormTurnierListe'
   ClientHeight = 532
   ClientWidth = 876
   Color = clBtnFace
@@ -27,11 +27,11 @@ object FormPersonenListe: TFormPersonenListe
       AlignWithMargins = True
       Left = 31
       Top = 4
-      Width = 206
+      Width = 115
       Height = 67
       Margins.Left = 30
       Align = alLeft
-      Caption = 'Bogensch'#252'tzen'
+      Caption = 'Turniere'
       Font.Charset = DEFAULT_CHARSET
       Font.Color = clWindowText
       Font.Height = -27
@@ -69,68 +69,44 @@ object FormPersonenListe: TFormPersonenListe
       Columns = <
         item
           Expanded = False
-          FieldName = 'PE_VORNAME'
-          Title.Caption = 'Vorname'
+          FieldName = 'TU_NAME'
+          Title.Caption = 'Turnier'
           Visible = True
         end
         item
           Expanded = False
-          FieldName = 'PE_NACHNAME'
-          Title.Caption = 'Nachname'
+          FieldName = 'TA_NAME'
+          Title.Caption = 'Turnierart'
           Visible = True
         end
         item
           Expanded = False
-          FieldName = 'PE_NATION'
-          Title.Caption = 'Nation'
+          FieldName = 'TU_BEGINN'
+          Title.Caption = 'Beginn'
           Visible = True
         end
         item
           Expanded = False
-          FieldName = 'PE_BUNDESLAND'
-          Title.Caption = 'Bundesland'
+          FieldName = 'TU_ENDE'
+          Title.Caption = 'Ende'
           Visible = True
         end
         item
           Expanded = False
-          FieldName = 'PE_BOGENKATEGORIE'
-          Title.Caption = 'Bogenkategorie'
+          FieldName = 'TU_VERANSTALTER'
+          Title.Caption = 'Veranstalter'
           Visible = True
         end
         item
           Expanded = False
-          FieldName = 'PE_ALTERSKLASSE'
-          Title.Caption = 'Altersklasse'
+          FieldName = 'TU_TURNIERLEITUNG'
+          Title.Caption = 'Turnierleitung'
           Visible = True
         end
         item
           Expanded = False
-          FieldName = 'VE_NAME'
-          Title.Caption = 'Verein'
-          Visible = True
-        end
-        item
-          Expanded = False
-          FieldName = 'PE_GEBURTSDATUM'
-          Title.Caption = 'Geburtsdatum'
-          Visible = True
-        end
-        item
-          Expanded = False
-          FieldName = 'PE_GESCHLECHT'
-          Title.Caption = 'Geschlecht'
-          Visible = True
-        end
-        item
-          Expanded = False
-          FieldName = 'PE_LIZENZ'
-          Title.Caption = 'Lizenz'
-          Visible = True
-        end
-        item
-          Expanded = False
-          FieldName = 'PE_LANDESWERTUNG'
-          Title.Caption = 'Landeswertung'
+          FieldName = 'TU_SCHIEDSRICHTER'
+          Title.Caption = 'Schiedsrichter'
           Visible = True
         end>
     end
@@ -183,6 +159,7 @@ object FormPersonenListe: TFormPersonenListe
       ImageIndex = 0
       Images = ImageList1
       TabOrder = 0
+      OnClick = buttonOKClick
     end
     object buttonCancel: TButton
       AlignWithMargins = True
@@ -220,7 +197,7 @@ object FormPersonenListe: TFormPersonenListe
       OnClick = ButtonLoeschenClick
     end
   end
-  object querySelectPersonen: TADOQuery
+  object querySelectTurnier: TADOQuery
     CursorType = ctStatic
     Parameters = <>
     SQL.Strings = (
@@ -229,30 +206,23 @@ object FormPersonenListe: TFormPersonenListe
       'SET @SEARCHSTRING = :SEARCHSTRING'
       ''
       'SELECT'
-      '  pe.PE_ID,'
-      '  pe.PE_VORNAME,'
-      '  pe.PE_NACHNAME,'
-      '  pe.PE_NATION,'
-      '  pe.PE_BUNDESLAND,'
-      '  pe.PE_BOGENKATEGORIE,'
-      '  pe.PE_ALTERSKLASSE,'
-      '  ve.VE_NAME,'
-      '  pe.PE_GEBURTSDATUM,'
-      '  pe.PE_GESCHLECHT,'
-      '  pe.PE_LIZENZ,'
-      '  pe.PE_LANDESWERTUNG'
-      'FROM PERSON pe'
-      '  LEFT OUTER JOIN VEREIN ve'
-      '    ON pe.VE_ID = ve.VE_ID'
-      'WHERE pe.PE_VORNAME LIKE @SEARCHSTRING'
-      '  OR pe.PE_NACHNAME LIKE @SEARCHSTRING'
-      '  OR ve.VE_NAME LIKE @SEARCHSTRING'
-      '')
+      '  tu.TU_ID,'
+      '  tu.TU_NAME,'
+      '  ta.TA_NAME,'
+      '  tu.TU_BEGINN,'
+      '  tu.TU_ENDE,'
+      '  tu.TU_VERANSTALTER,'
+      '  tu.TU_TURNIERLEITUNG,'
+      '  tu.TU_SCHIEDSRICHTER'
+      'FROM TURNIER tu'
+      '  LEFT OUTER JOIN TURNIERART ta'
+      '    on tu.TA_ID = ta.TA_ID'
+      'WHERE tu.TU_NAME LIKE @SEARCHSTRING')
     Left = 432
     Top = 232
   end
   object DataSource1: TDataSource
-    DataSet = querySelectPersonen
+    DataSet = querySelectTurnier
     Left = 168
     Top = 208
   end
@@ -260,7 +230,7 @@ object FormPersonenListe: TFormPersonenListe
     Left = 640
     Top = 152
     Bitmap = {
-      494C0101020008003C0010001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
+      494C010102000800440010001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
       0000000000003600000028000000400000001000000001002000000000000010
       0000000000000000000000000000000000000000000000000000000000000000
       000000000000FDFDFD00FAFAFA00FEFEFE000000000000000000000000000000
@@ -398,10 +368,5 @@ object FormPersonenListe: TFormPersonenListe
       FE07C10700000000FE03C38300000000FF0183C100000000FF8087E000000000
       FFC00FF000000000FFE00FFD0000000000000000000000000000000000000000
       000000000000}
-  end
-  object ADODataSet1: TADODataSet
-    Parameters = <>
-    Left = 208
-    Top = 352
   end
 end
