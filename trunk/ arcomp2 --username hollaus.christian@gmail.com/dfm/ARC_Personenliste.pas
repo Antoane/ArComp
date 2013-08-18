@@ -38,7 +38,6 @@ type
     ImageList1: TImageList;
     labelCaption: TLabel;
     DBGrid1: ARC_DbGrid.TDBGrid;
-    ADODataSet1: TADODataSet;
     Panel5: TPanel;
     editSearch: TEdit;
     Button2: TButton;
