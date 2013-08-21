@@ -176,7 +176,7 @@ var
 begin
   if querySelectPersonen.Active and (querySelectPersonen.RecordCount > 0) then
   begin
-    if MessageDlg('Wollen Sie den ausgewählten Verein wirklich löschen?', mtConfirmation, mbYesNo, 0) = mrYes then
+    if MessageDlg('Wollen Sie die ausgewählte Person wirklich löschen?', mtConfirmation, mbYesNo, 0) = mrYes then
     begin
       aQuery := TADOQuery.Create(nil);
       aID    := querySelectPersonen.FieldByName('PE_ID').AsString;

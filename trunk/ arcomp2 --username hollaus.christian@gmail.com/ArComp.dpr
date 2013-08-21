@@ -15,7 +15,10 @@ uses
   ARC_DAL_DbUpdate in 'pas\DAL\ARC_DAL_DbUpdate.pas',
   ARC_VereinListe in 'dfm\ARC_VereinListe.pas' {FormVereinsListe},
   ARC_Turnierliste in 'dfm\ARC_Turnierliste.pas' {FormTurnierListe},
-  ARC_TurnierDetail in 'dfm\ARC_TurnierDetail.pas' {FormTurnierDetail};
+  ARC_TurnierDetail in 'dfm\ARC_TurnierDetail.pas' {FormTurnierDetail},
+  ARC_Distanzen in 'dfm\ARC_Distanzen.pas' {FormDistanzen},
+  ARC_DAL_Distanz in 'pas\DAL\ARC_DAL_Distanz.pas',
+  ARC_DAL_Tools in 'pas\DAL\ARC_DAL_Tools.pas';
 
 {$R *.res}
 
@@ -26,6 +29,7 @@ begin
   Application.CreateForm(TMainWindow, MainWindow);
   Application.CreateForm(TFormTurnierListe, FormTurnierListe);
   Application.CreateForm(TFormTurnierDetail, FormTurnierDetail);
+  Application.CreateForm(TFormDistanzen, FormDistanzen);
   Application.Run;
 
   //Application.CreateForm(TFormPersonenDetail, FormPersonenDetail);

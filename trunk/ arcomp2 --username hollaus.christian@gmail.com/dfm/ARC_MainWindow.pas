@@ -22,6 +22,7 @@ uses
   ARC_ImportPersonen,
   ARC_VereinListe,
   ARC_Turnierliste,
+  ARC_Distanzen,
   Vcl.Grids,
   Vcl.DBGrids,
   Vcl.ExtCtrls,
@@ -70,6 +71,7 @@ type
     editTurnierart: TDBEdit;
     queryTurnier: TADOQuery;
     sourceTurnier: TDataSource;
+    RundenDistanzen1: TMenuItem;
     procedure Beenden1Click(Sender: TObject);
     procedure Importieren1Click(Sender: TObject);
     procedure Bogenschtzen1Click(Sender: TObject);
@@ -79,6 +81,7 @@ type
     procedure ButtonLoeschenClick(Sender: TObject);
     procedure buttonHinzufuegenClick(Sender: TObject);
     procedure FormShow(Sender: TObject);
+    procedure RundenDistanzen1Click(Sender: TObject);
 
   private
     FTU_ID: string;
@@ -264,6 +267,18 @@ begin
     aDialog.Show;
   finally
     //aDialog.Free;
+  end;
+end;
+
+procedure TMainWindow.RundenDistanzen1Click(Sender: TObject);
+var
+  aDialog: TFormDistanzen;
+begin
+  aDialog := TFormDistanzen.Create(self, DBConnection);
+  try
+    aDialog.ShowModal;
+  finally
+    aDialog.Free;
   end;
 end;
 
