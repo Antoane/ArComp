@@ -329,6 +329,10 @@ object MainWindow: TMainWindow
     end
     object Optionen1: TMenuItem
       Caption = 'Optionen'
+      object RundenDistanzen1: TMenuItem
+        Caption = 'Runden / Distanzen'
+        OnClick = RundenDistanzen1Click
+      end
     end
     object Drucken1: TMenuItem
       Caption = 'Drucken'
@@ -342,6 +346,7 @@ object MainWindow: TMainWindow
       ' Procedure for Prepare=1;Auto Translate=True;Packet Size=4096;Wo' +
       'rkstation ID=CPAHOC_PC;Use Encryption for Data=False;Tag with co' +
       'lumn collation when possible=False'
+    LoginPrompt = False
     Provider = 'SQLOLEDB.1'
     Left = 832
     Top = 32
