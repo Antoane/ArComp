@@ -18,11 +18,13 @@ uses
   Data.Win.ADODB,
 
   //ArComp
+  ARC_DAL_Tools,
   ARC_Personenliste,
   ARC_ImportPersonen,
   ARC_VereinListe,
   ARC_Turnierliste,
   ARC_Distanzen,
+  ARC_Finalberechtigungen,
   Vcl.Grids,
   Vcl.DBGrids,
   Vcl.ExtCtrls,
@@ -72,6 +74,7 @@ type
     queryTurnier: TADOQuery;
     sourceTurnier: TDataSource;
     RundenDistanzen1: TMenuItem;
+    Finalberechtigung1: TMenuItem;
     procedure Beenden1Click(Sender: TObject);
     procedure Importieren1Click(Sender: TObject);
     procedure Bogenschtzen1Click(Sender: TObject);
@@ -82,6 +85,7 @@ type
     procedure buttonHinzufuegenClick(Sender: TObject);
     procedure FormShow(Sender: TObject);
     procedure RundenDistanzen1Click(Sender: TObject);
+    procedure Finalberechtigung1Click(Sender: TObject);
 
   private
     FTU_ID: string;
@@ -95,6 +99,7 @@ type
     procedure deletePersonenzuteilung;
     procedure addPersonenzuteilung;
     procedure disableComponents;
+    procedure normiereDatenbank;
 
     {Private-Deklarationen}
   public
@@ -207,9 +212,27 @@ begin
   openTurnierliste();
 end;
 
+procedure TMainWindow.Finalberechtigung1Click(Sender: TObject);
+var
+  aDialog: TFormFinalberechtigung;
+begin
+  aDialog := TFormFinalberechtigung.Create(self, DBConnection);
+  try
+    aDialog.ShowModal;
+  finally
+    aDialog.Free;
+  end;
+end;
+
 procedure TMainWindow.FormShow(Sender: TObject);
 begin
+  normiereDatenbank();
   disableComponents();
+end;
+
+procedure TMainWindow.normiereDatenbank;
+begin
+  TARC_DAL_Tools.datenbankBereinigen(DBConnection);
 end;
 
 procedure TMainWindow.disableComponents;

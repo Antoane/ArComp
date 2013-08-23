@@ -333,6 +333,10 @@ object MainWindow: TMainWindow
         Caption = 'Runden / Distanzen'
         OnClick = RundenDistanzen1Click
       end
+      object Finalberechtigung1: TMenuItem
+        Caption = 'Finalberechtigung'
+        OnClick = Finalberechtigung1Click
+      end
     end
     object Drucken1: TMenuItem
       Caption = 'Drucken'
