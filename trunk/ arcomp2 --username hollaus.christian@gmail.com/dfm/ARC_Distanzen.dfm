@@ -21,8 +21,6 @@ object FormDistanzen: TFormDistanzen
     Height = 545
     Align = alClient
     TabOrder = 0
-    ExplicitWidth = 712
-    ExplicitHeight = 322
     object DBGrid1: TDBGrid
       AlignWithMargins = True
       Left = 313
@@ -31,13 +29,15 @@ object FormDistanzen: TFormDistanzen
       Height = 537
       Align = alClient
       DataSource = dataSource
-      Options = [dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgRowSelect, dgAlwaysShowSelection, dgConfirmDelete, dgCancelOnExit, dgMultiSelect, dgTitleClick, dgTitleHotTrack]
+      Options = [dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgAlwaysShowSelection, dgConfirmDelete, dgCancelOnExit, dgMultiSelect, dgTitleClick, dgTitleHotTrack]
+      ReadOnly = True
       TabOrder = 0
       TitleFont.Charset = DEFAULT_CHARSET
       TitleFont.Color = clWindowText
       TitleFont.Height = -11
       TitleFont.Name = 'Tahoma'
       TitleFont.Style = []
+      OnCellClick = DBGrid1CellClick
       OnDblClick = DBGrid1DblClick
       Columns = <
         item
@@ -85,7 +85,6 @@ object FormDistanzen: TFormDistanzen
       Align = alLeft
       BevelOuter = bvNone
       TabOrder = 1
-      ExplicitHeight = 320
       object Label4: TLabel
         Left = 19
         Top = 52
@@ -207,7 +206,6 @@ object FormDistanzen: TFormDistanzen
     Height = 41
     Align = alTop
     TabOrder = 1
-    ExplicitWidth = 712
   end
   object Panel4: TPanel
     Left = 0
@@ -216,23 +214,6 @@ object FormDistanzen: TFormDistanzen
     Height = 29
     Align = alBottom
     TabOrder = 2
-    ExplicitTop = 363
-    ExplicitWidth = 712
-    object buttonOK: TButton
-      AlignWithMargins = True
-      Left = 972
-      Top = 4
-      Width = 27
-      Height = 21
-      Margins.Right = 0
-      Align = alRight
-      ImageAlignment = iaCenter
-      ImageIndex = 0
-      Images = ImageList1
-      TabOrder = 0
-      OnClick = buttonOKClick
-      ExplicitLeft = 651
-    end
     object buttonCancel: TButton
       AlignWithMargins = True
       Left = 1002
@@ -243,24 +224,8 @@ object FormDistanzen: TFormDistanzen
       ImageAlignment = iaCenter
       ImageIndex = 1
       Images = ImageList1
-      TabOrder = 1
+      TabOrder = 0
       OnClick = buttonCancelClick
-      ExplicitLeft = 681
-    end
-    object buttonSave: TButton
-      AlignWithMargins = True
-      Left = 942
-      Top = 4
-      Width = 27
-      Height = 21
-      Margins.Right = 0
-      Align = alRight
-      ImageAlignment = iaCenter
-      ImageIndex = 2
-      Images = ImageList1
-      TabOrder = 2
-      OnClick = buttonSaveClick
-      ExplicitLeft = 621
     end
     object buttonAdd: TButton
       AlignWithMargins = True
@@ -271,10 +236,8 @@ object FormDistanzen: TFormDistanzen
       Margins.Right = 0
       Align = alLeft
       Caption = 'Hinzuf'#252'gen'
-      TabOrder = 3
+      TabOrder = 1
       OnClick = buttonAddClick
-      ExplicitLeft = 0
-      ExplicitHeight = 25
     end
     object buttonDelete: TButton
       AlignWithMargins = True
@@ -285,11 +248,8 @@ object FormDistanzen: TFormDistanzen
       Margins.Right = 0
       Align = alLeft
       Caption = 'L'#246'schen'
-      TabOrder = 4
+      TabOrder = 2
       OnClick = buttonDeleteClick
-      ExplicitLeft = 115
-      ExplicitTop = 6
-      ExplicitHeight = 25
     end
   end
   object queryDistanz: TADOQuery
@@ -306,7 +266,7 @@ object FormDistanzen: TFormDistanzen
     Left = 640
     Top = 152
     Bitmap = {
-      494C010103000800600010001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
+      494C010103000800640010001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
       0000000000003600000028000000400000001000000001002000000000000010
       0000000000000000000000000000000000000000000000000000000000000000
       000000000000FDFDFD00FAFAFA00FEFEFE000000000000000000000000000000
@@ -445,25 +405,8 @@ object FormDistanzen: TFormDistanzen
       FFC00FF000000000FFE00FFD0000000000000000000000000000000000000000
       000000000000}
   end
-  object updatePerson: TADOQuery
+  object queryUpdate: TADOQuery
     Parameters = <>
-    SQL.Strings = (
-      'UPDATE PERSON'
-      'SET'
-      '  PE_VORNAME = :PE_VORNAME,'
-      '  PE_NACHNAME = :PE_NACHNAME,'
-      '  PE_NATION = :PE_NATION,'
-      '  PE_BUNDESLAND = :PE_BUNDESLAND,'
-      '  PE_BOGENKATEGORIE = :PE_BOGENKATEGORIE,'
-      '  PE_ALTERSKLASSE = :PE_ALTERSKLASSE,'
-      '  PE_GEBURTSDATUM = :PE_GEBURTSDATUM,'
-      '  PE_GESCHLECHT = :PE_GESCHLECHT,'
-      '  PE_LIZENZ = :PE_LIZENZ,'
-      '  PE_LANDESWERTUNG = :PE_LANDESWERTUNG,'
-      '  VE_ID = :VE_ID'
-      'WHERE PE_ID = :ID'
-      ''
-      '')
     Left = 480
     Top = 192
   end

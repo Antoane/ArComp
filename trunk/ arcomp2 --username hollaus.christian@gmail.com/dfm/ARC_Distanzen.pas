@@ -35,11 +35,9 @@ type
     Panel3: TPanel;
     Panel4: TPanel;
     dataSource: TDataSource;
-    buttonOK: TButton;
     buttonCancel: TButton;
     ImageList1: TImageList;
-    buttonSave: TButton;
-    updatePerson: TADOQuery;
+    queryUpdate: TADOQuery;
     DBGrid1: TDBGrid;
     buttonAdd: TButton;
     buttonDelete: TButton;
@@ -59,8 +57,6 @@ type
     queryInsert: TADOQuery;
     queryDelete: TADOQuery;
     procedure FormShow(Sender: TObject);
-    procedure buttonSaveClick(Sender: TObject);
-    procedure buttonOKClick(Sender: TObject);
     procedure buttonCancelClick(Sender: TObject);
     procedure checkTurnierartClick(Sender: TObject);
     procedure checkAlterskategorieClick(Sender: TObject);
@@ -73,11 +69,11 @@ type
     procedure buttonAddClick(Sender: TObject);
     procedure buttonDeleteClick(Sender: TObject);
     procedure DBGrid1DblClick(Sender: TObject);
+    procedure DBGrid1CellClick(Column: TColumn);
 
   private
     {Private-Deklarationen}
     procedure loadData;
-    function saveData: boolean;
     procedure selectDistanzen;
     procedure deleteSelected;
     procedure setFilter;
@@ -121,7 +117,12 @@ end;
 
 procedure TFormDistanzen.buttonDeleteClick(Sender: TObject);
 begin
-  deleteSelected();
+  if MessageDlg
+    ('Wollen Sie wirklich die gewählten Distanzen löschen? Dies inkludiert auch eventuell nachfolgende Runden!',
+    mtWarning, mbOKCancel, 0) = mrOK then
+  begin
+    deleteSelected();
+  end;
 end;
 
 procedure TFormDistanzen.deleteSelected;
@@ -144,20 +145,6 @@ begin
     queryDistanz.EnableControls;
     selectDistanzen();
   end;
-end;
-
-procedure TFormDistanzen.buttonOKClick(Sender: TObject);
-begin
-  if saveData() then
-  begin
-    ModalResult := mrOk;
-    self.CloseModal;
-  end;
-end;
-
-procedure TFormDistanzen.buttonSaveClick(Sender: TObject);
-begin
-  saveData();
 end;
 
 procedure TFormDistanzen.checkAlterskategorieClick(Sender: TObject);
@@ -226,7 +213,25 @@ begin
   queryDistanz.connection := connection;
   queryInsert.connection  := connection;
   queryDelete.connection  := connection;
-  updatePerson.connection := connection;
+  queryUpdate.connection  := connection;
+end;
+
+procedure TFormDistanzen.DBGrid1CellClick(Column: TColumn);
+var
+  aDistanzText: string;
+  aDistanz    : integer;
+begin
+  if Column.FieldName = 'DI_DISTANZ' then
+  begin
+    aDistanzText := InputBox('Distanz ändern', 'Bitte geben Sie die Distanz ein', '');
+    if TryStrToInt(aDistanzText, aDistanz) then
+    begin
+      queryUpdate.Close;
+      TARC_DAL_Distanz.UpdateDistanz(queryUpdate, queryDistanz.FieldByName('DI_ID').AsString, aDistanz);
+      queryUpdate.ExecSQL;
+      selectDistanzen();
+    end;
+  end;
 end;
 
 procedure TFormDistanzen.DBGrid1DblClick(Sender: TObject);
@@ -274,14 +279,6 @@ begin
   begin
     queryDistanz.First;
   end;
-end;
-
-function TFormDistanzen.saveData: boolean;
-var
-  aDate: TDateTime;
-begin
-  result := True;
-
 end;
 
 end.

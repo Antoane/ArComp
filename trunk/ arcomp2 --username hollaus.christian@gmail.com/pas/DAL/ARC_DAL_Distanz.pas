@@ -20,6 +20,7 @@ type
     class procedure insertDistanzen(const query: TADOQuery; const turnierart, bogenklasse, altersklasse,
       geschlecht: string; const distanz: integer); static;
     class procedure deleteDistanz(query: TADOQuery; DI_ID: string); static;
+    class procedure UpdateDistanz(query: TADOQuery; DI_ID: string; distanz: integer); static;
   end;
 
 implementation
@@ -144,6 +145,27 @@ begin
   begin
     clear;
     add('DELETE FROM DISTANZ');
+    add('WHERE DI_ID IN(');
+    add('  SELECT di2.DI_ID');
+    add('  FROM DISTANZ di1');
+    add('    LEFT OUTER JOIN DISTANZ di2');
+    add('      ON di1.TA_ID = di2.TA_ID');
+    add('        AND di1.AK_ID = di2.AK_ID');
+    add('        AND di1.BK_ID = di2.BK_ID');
+    add('        AND di1.GE_ID = di2.GE_ID');
+    add('        AND di2.DI_RUNDE > = di1.DI_RUNDE');
+    add('  WHERE di1.DI_ID = ' + quotedstr(DI_ID));
+    add(')');
+  end;
+end;
+
+class procedure TARC_DAL_Distanz.UpdateDistanz(query: TADOQuery; DI_ID: string; distanz: integer);
+begin
+  with query.SQL do
+  begin
+    clear;
+    add('UPDATE DISTANZ');
+    add('SET DI_DISTANZ = ' + IntToStr(distanz));
     add('WHERE DI_ID = ' + quotedstr(DI_ID));
   end;
 end;
