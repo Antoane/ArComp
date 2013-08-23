@@ -114,6 +114,10 @@
 			</DCCReference>
 			<DCCReference Include="pas\DAL\ARC_DAL_Distanz.pas"/>
 			<DCCReference Include="pas\DAL\ARC_DAL_Tools.pas"/>
+			<DCCReference Include="dfm\ARC_Finalberechtigungen.pas">
+				<Form>FormFinalberechtigung</Form>
+			</DCCReference>
+			<DCCReference Include="pas\DAL\ARC_DAL_Finalberechtigungen.pas"/>
 			<BuildConfiguration Include="Release">
 				<Key>Cfg_2</Key>
 				<CfgParent>Base</CfgParent>

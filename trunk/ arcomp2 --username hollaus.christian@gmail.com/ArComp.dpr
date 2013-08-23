@@ -18,7 +18,9 @@ uses
   ARC_TurnierDetail in 'dfm\ARC_TurnierDetail.pas' {FormTurnierDetail},
   ARC_Distanzen in 'dfm\ARC_Distanzen.pas' {FormDistanzen},
   ARC_DAL_Distanz in 'pas\DAL\ARC_DAL_Distanz.pas',
-  ARC_DAL_Tools in 'pas\DAL\ARC_DAL_Tools.pas';
+  ARC_DAL_Tools in 'pas\DAL\ARC_DAL_Tools.pas',
+  ARC_Finalberechtigungen in 'dfm\ARC_Finalberechtigungen.pas' {FormFinalberechtigung},
+  ARC_DAL_Finalberechtigungen in 'pas\DAL\ARC_DAL_Finalberechtigungen.pas';
 
 {$R *.res}
 
@@ -30,6 +32,7 @@ begin
   Application.CreateForm(TFormTurnierListe, FormTurnierListe);
   Application.CreateForm(TFormTurnierDetail, FormTurnierDetail);
   Application.CreateForm(TFormDistanzen, FormDistanzen);
+  Application.CreateForm(TFormFinalberechtigung, FormFinalberechtigung);
   Application.Run;
 
   //Application.CreateForm(TFormPersonenDetail, FormPersonenDetail);
