@@ -51,6 +51,10 @@ type
     updateTurnier: TADOQuery;
     Label10: TLabel;
     editSchiedsrichter: TDBEdit;
+    Label5: TLabel;
+    editAnzahlScheiben: TDBEdit;
+    Label9: TLabel;
+    editSchuetzenProScheibe: TDBEdit;
     procedure FormShow(Sender: TObject);
     procedure buttonSaveClick(Sender: TObject);
     procedure buttonOKClick(Sender: TObject);
@@ -119,25 +123,38 @@ end;
 
 function TFormTurnierDetail.saveData: boolean;
 var
-  aDate: TDateTime;
+  aDate               : TDateTime;
+  aScheibenanzahl     : integer;
+  aSchuetzenProScheibe: integer;
 begin
   result := True;
   if TryStrToDate(editBeginn.Text, aDate) and TryStrToDate(editEnde.Text, aDate) then
   begin
-
-    updateTurnier.Parameters.ParseSQL(updateTurnier.SQL.Text, True);
-    with updateTurnier.Parameters do
+    if TryStrToInt(editAnzahlScheiben.Text, aScheibenanzahl) and TryStrToInt(editSchuetzenProScheibe.Text,
+      aSchuetzenProScheibe) then
     begin
-      ParamByName('TU_NAME').value           := editTurniername.Text;
-      ParamByName('TU_BEGINN').value         := editBeginn.Text;
-      ParamByName('TU_ENDE').value           := editEnde.Text;
-      ParamByName('TU_VERANSTALTER').value   := editVeranstalter.Text;
-      ParamByName('TU_TURNIERLEITUNG').value := editTurnierleitung.Text;
-      ParamByName('TU_SCHIEDSRICHTER').value := editSchiedsrichter.Text;
-      ParamByName('ID').value                := FTU_ID;
-      ParamByName('TA_ID').value := TARC_DAL_DbUpdate.getTurnierartID(queryTurnier.connection, comboTurnierart.Text);
+      updateTurnier.Parameters.ParseSQL(updateTurnier.SQL.Text, True);
+      with updateTurnier.Parameters do
+      begin
+        ParamByName('TU_NAME').value                 := editTurniername.Text;
+        ParamByName('TU_BEGINN').value               := editBeginn.Text;
+        ParamByName('TU_ENDE').value                 := editEnde.Text;
+        ParamByName('TU_VERANSTALTER').value         := editVeranstalter.Text;
+        ParamByName('TU_TURNIERLEITUNG').value       := editTurnierleitung.Text;
+        ParamByName('TU_SCHIEDSRICHTER').value       := editSchiedsrichter.Text;
+        ParamByName('TU_SCHEIBENANZAHL').value       := aScheibenanzahl;
+        ParamByName('TU_PERSONEN_PRO_SCHEIBE').value := aSchuetzenProScheibe;
+        ParamByName('ID').value                      := FTU_ID;
+        ParamByName('TA_ID').value := TARC_DAL_DbUpdate.getTurnierartID(queryTurnier.connection, comboTurnierart.Text);
+      end;
+      updateTurnier.ExecSQL;
+    end
+    else
+    begin
+      MessageDlg('bitte geben Sie eine gültige Scheibenanzahl / Schützenanzahl pro Scheibe ein.', mtError, [mbOK], 0);
+      editSchuetzenProScheibe.SetFocus;
+      result := false;
     end;
-    updateTurnier.ExecSQL;
   end
   else
   begin
