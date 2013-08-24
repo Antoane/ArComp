@@ -118,6 +118,7 @@
 				<Form>FormFinalberechtigung</Form>
 			</DCCReference>
 			<DCCReference Include="pas\DAL\ARC_DAL_Finalberechtigungen.pas"/>
+			<DCCReference Include="pas\BL\ARC_BL_Turnier.pas"/>
 			<BuildConfiguration Include="Release">
 				<Key>Cfg_2</Key>
 				<CfgParent>Base</CfgParent>

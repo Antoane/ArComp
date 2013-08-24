@@ -20,7 +20,8 @@ uses
   ARC_DAL_Distanz in 'pas\DAL\ARC_DAL_Distanz.pas',
   ARC_DAL_Tools in 'pas\DAL\ARC_DAL_Tools.pas',
   ARC_Finalberechtigungen in 'dfm\ARC_Finalberechtigungen.pas' {FormFinalberechtigung},
-  ARC_DAL_Finalberechtigungen in 'pas\DAL\ARC_DAL_Finalberechtigungen.pas';
+  ARC_DAL_Finalberechtigungen in 'pas\DAL\ARC_DAL_Finalberechtigungen.pas',
+  ARC_BL_Turnier in 'pas\BL\ARC_BL_Turnier.pas';
 
 {$R *.res}
 

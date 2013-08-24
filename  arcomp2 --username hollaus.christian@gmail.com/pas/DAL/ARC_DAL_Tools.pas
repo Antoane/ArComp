@@ -117,6 +117,7 @@ begin
       add('  AND GE_ID NOT IN (SELECT GE_ID FROM GESCHLECHT)');
       add('');
     end;
+    aQuery.ExecSQL;
 
     TARC_DAL_Tools.insertFehlendeFinalberechtigungen(connection);
   finally

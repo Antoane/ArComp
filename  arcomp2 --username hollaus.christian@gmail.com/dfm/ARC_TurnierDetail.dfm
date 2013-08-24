@@ -70,12 +70,28 @@ object FormTurnierDetail: TFormTurnierDetail
       Caption = 'Turnierleitung'
     end
     object Label10: TLabel
-      Left = 23
+      Left = 24
       Top = 155
       Width = 100
       Height = 13
       AutoSize = False
       Caption = 'Schiedsrichter'
+    end
+    object Label5: TLabel
+      Left = 24
+      Top = 185
+      Width = 100
+      Height = 13
+      AutoSize = False
+      Caption = 'Anzahl Scheiben'
+    end
+    object Label9: TLabel
+      Left = 24
+      Top = 214
+      Width = 100
+      Height = 13
+      AutoSize = False
+      Caption = 'Sch'#252'tzen pro Scheibe'
     end
     object editBeginn: TDBEdit
       Left = 120
@@ -139,6 +155,24 @@ object FormTurnierDetail: TFormTurnierDetail
       DataField = 'TU_SCHIEDSRICHTER'
       DataSource = dataSource
       TabOrder = 5
+    end
+    object editAnzahlScheiben: TDBEdit
+      Left = 120
+      Top = 181
+      Width = 200
+      Height = 21
+      DataField = 'TU_SCHEIBENANZAHL'
+      DataSource = dataSource
+      TabOrder = 7
+    end
+    object editSchuetzenProScheibe: TDBEdit
+      Left = 120
+      Top = 210
+      Width = 200
+      Height = 21
+      DataField = 'TU_PERSONEN_PRO_SCHEIBE'
+      DataSource = dataSource
+      TabOrder = 8
     end
   end
   object Panel3: TPanel
@@ -209,7 +243,9 @@ object FormTurnierDetail: TFormTurnierDetail
       '  tu.TU_ENDE,'
       '  tu.TU_VERANSTALTER,'
       '  tu.TU_TURNIERLEITUNG,'
-      '  tu.TU_SCHIEDSRICHTER'
+      '  tu.TU_SCHIEDSRICHTER,'
+      '  tu.TU_SCHEIBENANZAHL,'
+      '  tu.TU_PERSONEN_PRO_SCHEIBE'
       'FROM TURNIER tu'
       '  LEFT OUTER JOIN TURNIERART ta'
       '    on tu.TA_ID = ta.TA_ID'
@@ -228,7 +264,7 @@ object FormTurnierDetail: TFormTurnierDetail
     Left = 640
     Top = 152
     Bitmap = {
-      494C0101030008005C0010001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
+      494C010103000800600010001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
       0000000000003600000028000000400000001000000001002000000000000010
       0000000000000000000000000000000000000000000000000000000000000000
       000000000000FDFDFD00FAFAFA00FEFEFE000000000000000000000000000000
@@ -378,6 +414,8 @@ object FormTurnierDetail: TFormTurnierDetail
       '  TU_VERANSTALTER = :TU_VERANSTALTER,'
       '  TU_TURNIERLEITUNG = :TU_TURNIERLEITUNG,'
       '  TU_SCHIEDSRICHTER = :TU_SCHIEDSRICHTER,'
+      '  TU_SCHEIBENANZAHL = :TU_SCHEIBENANZAHL,'
+      '  TU_PERSONEN_PRO_SCHEIBE = :TU_PERSONEN_PRO_SCHEIBE,'
       '  TA_ID = :TA_ID'
       'WHERE TU_ID = :ID'
       ''

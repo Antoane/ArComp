@@ -2,8 +2,8 @@ object MainWindow: TMainWindow
   Left = 0
   Top = 0
   Caption = 'MainWindow'
-  ClientHeight = 492
-  ClientWidth = 929
+  ClientHeight = 644
+  ClientWidth = 1048
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -18,16 +18,16 @@ object MainWindow: TMainWindow
   object Panel2: TPanel
     Left = 0
     Top = 90
-    Width = 929
-    Height = 402
+    Width = 1048
+    Height = 554
     Align = alClient
     Caption = 'Panel2'
     TabOrder = 0
     object pageControl: TPageControl
       Left = 1
       Top = 1
-      Width = 927
-      Height = 400
+      Width = 1046
+      Height = 552
       ActivePage = sheetPersonenzuteilung
       Align = alClient
       TabOrder = 0
@@ -42,8 +42,8 @@ object MainWindow: TMainWindow
         object DBGrid1: TDBGrid
           Left = 0
           Top = 29
-          Width = 919
-          Height = 308
+          Width = 1038
+          Height = 460
           Align = alClient
           DataSource = sourcePersonen
           ReadOnly = True
@@ -124,7 +124,7 @@ object MainWindow: TMainWindow
         object Panel5: TPanel
           Left = 0
           Top = 0
-          Width = 919
+          Width = 1038
           Height = 29
           Align = alTop
           TabOrder = 1
@@ -151,8 +151,8 @@ object MainWindow: TMainWindow
         end
         object Panel4: TPanel
           Left = 0
-          Top = 337
-          Width = 919
+          Top = 489
+          Width = 1038
           Height = 35
           Align = alBottom
           TabOrder = 2
@@ -180,12 +180,315 @@ object MainWindow: TMainWindow
           end
         end
       end
+      object sheetScheibeneinteilung: TTabSheet
+        Caption = 'Scheibeneinteilung'
+        ImageIndex = 1
+        object pageControlScheibeneinteilung: TPageControl
+          AlignWithMargins = True
+          Left = 3
+          Top = 3
+          Width = 1032
+          Height = 518
+          ActivePage = sheetScheibeneinteilungAllgemein
+          Align = alClient
+          TabOrder = 0
+          object sheetScheibeneinteilungAllgemein: TTabSheet
+            Caption = 'Allgemein'
+            object panelScheibeneinteilungInfo: TPanel
+              AlignWithMargins = True
+              Left = 3
+              Top = 3
+              Width = 325
+              Height = 484
+              Align = alLeft
+              TabOrder = 0
+              object Label2: TLabel
+                Left = 8
+                Top = 16
+                Width = 78
+                Height = 13
+                Caption = 'Anzahl Scheiben'
+              end
+              object Label3: TLabel
+                Left = 8
+                Top = 41
+                Width = 103
+                Height = 13
+                Caption = 'Sch'#252'tzen pro Scheibe'
+              end
+              object Label4: TLabel
+                Left = 8
+                Top = 91
+                Width = 52
+                Height = 13
+                Caption = 'Teilnehmer'
+              end
+              object Label6: TLabel
+                Left = 8
+                Top = 116
+                Width = 101
+                Height = 13
+                Caption = 'Teilnehmer mit Lizenz'
+              end
+              object Label7: TLabel
+                Left = 8
+                Top = 141
+                Width = 119
+                Height = 13
+                Caption = 'Teilnehmer ohne Scheibe'
+              end
+              object Label10: TLabel
+                Left = 8
+                Top = 66
+                Width = 102
+                Height = 13
+                Caption = 'Anzahl Pl'#228'tze gesamt'
+              end
+              object editAnzahlScheiben: TDBEdit
+                Left = 144
+                Top = 13
+                Width = 121
+                Height = 21
+                DataField = 'TU_SCHEIBENANZAHL'
+                DataSource = sourceScheibeneinteilungInfo
+                ReadOnly = True
+                TabOrder = 0
+              end
+              object editSchuetzenProScheibe: TDBEdit
+                Left = 144
+                Top = 38
+                Width = 121
+                Height = 21
+                DataField = 'TU_PERSONEN_PRO_SCHEIBE'
+                DataSource = sourceScheibeneinteilungInfo
+                ReadOnly = True
+                TabOrder = 1
+              end
+              object editAnzahlTeilnehmer: TDBEdit
+                Left = 144
+                Top = 88
+                Width = 121
+                Height = 21
+                DataField = 'TEILNEHMER'
+                DataSource = sourceScheibeneinteilungInfo
+                ReadOnly = True
+                TabOrder = 2
+              end
+              object editAnzahlTeilnehmerMitLizenz: TDBEdit
+                Left = 144
+                Top = 113
+                Width = 121
+                Height = 21
+                DataField = 'TEILNEHMER_MIT_LIZENZ'
+                DataSource = sourceScheibeneinteilungInfo
+                ReadOnly = True
+                TabOrder = 3
+              end
+              object editTeilnehmerOhneScheibe: TDBEdit
+                Left = 144
+                Top = 138
+                Width = 121
+                Height = 21
+                DataField = 'TEILNEHMER_NICHT_ZUGETEILT'
+                DataSource = sourceScheibeneinteilungInfo
+                ReadOnly = True
+                TabOrder = 4
+              end
+              object editPlaetze: TDBEdit
+                Left = 144
+                Top = 63
+                Width = 121
+                Height = 21
+                DataField = 'PLAETZE'
+                DataSource = sourceScheibeneinteilungInfo
+                ReadOnly = True
+                TabOrder = 5
+              end
+            end
+            object Panel3: TPanel
+              Left = 768
+              Top = 408
+              Width = 185
+              Height = 41
+              Caption = 'Panel3'
+              TabOrder = 1
+            end
+          end
+          object sheetScheibeneinteilungNichtZugeteilt: TTabSheet
+            Caption = 'nicht zugeteilt'
+            ImageIndex = 1
+            object DBGrid2: TDBGrid
+              Left = 191
+              Top = 29
+              Width = 833
+              Height = 461
+              Align = alClient
+              DataSource = sourceScheibeneinteilungNichtZugeteilt
+              ReadOnly = True
+              TabOrder = 0
+              TitleFont.Charset = DEFAULT_CHARSET
+              TitleFont.Color = clWindowText
+              TitleFont.Height = -11
+              TitleFont.Name = 'Tahoma'
+              TitleFont.Style = []
+              Columns = <
+                item
+                  Expanded = False
+                  FieldName = 'PE_VORNAME'
+                  Title.Caption = 'Vorname'
+                  Visible = True
+                end
+                item
+                  Expanded = False
+                  FieldName = 'PE_NACHNAME'
+                  Title.Caption = 'Nachname'
+                  Visible = True
+                end
+                item
+                  Expanded = False
+                  FieldName = 'PE_NATION'
+                  Title.Caption = 'Nation'
+                  Visible = True
+                end
+                item
+                  Expanded = False
+                  FieldName = 'PE_BUNDESLAND'
+                  Title.Caption = 'Bundesland'
+                  Visible = True
+                end
+                item
+                  Expanded = False
+                  FieldName = 'PE_BOGENKATEGORIE'
+                  Title.Caption = 'Bogenkategorie'
+                  Visible = True
+                end
+                item
+                  Expanded = False
+                  FieldName = 'PE_ALTERSKLASSE'
+                  Title.Caption = 'Altersklasse'
+                  Visible = True
+                end
+                item
+                  Expanded = False
+                  FieldName = 'VE_NAME'
+                  Title.Caption = 'Verein'
+                  Visible = True
+                end
+                item
+                  Expanded = False
+                  FieldName = 'PE_GEBURTSDATUM'
+                  Title.Caption = 'Geburtsdatum'
+                  Visible = True
+                end
+                item
+                  Expanded = False
+                  FieldName = 'PE_GESCHLECHT'
+                  Title.Caption = 'Geschlecht'
+                  Visible = True
+                end
+                item
+                  Expanded = False
+                  FieldName = 'PE_LIZENZ'
+                  Title.Caption = 'Lizenz'
+                  Visible = True
+                end
+                item
+                  Expanded = False
+                  FieldName = 'PE_LANDESWERTUNG'
+                  Title.Caption = 'Landeswertung'
+                  Visible = True
+                end>
+            end
+            object Panel6: TPanel
+              Left = 0
+              Top = 0
+              Width = 1024
+              Height = 29
+              Align = alTop
+              TabOrder = 1
+              object editSearchNichtZugeteilt: TEdit
+                AlignWithMargins = True
+                Left = 4
+                Top = 4
+                Width = 232
+                Height = 21
+                Align = alLeft
+                TabOrder = 0
+              end
+              object buttonSearchPersonenNichtZugeteilt: TButton
+                AlignWithMargins = True
+                Left = 242
+                Top = 4
+                Width = 75
+                Height = 21
+                Align = alLeft
+                Caption = 'Suchen'
+                TabOrder = 1
+                OnClick = buttonSearchPersonenNichtZugeteiltClick
+              end
+            end
+            object panelScheibenEinteilen: TPanel
+              AlignWithMargins = True
+              Left = 3
+              Top = 32
+              Width = 185
+              Height = 455
+              Align = alLeft
+              BevelOuter = bvNone
+              TabOrder = 2
+              object comboScheibenanzahl: TComboBox
+                AlignWithMargins = True
+                Left = 3
+                Top = 3
+                Width = 179
+                Height = 21
+                Margins.Bottom = 0
+                Align = alTop
+                Style = csDropDownList
+                TabOrder = 0
+                ExplicitLeft = 32
+                ExplicitTop = 40
+                ExplicitWidth = 145
+              end
+              object comboScheibenplatz: TComboBox
+                AlignWithMargins = True
+                Left = 3
+                Top = 27
+                Width = 179
+                Height = 21
+                Margins.Bottom = 0
+                Align = alTop
+                Style = csDropDownList
+                TabOrder = 1
+                ExplicitLeft = 32
+                ExplicitTop = 80
+                ExplicitWidth = 145
+              end
+              object buttonZuteilen: TButton
+                AlignWithMargins = True
+                Left = 3
+                Top = 51
+                Width = 179
+                Height = 21
+                Align = alTop
+                Caption = 'Zuteilen'
+                TabOrder = 2
+                OnClick = buttonZuteilenClick
+              end
+            end
+          end
+          object sheetScheibeneinteilungZugeteilt: TTabSheet
+            Caption = 'zugeteilt'
+            ImageIndex = 2
+          end
+        end
+      end
     end
   end
   object panelTurnierinfo: TPanel
     Left = 0
     Top = 0
-    Width = 929
+    Width = 1048
     Height = 90
     Align = alTop
     TabOrder = 1
@@ -293,8 +596,8 @@ object MainWindow: TMainWindow
     end
   end
   object MainMenu1: TMainMenu
-    Left = 32
-    Top = 184
+    Left = 968
+    Top = 24
     object test1: TMenuItem
       Caption = 'Datei'
       object Bearbeiten1: TMenuItem
@@ -425,5 +728,125 @@ object MainWindow: TMainWindow
     DataSet = queryTurnier
     Left = 696
     Top = 168
+  end
+  object queryScheibeneinteilungInfo: TADOQuery
+    Connection = DBConnection
+    Parameters = <
+      item
+        Name = 'TU_ID'
+        Size = -1
+        Value = Null
+      end>
+    SQL.Strings = (
+      'DECLARE @TU_ID varchar(36)'
+      'DECLARE @TEILNEHMER integer'
+      'DECLARE @TEILNEHMER_MIT_LIZENZ integer'
+      'DECLARE @TEILNEHMER_NICHT_ZUGETEILT integer'
+      'DECLARE @PLAETZE integer'
+      ''
+      'SET @TU_ID = :TU_ID'
+      ''
+      'SET @TEILNEHMER = ('
+      '  SELECT COUNT(*)'
+      '  FROM TURNIER_ZUTEILUNG'
+      '  WHERE TU_ID = @TU_ID'
+      ')'
+      ''
+      'SET @TEILNEHMER_MIT_LIZENZ = ('
+      '  SELECT COUNT(*)'
+      '  FROM TURNIER_ZUTEILUNG zu'
+      '    INNER JOIN PERSON pe'
+      '      ON zu.PE_ID = pe.PE_ID'
+      #9'    AND pe.PE_LIZENZ = 1'
+      '  WHERE TU_ID = @TU_ID'
+      ')'
+      ''
+      'SET @TEILNEHMER_NICHT_ZUGETEILT = ('
+      '  SELECT COUNT(*)'
+      '  FROM TURNIER_ZUTEILUNG zu'
+      '  WHERE zu.PE_ID NOT IN ('
+      #9'                    SELECT se.PE_ID'
+      #9#9#9#9#9#9'FROM SCHEIBENEINTEILUNG se'
+      #9#9#9#9#9#9'WHERE se.TU_ID = @TU_ID'
+      #9'                    )'
+      '  AND zu.TU_ID = @TU_ID'
+      ')'
+      ''
+      'SELECT DISTINCT'
+      '  tu.TU_SCHEIBENANZAHL,'
+      '  tu.TU_PERSONEN_PRO_SCHEIBE,'
+      
+        '  (tu.TU_SCHEIBENANZAHL * tu.TU_PERSONEN_PRO_SCHEIBE) AS PLAETZE' +
+        ','
+      '  @TEILNEHMER AS TEILNEHMER,'
+      '  @TEILNEHMER_MIT_LIZENZ AS TEILNEHMER_MIT_LIZENZ,'
+      '  @TEILNEHMER_NICHT_ZUGETEILT AS TEILNEHMER_NICHT_ZUGETEILT'
+      '  FROM TURNIER tu'
+      'WHERE tu.TU_ID = @TU_ID'
+      '')
+    Left = 696
+    Top = 320
+  end
+  object sourceScheibeneinteilungInfo: TDataSource
+    DataSet = queryScheibeneinteilungInfo
+    Left = 696
+    Top = 392
+  end
+  object queryScheibeneinteilungNichtZugeteilt: TADOQuery
+    Connection = DBConnection
+    Parameters = <
+      item
+        Name = 'SEARCHSTRING'
+        Size = -1
+        Value = Null
+      end
+      item
+        Name = 'ID'
+        Size = -1
+        Value = Null
+      end>
+    SQL.Strings = (
+      'DECLARE @SEARCHSTRING VARCHAR(50)'
+      ''
+      'SET @SEARCHSTRING = :SEARCHSTRING'
+      ''
+      'SELECT'
+      '  pe.PE_ID,'
+      '  pe.PE_VORNAME,'
+      '  pe.PE_NACHNAME,'
+      '  pe.PE_NATION,'
+      '  pe.PE_BUNDESLAND,'
+      '  pe.PE_BOGENKATEGORIE,'
+      '  pe.PE_ALTERSKLASSE,'
+      '  ve.VE_NAME,'
+      '  pe.PE_GEBURTSDATUM,'
+      '  pe.PE_GESCHLECHT,'
+      '  pe.PE_LIZENZ,'
+      '  pe.PE_LANDESWERTUNG'
+      'FROM TURNIER_ZUTEILUNG zu'
+      '  INNER JOIN TURNIER tu'
+      '    ON zu.TU_ID = tu.TU_ID'
+      '  INNER JOIN PERSON pe'
+      '    ON zu.PE_ID = pe.PE_ID'
+      '  LEFT OUTER JOIN VEREIN ve'
+      '    ON pe.VE_ID = ve.VE_ID'
+      'WHERE tu.TU_ID = :ID'
+      
+        '  AND pe.PE_ID NOT IN (SELECT se.PE_ID FROM SCHEIBENEINTEILUNG s' +
+        'e WHERE se.TU_ID = tu.TU_ID)'
+      '  AND('
+      '    pe.PE_VORNAME LIKE @SEARCHSTRING'
+      '    OR pe.PE_NACHNAME LIKE @SEARCHSTRING'
+      '    OR ve.VE_NAME LIKE @SEARCHSTRING'
+      '  )'
+      ''
+      '')
+    Left = 856
+    Top = 312
+  end
+  object sourceScheibeneinteilungNichtZugeteilt: TDataSource
+    DataSet = queryScheibeneinteilungNichtZugeteilt
+    Left = 856
+    Top = 384
   end
 end
