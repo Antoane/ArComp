@@ -28,7 +28,7 @@ uses
 type
   TFormPersonenDetail = class(TForm)
     queryPerson: TADOQuery;
-    Panel2: TPanel;
+    panelMain: TPanel;
     Panel3: TPanel;
     Panel4: TPanel;
     editNachname: TDBEdit;
@@ -57,6 +57,7 @@ type
     updatePerson: TADOQuery;
     Label10: TLabel;
     comboVerein: TDBComboBox;
+    checkInTurnierUebernehmen: TCheckBox;
     procedure FormShow(Sender: TObject);
     procedure buttonSaveClick(Sender: TObject);
     procedure buttonOKClick(Sender: TObject);
@@ -67,10 +68,16 @@ type
     FPE_ID: string;
     procedure loadData;
     function saveData: boolean;
+    function getInTurnierUebernehmen: boolean;
+    procedure setInTurnierUebernehmen(const Value: boolean);
 
   public
     constructor create(owner: TComponent; connection: TADOConnection; PE_ID: string);
     {Public-Deklarationen}
+
+    property inTurnierUebernehmen: boolean
+      read   getInTurnierUebernehmen
+      write  setInTurnierUebernehmen;
   end;
 
 var
@@ -113,6 +120,11 @@ begin
   loadData();
 end;
 
+function TFormPersonenDetail.getInTurnierUebernehmen: boolean;
+begin
+  result := checkInTurnierUebernehmen.Checked;
+end;
+
 procedure TFormPersonenDetail.loadData();
 begin
   TARC_Tools.fillDBComboFromTable(comboAlterskategorie, 'ALTERSKATEGORIE', 'AK_ID', 'AK_NAME', queryPerson.connection);
@@ -121,7 +133,7 @@ begin
   TARC_Tools.fillDBComboFromTable(comboGeschlecht, 'GESCHLECHT', 'GE_ID', 'GE_NAME', queryPerson.connection);
 
   queryPerson.Parameters.ParseSQL(queryPerson.SQL.Text, True);
-  queryPerson.Parameters.ParamByName('ID').value := FPE_ID;
+  queryPerson.Parameters.ParamByName('ID').Value := FPE_ID;
   queryPerson.Active                             := True;
   queryPerson.Open;
 end;
@@ -137,18 +149,18 @@ begin
     updatePerson.Parameters.ParseSQL(updatePerson.SQL.Text, True);
     with updatePerson.Parameters do
     begin
-      ParamByName('PE_VORNAME').value        := editVorname.Text;
-      ParamByName('PE_NACHNAME').value       := editNachname.Text;
-      ParamByName('PE_NATION').value         := editLand.Text;
-      ParamByName('PE_BUNDESLAND').value     := editBundesland.Text;
-      ParamByName('PE_BOGENKATEGORIE').value := comboBogenkategorie.Text;
-      ParamByName('PE_ALTERSKLASSE').value   := comboAlterskategorie.Text;
-      ParamByName('PE_GEBURTSDATUM').value   := editGeburtsdatum.Text;
-      ParamByName('PE_GESCHLECHT').value     := comboGeschlecht.Text;
-      ParamByName('PE_LIZENZ').value         := boolToInt(checkLizenz.Checked);
-      ParamByName('PE_LANDESWERTUNG').value  := boolToInt(checkLandeswertung.Checked);
-      ParamByName('ID').value                := FPE_ID;
-      ParamByName('VE_ID').value := TARC_DAL_DbUpdate.getVereinID(queryPerson.connection, comboVerein.Text);
+      ParamByName('PE_VORNAME').Value        := editVorname.Text;
+      ParamByName('PE_NACHNAME').Value       := editNachname.Text;
+      ParamByName('PE_NATION').Value         := editLand.Text;
+      ParamByName('PE_BUNDESLAND').Value     := editBundesland.Text;
+      ParamByName('PE_BOGENKATEGORIE').Value := comboBogenkategorie.Text;
+      ParamByName('PE_ALTERSKLASSE').Value   := comboAlterskategorie.Text;
+      ParamByName('PE_GEBURTSDATUM').Value   := editGeburtsdatum.Text;
+      ParamByName('PE_GESCHLECHT').Value     := comboGeschlecht.Text;
+      ParamByName('PE_LIZENZ').Value         := boolToInt(checkLizenz.Checked);
+      ParamByName('PE_LANDESWERTUNG').Value  := boolToInt(checkLandeswertung.Checked);
+      ParamByName('ID').Value                := FPE_ID;
+      ParamByName('VE_ID').Value := TARC_DAL_DbUpdate.getVereinID(queryPerson.connection, comboVerein.Text);
     end;
     updatePerson.ExecSQL;
 
@@ -164,6 +176,12 @@ begin
     result := false;
   end;
 
+end;
+
+procedure TFormPersonenDetail.setInTurnierUebernehmen(const Value: boolean);
+begin
+  checkInTurnierUebernehmen.Checked := Value;
+  checkInTurnierUebernehmen.Visible := Value;
 end;
 
 end.

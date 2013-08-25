@@ -21055,11 +21055,11 @@ object MainWindow: TMainWindow
       Top = 1
       Width = 1046
       Height = 552
-      ActivePage = sheetScheibeneinteilung
+      ActivePage = sheetPersonenzuteilung
       Align = alClient
       TabOrder = 0
       object sheetPersonenzuteilung: TTabSheet
-        Caption = 'Bogensch'#252'tzen'
+        Caption = 'Turnierteilnehmer'
         Font.Charset = DEFAULT_CHARSET
         Font.Color = clWindowText
         Font.Height = -11
@@ -21080,6 +21080,7 @@ object MainWindow: TMainWindow
           TitleFont.Height = -11
           TitleFont.Name = 'Tahoma'
           TitleFont.Style = []
+          OnDblClick = gridTeilnehmerDblClick
           OnTitleClick = gridTeilnehmerTitleClick
           Columns = <
             item
@@ -21164,6 +21165,7 @@ object MainWindow: TMainWindow
             Height = 21
             Align = alLeft
             TabOrder = 0
+            OnKeyUp = editSearchKeyUp
           end
           object Button3: TButton
             AlignWithMargins = True
@@ -21186,7 +21188,7 @@ object MainWindow: TMainWindow
           TabOrder = 2
           object buttonHinzufuegen: TButton
             AlignWithMargins = True
-            Left = 4
+            Left = 110
             Top = 4
             Width = 100
             Height = 27
@@ -21194,17 +21196,30 @@ object MainWindow: TMainWindow
             Caption = 'Hinzuf'#252'gen'
             TabOrder = 0
             OnClick = buttonHinzufuegenClick
+            ExplicitLeft = 4
           end
           object ButtonLoeschen: TButton
             AlignWithMargins = True
-            Left = 110
+            Left = 216
             Top = 4
             Width = 100
             Height = 27
             Align = alLeft
-            Caption = 'L'#246'schen'
+            Caption = 'Entfernen'
             TabOrder = 1
             OnClick = ButtonLoeschenClick
+            ExplicitLeft = 110
+          end
+          object buttonNeuPerson: TButton
+            AlignWithMargins = True
+            Left = 4
+            Top = 4
+            Width = 100
+            Height = 27
+            Align = alLeft
+            Caption = 'Neu'
+            TabOrder = 2
+            OnClick = buttonNeuPersonClick
           end
         end
       end
@@ -21472,6 +21487,7 @@ object MainWindow: TMainWindow
                 Height = 21
                 Align = alLeft
                 TabOrder = 0
+                OnKeyUp = editSearchNichtZugeteiltKeyUp
               end
               object buttonSearchPersonenNichtZugeteilt: TButton
                 AlignWithMargins = True
@@ -21547,6 +21563,7 @@ object MainWindow: TMainWindow
                 Height = 21
                 Align = alLeft
                 TabOrder = 0
+                OnKeyUp = editSearchZugeteiltKeyUp
               end
               object buttonSearchPersonenZugeteilt: TButton
                 AlignWithMargins = True
@@ -21579,7 +21596,6 @@ object MainWindow: TMainWindow
                 Caption = 'Zuteilung entfernen'
                 TabOrder = 0
                 OnClick = buttonZuteilungEntfernenClick
-                ExplicitTop = 51
               end
             end
             object gridZugeteilt: TDBGrid
