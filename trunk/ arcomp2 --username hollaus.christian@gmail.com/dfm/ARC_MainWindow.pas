@@ -112,6 +112,14 @@ type
     queryInfoFreiePlaetze: TADOQuery;
     sourceInfoFreiePlaetze: TDataSource;
     logoArcomp: TImage;
+    Panel3: TPanel;
+    editSearchZugeteilt: TEdit;
+    buttonSearchPersonenZugeteilt: TButton;
+    Panel7: TPanel;
+    buttonZuteilungEntfernen: TButton;
+    gridZugeteilt: TDBGrid;
+    queryScheibeneinteilungZugeteilt: TADOQuery;
+    sourceScheibeneinteilungZugeteilt: TDataSource;
     procedure Beenden1Click(Sender: TObject);
     procedure Importieren1Click(Sender: TObject);
     procedure Bogenschtzen1Click(Sender: TObject);
@@ -128,6 +136,9 @@ type
     procedure FormCreate(Sender: TObject);
     procedure gridTeilnehmerTitleClick(Column: TColumn);
     procedure gridNichtZugeteiltTitleClick(Column: TColumn);
+    procedure buttonSearchPersonenZugeteiltClick(Sender: TObject);
+    procedure gridZugeteiltTitleClick(Column: TColumn);
+    procedure buttonZuteilungEntfernenClick(Sender: TObject);
 
   private
     FTU_ID     : string;
@@ -149,6 +160,7 @@ type
     procedure normiereDatenbank;
     procedure searchPersonenNichtZugeteilt(searchString: string);
     procedure loadScheibeneinteilungInfo;
+    procedure searchPersonenZugeteilt(searchString: string);
 
     {Private-Deklarationen}
   public
@@ -177,6 +189,11 @@ begin
   searchPersonenNichtZugeteilt(editSearchNichtZugeteilt.Text);
 end;
 
+procedure TMainWindow.buttonSearchPersonenZugeteiltClick(Sender: TObject);
+begin
+  searchPersonenZugeteilt(editSearchZugeteilt.Text);
+end;
+
 procedure TMainWindow.buttonZuteilenClick(Sender: TObject);
 var
   aPE_ID: string;
@@ -192,15 +209,29 @@ begin
     if FBL_Turnier.zuteilen(FTU_ID, aPE_ID, comboScheibenanzahl, comboScheibenplatz) then
     begin
       searchPersonenNichtZugeteilt('');
+      searchPersonenZugeteilt('');
       loadScheibeneinteilungInfo();
     end;
   end;
+end;
+
+procedure TMainWindow.buttonZuteilungEntfernenClick(Sender: TObject);
+begin
+  FBL_Turnier.zuteilungEntfernen(queryScheibeneinteilungZugeteilt.FieldByName('SE_ID').AsString);
+  searchPersonenNichtZugeteilt('');
+  searchPersonenZugeteilt('');
+  loadScheibeneinteilungInfo();
 end;
 
 constructor TMainWindow.create(aOwner: TComponent);
 begin
   inherited create(aOwner);
   FBL_Turnier := TARC_BL_Turnier.create(self, DBConnection);
+end;
+
+procedure TMainWindow.gridZugeteiltTitleClick(Column: TColumn);
+begin
+  TARC_Tools.gridSort(gridZugeteilt, Column);
 end;
 
 procedure TMainWindow.gridNichtZugeteiltTitleClick(Column: TColumn);
@@ -242,16 +273,24 @@ begin
         with aQuery.SQL do
         begin
           clear;
-          add('INSERT INTO TURNIER_ZUTEILUNG(');
-          add('  TZ_ID,');
-          add('  TU_ID,');
-          add('  PE_ID');
+          add('IF NOT EXISTS(');
+          add('  SELECT PE_ID');
+          add('  FROM TURNIER_ZUTEILUNG');
+          add('  WHERE TU_ID =' + quotedStr(FTU_ID));
+          add('    AND PE_ID =' + quotedStr(id));
           add(')');
-          add('VALUES(');
-          add('  newID(),');
-          add('  ' + quotedStr(FTU_ID) + ',');
-          add('  ' + quotedStr(id));
-          add(')');
+          add('BEGIN');
+          add('  INSERT INTO TURNIER_ZUTEILUNG(');
+          add('    TZ_ID,');
+          add('    TU_ID,');
+          add('    PE_ID');
+          add('  )');
+          add('  VALUES(');
+          add('    newID(),');
+          add('    ' + quotedStr(FTU_ID) + ',');
+          add('    ' + quotedStr(id));
+          add('  )');
+          add('END');
         end;
         aQuery.ExecSQL;
       end;
@@ -489,6 +528,22 @@ begin
     queryScheibeneinteilungNichtZugeteilt.Parameters.ParamByName('SEARCHSTRING').value := '%' + searchString + '%';
     queryScheibeneinteilungNichtZugeteilt.Parameters.ParamByName('ID').value           := FTU_ID;
     queryScheibeneinteilungNichtZugeteilt.Open;
+  end;
+end;
+
+procedure TMainWindow.searchPersonenZugeteilt(searchString: string);
+begin
+  begin
+    queryScheibeneinteilungZugeteilt.Close;
+    if queryScheibeneinteilungZugeteilt.Active and (queryScheibeneinteilungZugeteilt.RecordCount > 0) then
+    begin
+      queryScheibeneinteilungZugeteilt.Active := false;
+    end;
+    queryScheibeneinteilungZugeteilt.Parameters.clear;
+    queryScheibeneinteilungZugeteilt.Parameters.ParseSQL(queryScheibeneinteilungZugeteilt.SQL.Text, True);
+    queryScheibeneinteilungZugeteilt.Parameters.ParamByName('SEARCHSTRING').value := '%' + searchString + '%';
+    queryScheibeneinteilungZugeteilt.Parameters.ParamByName('ID').value           := FTU_ID;
+    queryScheibeneinteilungZugeteilt.Open;
   end;
 end;
 
