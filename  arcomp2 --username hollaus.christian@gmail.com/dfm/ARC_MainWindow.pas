@@ -19,6 +19,7 @@ uses
 
   //ArComp
   ARC_DAL_Tools,
+  ARC_Tools,
   ARC_Personenliste,
   ARC_ImportPersonen,
   ARC_VereinListe,
@@ -48,10 +49,10 @@ type
     Bogenschtzen1: TMenuItem;
     DBConnection: TADOConnection;
     Vereine1: TMenuItem;
-    Panel2: TPanel;
+    panelMain: TPanel;
     pageControl: TPageControl;
     sheetPersonenzuteilung: TTabSheet;
-    DBGrid1: TDBGrid;
+    gridTeilnehmer: TDBGrid;
     Panel5: TPanel;
     editSearch: TEdit;
     Button3: TButton;
@@ -82,7 +83,7 @@ type
     sheetScheibeneinteilungNichtZugeteilt: TTabSheet;
     sheetScheibeneinteilungZugeteilt: TTabSheet;
     panelScheibeneinteilungInfo: TPanel;
-    Panel3: TPanel;
+    panelFreieScheiben: TPanel;
     editAnzahlScheiben: TDBEdit;
     Label2: TLabel;
     editSchuetzenProScheibe: TDBEdit;
@@ -97,7 +98,7 @@ type
     sourceScheibeneinteilungInfo: TDataSource;
     editPlaetze: TDBEdit;
     Label10: TLabel;
-    DBGrid2: TDBGrid;
+    gridNichtZugeteilt: TDBGrid;
     queryScheibeneinteilungNichtZugeteilt: TADOQuery;
     sourceScheibeneinteilungNichtZugeteilt: TDataSource;
     Panel6: TPanel;
@@ -107,6 +108,10 @@ type
     comboScheibenanzahl: TComboBox;
     comboScheibenplatz: TComboBox;
     buttonZuteilen: TButton;
+    DBGrid3: TDBGrid;
+    queryInfoFreiePlaetze: TADOQuery;
+    sourceInfoFreiePlaetze: TDataSource;
+    logoArcomp: TImage;
     procedure Beenden1Click(Sender: TObject);
     procedure Importieren1Click(Sender: TObject);
     procedure Bogenschtzen1Click(Sender: TObject);
@@ -120,6 +125,9 @@ type
     procedure Finalberechtigung1Click(Sender: TObject);
     procedure buttonSearchPersonenNichtZugeteiltClick(Sender: TObject);
     procedure buttonZuteilenClick(Sender: TObject);
+    procedure FormCreate(Sender: TObject);
+    procedure gridTeilnehmerTitleClick(Column: TColumn);
+    procedure gridNichtZugeteiltTitleClick(Column: TColumn);
 
   private
     FTU_ID     : string;
@@ -181,10 +189,9 @@ begin
 
   if aPE_ID <> '' then
   begin
-    if FBL_Turnier.zuteilen(FTU_ID, aPE_ID, strToInt(comboScheibenanzahl.Text), comboScheibenplatz.Text) then
+    if FBL_Turnier.zuteilen(FTU_ID, aPE_ID, comboScheibenanzahl, comboScheibenplatz) then
     begin
       searchPersonenNichtZugeteilt('');
-      FBL_Turnier.selectFreieScheibe(comboScheibenanzahl, comboScheibenplatz);
       loadScheibeneinteilungInfo();
     end;
   end;
@@ -194,6 +201,16 @@ constructor TMainWindow.create(aOwner: TComponent);
 begin
   inherited create(aOwner);
   FBL_Turnier := TARC_BL_Turnier.create(self, DBConnection);
+end;
+
+procedure TMainWindow.gridNichtZugeteiltTitleClick(Column: TColumn);
+begin
+  TARC_Tools.gridSort(gridNichtZugeteilt, Column);
+end;
+
+procedure TMainWindow.gridTeilnehmerTitleClick(Column: TColumn);
+begin
+  TARC_Tools.gridSort(gridTeilnehmer, Column);
 end;
 
 procedure TMainWindow.Button3Click(Sender: TObject);
@@ -304,6 +321,20 @@ begin
   end;
 end;
 
+procedure TMainWindow.FormCreate(Sender: TObject);
+var
+  aRowList: tStringList;
+begin
+  aRowList := tStringList.create;
+  try
+    aRowList.LoadFromFile('connectionString.txt');
+    DBConnection.ConnectionString := aRowList[0];
+  finally
+    aRowList.Free;
+  end;
+
+end;
+
 procedure TMainWindow.FormShow(Sender: TObject);
 begin
   normiereDatenbank();
@@ -317,8 +348,9 @@ end;
 
 procedure TMainWindow.disableComponents;
 begin
-  pageControl.Enabled      := queryTurnier.Active and (queryTurnier.RecordCount > 0);
-  panelTurnierinfo.Enabled := queryTurnier.Active and (queryTurnier.RecordCount > 0);
+  pageControl.visible      := queryTurnier.Active and (queryTurnier.RecordCount > 0);
+  panelTurnierinfo.visible := queryTurnier.Active and (queryTurnier.RecordCount > 0);
+  logoArcomp.visible       := not pageControl.visible;
 end;
 
 procedure TMainWindow.openTurnierliste;
@@ -348,7 +380,7 @@ begin
   try
     //aDialog.Parent := self;
     aDialog.setConnection(DBConnection);
-    aDialog.Show;
+    aDialog.ShowModal;
   finally
     //aDialog.Free;
   end;
@@ -424,6 +456,8 @@ begin
   queryScheibeneinteilungInfo.Parameters.ParseSQL(queryScheibeneinteilungInfo.SQL.Text, True);
   queryScheibeneinteilungInfo.Parameters.ParamByName('TU_ID').value := FTU_ID;
   queryScheibeneinteilungInfo.Open;
+  FBL_Turnier.selectFreieScheibenInfo(queryInfoFreiePlaetze, FTU_ID);
+
 end;
 
 procedure TMainWindow.searchPersonen(searchString: string);

@@ -31,7 +31,7 @@ object FormPersonenDetail: TFormPersonenDetail
     end
     object Label3: TLabel
       Left = 24
-      Top = 44
+      Top = 14
       Width = 100
       Height = 13
       AutoSize = False
@@ -47,7 +47,7 @@ object FormPersonenDetail: TFormPersonenDetail
     end
     object Label8: TLabel
       Left = 24
-      Top = 17
+      Top = 41
       Width = 100
       Height = 13
       AutoSize = False
@@ -95,12 +95,12 @@ object FormPersonenDetail: TFormPersonenDetail
     end
     object editNachname: TDBEdit
       Left = 120
-      Top = 41
+      Top = 11
       Width = 200
       Height = 21
       DataField = 'PE_NACHNAME'
       DataSource = dataSource
-      TabOrder = 1
+      TabOrder = 0
     end
     object editLand: TDBEdit
       Left = 120
@@ -122,12 +122,12 @@ object FormPersonenDetail: TFormPersonenDetail
     end
     object editVorname: TDBEdit
       Left = 120
-      Top = 14
+      Top = 38
       Width = 200
       Height = 21
       DataField = 'PE_VORNAME'
       DataSource = dataSource
-      TabOrder = 0
+      TabOrder = 1
     end
     object comboAlterskategorie: TDBComboBox
       Left = 470
@@ -291,7 +291,7 @@ object FormPersonenDetail: TFormPersonenDetail
     Left = 640
     Top = 152
     Bitmap = {
-      494C010103000800500010001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
+      494C010103000800540010001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
       0000000000003600000028000000400000001000000001002000000000000010
       0000000000000000000000000000000000000000000000000000000000000000
       000000000000FDFDFD00FAFAFA00FEFEFE000000000000000000000000000000

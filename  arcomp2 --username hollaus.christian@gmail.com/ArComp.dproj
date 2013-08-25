@@ -5,7 +5,7 @@
 			<FrameworkType>VCL</FrameworkType>
 			<MainSource>ArComp.dpr</MainSource>
 			<Base>True</Base>
-			<Config Condition="'$(Config)'==''">Debug</Config>
+			<Config Condition="'$(Config)'==''">Release</Config>
 			<Platform Condition="'$(Platform)'==''">Win32</Platform>
 			<TargetedPlatforms>1</TargetedPlatforms>
 			<AppType>Application</AppType>
@@ -119,6 +119,7 @@
 			</DCCReference>
 			<DCCReference Include="pas\DAL\ARC_DAL_Finalberechtigungen.pas"/>
 			<DCCReference Include="pas\BL\ARC_BL_Turnier.pas"/>
+			<DCCReference Include="pas\DAL\ARC_DAL_Turnier.pas"/>
 			<BuildConfiguration Include="Release">
 				<Key>Cfg_2</Key>
 				<CfgParent>Base</CfgParent>

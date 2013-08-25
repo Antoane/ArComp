@@ -50,7 +50,7 @@ object FormPersonenListe: TFormPersonenListe
     Align = alClient
     Caption = 'Panel2'
     TabOrder = 1
-    object DBGrid1: TDBGrid
+    object gridPersonen: TDBGrid
       Left = 1
       Top = 30
       Width = 874
@@ -65,19 +65,19 @@ object FormPersonenListe: TFormPersonenListe
       TitleFont.Height = -11
       TitleFont.Name = 'Tahoma'
       TitleFont.Style = []
-      OnDblClick = DBGrid1DblClick
-      OnTitleClick = DBGrid1TitleClick
+      OnDblClick = gridPersonenDblClick
+      OnTitleClick = gridPersonenTitleClick
       Columns = <
-        item
-          Expanded = False
-          FieldName = 'PE_VORNAME'
-          Title.Caption = 'Vorname'
-          Visible = True
-        end
         item
           Expanded = False
           FieldName = 'PE_NACHNAME'
           Title.Caption = 'Nachname'
+          Visible = True
+        end
+        item
+          Expanded = False
+          FieldName = 'PE_VORNAME'
+          Title.Caption = 'Vorname'
           Visible = True
         end
         item
@@ -262,7 +262,7 @@ object FormPersonenListe: TFormPersonenListe
     Left = 640
     Top = 152
     Bitmap = {
-      494C010102000800440010001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
+      494C0101020008004C0010001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
       0000000000003600000028000000400000001000000001002000000000000010
       0000000000000000000000000000000000000000000000000000000000000000
       000000000000FDFDFD00FAFAFA00FEFEFE000000000000000000000000000000
