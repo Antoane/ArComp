@@ -4,8 +4,10 @@ interface
 
 uses
   Data.Win.ADODB,
+  db,
   System.Classes,
   System.SysUtils,
+  variants,
   vcl.dialogs,
   vcl.controls,
   vcl.StdCtrls,
@@ -27,7 +29,8 @@ type
     procedure fillComboScheibenanzahl(combo: TCombobox; TU_ID: string);
     procedure fillComboScheibenPlatz(combo: TCombobox; TU_ID: string);
     function zuteilen(TU_ID, PE_ID: string; scheibe: TCombobox; platz: TCombobox): boolean;
-    procedure selectFreieScheibe(comboScheibe, comboPlatz: TCombobox);
+    procedure zuteilungEntfernen(SE_ID: string);
+    procedure selectFreieScheibe(comboScheibe, comboPlatz: TCombobox; TU_ID: string);
 
     procedure selectFreieScheibenInfo(query: TADOQuery; TU_ID: string);
   end;
@@ -118,6 +121,26 @@ begin
   end;
 end;
 
+procedure TARC_BL_Turnier.zuteilungEntfernen(SE_ID: string);
+var
+  aQuery: TADOQuery;
+begin
+  aQuery := TADOQuery.create(nil);
+  try
+    aQuery.connection := FConnection;
+    with aQuery.SQL do
+    begin
+      clear;
+      add('DELETE');
+      add('FROM SCHEIBENEINTEILUNG');
+      add('WHERE SE_ID = ' + quotedStr(SE_ID));
+    end;
+    aQuery.ExecSQL;
+  finally
+    aQuery.Free;
+  end;
+end;
+
 function TARC_BL_Turnier.zuteilen(TU_ID: string; PE_ID: string; scheibe: TCombobox; platz: TCombobox): boolean;
 var
   aQueryCheck : TADOQuery;
@@ -178,7 +201,7 @@ begin
     end;
     aQueryInsert.ExecSQL;
 
-    selectFreieScheibe(scheibe, platz);
+    selectFreieScheibe(scheibe, platz, TU_ID);
     result := true;
   finally
     aQueryCheck.Free;
@@ -186,9 +209,62 @@ begin
   end;
 end;
 
-procedure TARC_BL_Turnier.selectFreieScheibe(comboScheibe: TCombobox; comboPlatz: TCombobox);
+procedure TARC_BL_Turnier.selectFreieScheibe(comboScheibe: TCombobox; comboPlatz: TCombobox; TU_ID: string);
+var
+  aAktuelleScheibe: integer;
+  aAktuellerPlatz : string;
+  aQuery          : TADOQuery;
+  aScheibenIndex  : integer;
+  aPlatzIndex     : integer;
 begin
-  //
+  aAktuelleScheibe := StrToInt(comboScheibe.Text);
+  aAktuellerPlatz  := comboPlatz.Text;
+
+  aQuery := TADOQuery.create(nil);
+  try
+    aQuery.connection := FConnection;
+
+    with aQuery.SQL do
+    begin
+      add('SELECT');
+      add('  SE_NUMMER,');
+      add('  SE_PLATZ');
+      add('FROM SCHEIBENEINTEILUNG');
+      add('WHERE TU_ID = ' + quotedStr(TU_ID));
+      add('ORDER BY');
+      add('  SE_NUMMER,');
+      add('  SE_PLATZ');
+    end;
+    aQuery.open();
+
+    if aQuery.Active and (aQuery.RecordCount > 0) then
+    begin
+      aScheibenIndex := comboScheibe.ItemIndex;
+      aPlatzIndex    := comboPlatz.ItemIndex;
+
+      while aScheibenIndex < comboScheibe.Items.Count do
+      begin
+        while aPlatzIndex < comboPlatz.Items.Count do
+        begin
+          if aQuery.Locate('SE_NUMMER; SE_PLATZ',
+            varArrayOf([comboScheibe.Items[aScheibenIndex], comboPlatz.Items[aPlatzIndex]]), [locaseInSensitive]) then
+          begin
+            inc(aPlatzIndex);
+          end
+          else
+          begin
+            comboScheibe.ItemIndex := aScheibenIndex;
+            comboPlatz.ItemIndex   := aPlatzIndex;
+            exit;
+          end;
+        end;
+        inc(aScheibenIndex);
+        aPlatzIndex := 0;
+      end;
+    end;
+  finally
+    aQuery.Free;
+  end;
 end;
 
 procedure TARC_BL_Turnier.selectFreieScheibenInfo(query: TADOQuery; TU_ID: string);

@@ -21055,7 +21055,7 @@ object MainWindow: TMainWindow
       Top = 1
       Width = 1046
       Height = 552
-      ActivePage = sheetPersonenzuteilung
+      ActivePage = sheetScheibeneinteilung
       Align = alClient
       TabOrder = 0
       object sheetPersonenzuteilung: TTabSheet
@@ -21084,14 +21084,14 @@ object MainWindow: TMainWindow
           Columns = <
             item
               Expanded = False
-              FieldName = 'PE_VORNAME'
-              Title.Caption = 'Vorname'
+              FieldName = 'PE_NACHNAME'
+              Title.Caption = 'Nachname'
               Visible = True
             end
             item
               Expanded = False
-              FieldName = 'PE_NACHNAME'
-              Title.Caption = 'Nachname'
+              FieldName = 'PE_VORNAME'
+              Title.Caption = 'Vorname'
               Visible = True
             end
             item
@@ -21217,7 +21217,7 @@ object MainWindow: TMainWindow
           Top = 3
           Width = 1032
           Height = 518
-          ActivePage = sheetScheibeneinteilungNichtZugeteilt
+          ActivePage = sheetScheibeneinteilungZugeteilt
           Align = alClient
           TabOrder = 0
           object sheetScheibeneinteilungAllgemein: TTabSheet
@@ -21341,9 +21341,6 @@ object MainWindow: TMainWindow
               Height = 484
               Align = alLeft
               TabOrder = 1
-              ExplicitLeft = 344
-              ExplicitTop = 204
-              ExplicitHeight = 41
               object DBGrid3: TDBGrid
                 Left = 1
                 Top = 1
@@ -21395,14 +21392,14 @@ object MainWindow: TMainWindow
               Columns = <
                 item
                   Expanded = False
-                  FieldName = 'PE_VORNAME'
-                  Title.Caption = 'Vorname'
+                  FieldName = 'PE_NACHNAME'
+                  Title.Caption = 'Nachname'
                   Visible = True
                 end
                 item
                   Expanded = False
-                  FieldName = 'PE_NACHNAME'
-                  Title.Caption = 'Nachname'
+                  FieldName = 'PE_VORNAME'
+                  Title.Caption = 'Vorname'
                   Visible = True
                 end
                 item
@@ -21507,9 +21504,6 @@ object MainWindow: TMainWindow
                 Align = alTop
                 Style = csDropDownList
                 TabOrder = 0
-                ExplicitLeft = 32
-                ExplicitTop = 40
-                ExplicitWidth = 145
               end
               object comboScheibenplatz: TComboBox
                 AlignWithMargins = True
@@ -21521,9 +21515,6 @@ object MainWindow: TMainWindow
                 Align = alTop
                 Style = csDropDownList
                 TabOrder = 1
-                ExplicitLeft = 32
-                ExplicitTop = 80
-                ExplicitWidth = 145
               end
               object buttonZuteilen: TButton
                 AlignWithMargins = True
@@ -21541,6 +21532,151 @@ object MainWindow: TMainWindow
           object sheetScheibeneinteilungZugeteilt: TTabSheet
             Caption = 'zugeteilt'
             ImageIndex = 2
+            object Panel3: TPanel
+              Left = 0
+              Top = 0
+              Width = 1024
+              Height = 29
+              Align = alTop
+              TabOrder = 0
+              object editSearchZugeteilt: TEdit
+                AlignWithMargins = True
+                Left = 4
+                Top = 4
+                Width = 232
+                Height = 21
+                Align = alLeft
+                TabOrder = 0
+              end
+              object buttonSearchPersonenZugeteilt: TButton
+                AlignWithMargins = True
+                Left = 242
+                Top = 4
+                Width = 75
+                Height = 21
+                Align = alLeft
+                Caption = 'Suchen'
+                TabOrder = 1
+                OnClick = buttonSearchPersonenZugeteiltClick
+              end
+            end
+            object Panel7: TPanel
+              AlignWithMargins = True
+              Left = 3
+              Top = 32
+              Width = 185
+              Height = 455
+              Align = alLeft
+              BevelOuter = bvNone
+              TabOrder = 1
+              object buttonZuteilungEntfernen: TButton
+                AlignWithMargins = True
+                Left = 3
+                Top = 3
+                Width = 179
+                Height = 21
+                Align = alTop
+                Caption = 'Zuteilung entfernen'
+                TabOrder = 0
+                OnClick = buttonZuteilungEntfernenClick
+                ExplicitTop = 51
+              end
+            end
+            object gridZugeteilt: TDBGrid
+              Left = 191
+              Top = 29
+              Width = 833
+              Height = 461
+              Align = alClient
+              DataSource = sourceScheibeneinteilungZugeteilt
+              ReadOnly = True
+              TabOrder = 2
+              TitleFont.Charset = DEFAULT_CHARSET
+              TitleFont.Color = clWindowText
+              TitleFont.Height = -11
+              TitleFont.Name = 'Tahoma'
+              TitleFont.Style = []
+              OnTitleClick = gridZugeteiltTitleClick
+              Columns = <
+                item
+                  Expanded = False
+                  FieldName = 'SE_NUMMER'
+                  Title.Caption = 'Scheibe'
+                  Visible = True
+                end
+                item
+                  Expanded = False
+                  FieldName = 'SE_PLATZ'
+                  Title.Caption = 'Platz'
+                  Visible = True
+                end
+                item
+                  Expanded = False
+                  FieldName = 'PE_NACHNAME'
+                  Title.Caption = 'Nachname'
+                  Visible = True
+                end
+                item
+                  Expanded = False
+                  FieldName = 'PE_VORNAME'
+                  Title.Caption = 'Vorname'
+                  Visible = True
+                end
+                item
+                  Expanded = False
+                  FieldName = 'PE_NATION'
+                  Title.Caption = 'Nation'
+                  Visible = True
+                end
+                item
+                  Expanded = False
+                  FieldName = 'PE_BUNDESLAND'
+                  Title.Caption = 'Bundesland'
+                  Visible = True
+                end
+                item
+                  Expanded = False
+                  FieldName = 'PE_BOGENKATEGORIE'
+                  Title.Caption = 'Bogenkategorie'
+                  Visible = True
+                end
+                item
+                  Expanded = False
+                  FieldName = 'PE_ALTERSKLASSE'
+                  Title.Caption = 'Altersklasse'
+                  Visible = True
+                end
+                item
+                  Expanded = False
+                  FieldName = 'VE_NAME'
+                  Title.Caption = 'Verein'
+                  Visible = True
+                end
+                item
+                  Expanded = False
+                  FieldName = 'PE_GEBURTSDATUM'
+                  Title.Caption = 'Geburtsdatum'
+                  Visible = True
+                end
+                item
+                  Expanded = False
+                  FieldName = 'PE_GESCHLECHT'
+                  Title.Caption = 'Geschlecht'
+                  Visible = True
+                end
+                item
+                  Expanded = False
+                  FieldName = 'PE_LIZENZ'
+                  Title.Caption = 'Lizenz'
+                  Visible = True
+                end
+                item
+                  Expanded = False
+                  FieldName = 'PE_LANDESWERTUNG'
+                  Title.Caption = 'Landeswertung'
+                  Visible = True
+                end>
+            end
           end
         end
       end
@@ -21965,5 +22101,66 @@ object MainWindow: TMainWindow
     DataSet = queryInfoFreiePlaetze
     Left = 696
     Top = 536
+  end
+  object queryScheibeneinteilungZugeteilt: TADOQuery
+    Connection = DBConnection
+    Parameters = <
+      item
+        Name = 'SEARCHSTRING'
+        Size = -1
+        Value = Null
+      end
+      item
+        Name = 'ID'
+        Size = -1
+        Value = Null
+      end>
+    SQL.Strings = (
+      'DECLARE @SEARCHSTRING VARCHAR(50)'
+      ''
+      'SET @SEARCHSTRING = :SEARCHSTRING'
+      ''
+      'SELECT'
+      '  se.SE_ID,'
+      '  pe.PE_ID,'
+      '  pe.PE_VORNAME,'
+      '  pe.PE_NACHNAME,'
+      '  pe.PE_NATION,'
+      '  pe.PE_BUNDESLAND,'
+      '  pe.PE_BOGENKATEGORIE,'
+      '  pe.PE_ALTERSKLASSE,'
+      '  ve.VE_NAME,'
+      '  pe.PE_GEBURTSDATUM,'
+      '  pe.PE_GESCHLECHT,'
+      '  pe.PE_LIZENZ,'
+      '  pe.PE_LANDESWERTUNG,'
+      '  se.SE_NUMMER,'
+      '  se.SE_PLATZ'
+      'FROM TURNIER_ZUTEILUNG zu'
+      '  INNER JOIN TURNIER tu'
+      '    ON zu.TU_ID = tu.TU_ID'
+      '  INNER JOIN PERSON pe'
+      '    ON zu.PE_ID = pe.PE_ID'
+      '  LEFT OUTER JOIN VEREIN ve'
+      '    ON pe.VE_ID = ve.VE_ID'
+      '  INNER JOIN SCHEIBENEINTEILUNG se'
+      '    ON se.TU_ID = tu.TU_ID'
+      '      AND se.PE_ID = pe.PE_ID'
+      'WHERE tu.TU_ID = :ID'
+      '  AND('
+      '    pe.PE_VORNAME LIKE @SEARCHSTRING'
+      '    OR pe.PE_NACHNAME LIKE @SEARCHSTRING'
+      '    OR ve.VE_NAME LIKE @SEARCHSTRING'
+      '  )'
+      'ORDER BY'
+      '  SE_NUMMER,'
+      '  SE_PLATZ')
+    Left = 488
+    Top = 256
+  end
+  object sourceScheibeneinteilungZugeteilt: TDataSource
+    DataSet = queryScheibeneinteilungZugeteilt
+    Left = 488
+    Top = 328
   end
 end
