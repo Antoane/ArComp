@@ -5,6 +5,8 @@ interface
 uses
   vcl.dbctrls,
   vcl.stdctrls,
+  vcl.dbGrids,
+  Graphics,
   Data.Win.ADODB;
 
 type
@@ -16,6 +18,7 @@ type
     class procedure fillDBComboFromTable(combo: TDBComboBox; table, key, value: string;
       connection: TADOConnection); static;
     class procedure fillComboFromTable(combo: TComboBox; table, key, value: string; connection: TADOConnection); static;
+    class procedure gridSort(grid: TDbGrid; Column: TColumn); static;
 
   published
 
@@ -91,6 +94,33 @@ begin
   finally
     aQuery.Free;
   end;
+end;
+
+class procedure TARC_Tools.gridSort(grid: TDbGrid; Column: TColumn);
+{$J+}
+const
+  PreviousColumnIndex: integer = -1;
+{$J-}
+begin
+  if grid.DataSource.DataSet is TCustomADODataSet then
+    with TCustomADODataSet(grid.DataSource.DataSet) do
+    begin
+      try
+        if PreviousColumnIndex >= 0 then
+        begin
+          grid.Columns[PreviousColumnIndex].title.Font.Style := grid.Columns[PreviousColumnIndex].title.Font.Style
+            - [fsBold];
+        end;
+      except
+      end;
+
+      Column.title.Font.Style := Column.title.Font.Style + [fsBold];
+      PreviousColumnIndex     := Column.Index;
+
+      if (Pos(system.Widestring(Column.Field.FieldName), Sort) = 1) and (Pos(system.Widestring(' DESC'), Sort) = 0) then
+          Sort  := Column.Field.FieldName + ' DESC'
+      else Sort := Column.Field.FieldName + ' ASC';
+    end;
 end;
 
 end.

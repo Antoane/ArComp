@@ -8,7 +8,11 @@ uses
   System.SysUtils,
   vcl.dialogs,
   vcl.controls,
-  vcl.StdCtrls;
+  vcl.StdCtrls,
+
+  //ArComp
+
+  ARC_DAL_Turnier;
 
 type
   TARC_BL_Turnier = class(TObject)
@@ -22,8 +26,10 @@ type
 
     procedure fillComboScheibenanzahl(combo: TCombobox; TU_ID: string);
     procedure fillComboScheibenPlatz(combo: TCombobox; TU_ID: string);
-    function zuteilen(TU_ID, PE_ID: string; scheibe: integer; platz: string): boolean;
+    function zuteilen(TU_ID, PE_ID: string; scheibe: TCombobox; platz: TCombobox): boolean;
     procedure selectFreieScheibe(comboScheibe, comboPlatz: TCombobox);
+
+    procedure selectFreieScheibenInfo(query: TADOQuery; TU_ID: string);
   end;
 
 implementation
@@ -112,16 +118,20 @@ begin
   end;
 end;
 
-function TARC_BL_Turnier.zuteilen(TU_ID: string; PE_ID: string; scheibe: integer; platz: string): boolean;
+function TARC_BL_Turnier.zuteilen(TU_ID: string; PE_ID: string; scheibe: TCombobox; platz: TCombobox): boolean;
 var
   aQueryCheck : TADOQuery;
   aQueryInsert: TADOQuery;
+  aScheibe    : integer;
+  aPlatz      : string;
 begin
   aQueryCheck  := TADOQuery.create(nil);
   aQueryInsert := TADOQuery.create(nil);
   try
     aQueryCheck.connection  := FConnection;
     aQueryInsert.connection := FConnection;
+    aScheibe                := StrToInt(scheibe.Text);
+    aPlatz                  := platz.Text;
     with aQueryCheck.SQL do
     begin
       clear;
@@ -129,8 +139,8 @@ begin
       add('  PE_ID');
       add('FROM SCHEIBENEINTEILUNG');
       add('WHERE TU_ID = ' + quotedStr(TU_ID));
-      add('  AND SE_NUMMER = ' + IntToStr(scheibe));
-      add('  AND SE_PLATZ = ' + quotedStr(platz));
+      add('  AND SE_NUMMER = ' + IntToStr(aScheibe));
+      add('  AND SE_PLATZ = ' + quotedStr(aPlatz));
     end;
     aQueryCheck.open;
     if aQueryCheck.Active and (aQueryCheck.RecordCount > 0) then
@@ -148,8 +158,8 @@ begin
       add('DELETE');
       add('FROM SCHEIBENEINTEILUNG');
       add('WHERE TU_ID = ' + quotedStr(TU_ID));
-      add('  AND SE_NUMMER = ' + IntToStr(scheibe));
-      add('  AND SE_PLATZ = ' + quotedStr(platz));
+      add('  AND SE_NUMMER = ' + IntToStr(aScheibe));
+      add('  AND SE_PLATZ = ' + quotedStr(aPlatz));
       add('');
       add('INSERT INTO SCHEIBENEINTEILUNG(');
       add('  SE_ID,');
@@ -162,11 +172,13 @@ begin
       add('  newID(),');
       add('  ' + quotedStr(TU_ID) + ',');
       add('  ' + quotedStr(PE_ID) + ',');
-      add('  ' + IntToStr(scheibe) + ',');
-      add('  ' + quotedStr(platz));
+      add('  ' + IntToStr(aScheibe) + ',');
+      add('  ' + quotedStr(aPlatz));
       add(')  ');
     end;
     aQueryInsert.ExecSQL;
+
+    selectFreieScheibe(scheibe, platz);
     result := true;
   finally
     aQueryCheck.Free;
@@ -177,6 +189,16 @@ end;
 procedure TARC_BL_Turnier.selectFreieScheibe(comboScheibe: TCombobox; comboPlatz: TCombobox);
 begin
   //
+end;
+
+procedure TARC_BL_Turnier.selectFreieScheibenInfo(query: TADOQuery; TU_ID: string);
+begin
+  query.Close;
+  TARC_DAL_Turnier.selectFreieScheibenplaetze(query);
+
+  query.Parameters.ParseSQL(query.SQL.Text, true);
+  query.Parameters.ParamByName('TU_ID').value := TU_ID;
+  query.open;
 end;
 
 end.

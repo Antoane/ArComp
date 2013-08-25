@@ -24,6 +24,7 @@ uses
   //ARComp
   ARC_PersonenDetail,
   ARC_Functions,
+  ARC_Tools,
   ARC_DbGrid;
 
 type
@@ -37,7 +38,7 @@ type
     buttonCancel: TButton;
     ImageList1: TImageList;
     labelCaption: TLabel;
-    DBGrid1: ARC_DbGrid.TDBGrid;
+    gridPersonen: TDBGrid;
     Panel5: TPanel;
     editSearch: TEdit;
     Button2: TButton;
@@ -45,11 +46,11 @@ type
     ButtonLoeschen: TButton;
     procedure FormShow(Sender: TObject);
     procedure buttonCancelClick(Sender: TObject);
-    procedure DBGrid1TitleClick(Column: TColumn);
+    procedure gridPersonenTitleClick(Column: TColumn);
     procedure Button2Click(Sender: TObject);
     procedure FormKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
     procedure FormKeyUp(Sender: TObject; var Key: Word; Shift: TShiftState);
-    procedure DBGrid1DblClick(Sender: TObject);
+    procedure gridPersonenDblClick(Sender: TObject);
     procedure editSearchKeyUp(Sender: TObject; var Key: Word; Shift: TShiftState);
     procedure ButtonLoeschenClick(Sender: TObject);
     procedure buttonHinzufuegenClick(Sender: TObject);
@@ -156,13 +157,13 @@ procedure TFormPersonenListe.setProps;
 var
   i: integer;
 begin
-  if DBGrid1.SelectedRows.Count > 0 then
+  if gridPersonen.SelectedRows.Count > 0 then
   begin
-    with DBGrid1.DataSource.DataSet do
+    with gridPersonen.DataSource.DataSet do
     begin
-      for i := 0 to DBGrid1.SelectedRows.Count - 1 do
+      for i := 0 to gridPersonen.SelectedRows.Count - 1 do
       begin
-        GotoBookmark(pointer(DBGrid1.SelectedRows.Items[i]));
+        GotoBookmark(pointer(gridPersonen.SelectedRows.Items[i]));
         FselectedIDs.add(querySelectPersonen.FieldByName('PE_ID').AsString);
       end;
     end;
@@ -225,7 +226,7 @@ begin
   //Params.Style := WS_CHILD or WS_DLGFRAME or WS_VISIBLE or DS_CONTROL;
 end;
 
-procedure TFormPersonenListe.DBGrid1DblClick(Sender: TObject);
+procedure TFormPersonenListe.gridPersonenDblClick(Sender: TObject);
 begin
   if querySelectPersonen.Active and (querySelectPersonen.RecordCount > 0) then
   begin
@@ -244,31 +245,9 @@ begin
   end;
 end;
 
-procedure TFormPersonenListe.DBGrid1TitleClick(Column: TColumn);
-{$J+}
-const
-  PreviousColumnIndex: integer = -1;
-{$J-}
+procedure TFormPersonenListe.gridPersonenTitleClick(Column: TColumn);
 begin
-  if DBGrid1.DataSource.DataSet is TCustomADODataSet then
-    with TCustomADODataSet(DBGrid1.DataSource.DataSet) do
-    begin
-      try
-        if PreviousColumnIndex >= 0 then
-        begin
-          DBGrid1.Columns[PreviousColumnIndex].title.Font.Style := DBGrid1.Columns[PreviousColumnIndex].title.Font.Style
-            - [fsBold];
-        end;
-      except
-      end;
-
-      Column.title.Font.Style := Column.title.Font.Style + [fsBold];
-      PreviousColumnIndex     := Column.Index;
-
-      if (Pos(System.Widestring(Column.Field.FieldName), Sort) = 1) and (Pos(System.Widestring(' DESC'), Sort) = 0) then
-          Sort  := Column.Field.FieldName + ' DESC'
-      else Sort := Column.Field.FieldName + ' ASC';
-    end;
+  TARC_Tools.gridSort(gridPersonen, Column);
 end;
 
 destructor TFormPersonenListe.Destroy;

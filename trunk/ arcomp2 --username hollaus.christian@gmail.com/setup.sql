@@ -147,3 +147,12 @@ CREATE TABLE SCHEIBENEINTEILUNG(
   SE_PLATZ varchar(10)
 )
 
+CREATE TABLE FINALBERECHTIGUNG(
+  FB_ID varchar(36),
+  TA_ID varchar(36),
+  AK_ID varchar(36),
+  BK_ID varchar(36),
+  GE_ID varchar(36),
+  FB_FINALBERECHTIGT integer
+)
+
