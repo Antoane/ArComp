@@ -31,6 +31,7 @@ type
     function zuteilen(TU_ID, PE_ID: string; scheibe: TCombobox; platz: TCombobox): boolean;
     procedure zuteilungEntfernen(SE_ID: string);
     procedure selectFreieScheibe(comboScheibe, comboPlatz: TCombobox; TU_ID: string);
+    procedure teilnehmerEinfuegen(TU_ID: string; PE_ID: string);
 
     procedure selectFreieScheibenInfo(query: TADOQuery; TU_ID: string);
   end;
@@ -275,6 +276,42 @@ begin
   query.Parameters.ParseSQL(query.SQL.Text, true);
   query.Parameters.ParamByName('TU_ID').value := TU_ID;
   query.open;
+end;
+
+procedure TARC_BL_Turnier.teilnehmerEinfuegen(TU_ID, PE_ID: string);
+var
+  aQuery: TADOQuery;
+begin
+  aQuery := TADOQuery.create(nil);
+  try
+    aQuery.connection := FConnection;
+
+    with aQuery.SQL do
+    begin
+      clear;
+      add('IF NOT EXISTS(');
+      add('  SELECT PE_ID');
+      add('  FROM TURNIER_ZUTEILUNG');
+      add('  WHERE TU_ID =' + quotedStr(TU_ID));
+      add('    AND PE_ID =' + quotedStr(PE_ID));
+      add(')');
+      add('BEGIN');
+      add('  INSERT INTO TURNIER_ZUTEILUNG(');
+      add('    TZ_ID,');
+      add('    TU_ID,');
+      add('    PE_ID');
+      add('  )');
+      add('  VALUES(');
+      add('    newID(),');
+      add('    ' + quotedStr(TU_ID) + ',');
+      add('    ' + quotedStr(PE_ID));
+      add('  )');
+      add('END');
+    end;
+    aQuery.ExecSQL;
+  finally
+    aQuery.Free;
+  end;
 end;
 
 end.

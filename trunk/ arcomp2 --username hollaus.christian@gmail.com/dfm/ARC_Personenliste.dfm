@@ -1,7 +1,7 @@
 object FormPersonenListe: TFormPersonenListe
   Left = 0
   Top = 0
-  Caption = 'FormPersonenListe'
+  Caption = 'Sch'#252'tzenliste'
   ClientHeight = 532
   ClientWidth = 876
   Color = clBtnFace
@@ -206,7 +206,7 @@ object FormPersonenListe: TFormPersonenListe
       Width = 100
       Height = 27
       Align = alLeft
-      Caption = 'Hinzuf'#252'gen'
+      Caption = 'Neu'
       TabOrder = 2
       OnClick = buttonHinzufuegenClick
     end
@@ -262,7 +262,7 @@ object FormPersonenListe: TFormPersonenListe
     Left = 640
     Top = 152
     Bitmap = {
-      494C0101020008004C0010001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
+      494C010102000800500010001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
       0000000000003600000028000000400000001000000001002000000000000010
       0000000000000000000000000000000000000000000000000000000000000000
       000000000000FDFDFD00FAFAFA00FEFEFE000000000000000000000000000000

@@ -1,7 +1,7 @@
 object FormPersonenDetail: TFormPersonenDetail
   Left = 0
   Top = 0
-  Caption = 'FormPersonenDetail'
+  Caption = 'Sch'#252'tze Detail'
   ClientHeight = 392
   ClientWidth = 712
   Color = clBtnFace
@@ -14,7 +14,7 @@ object FormPersonenDetail: TFormPersonenDetail
   OnShow = FormShow
   PixelsPerInch = 96
   TextHeight = 13
-  object Panel2: TPanel
+  object panelMain: TPanel
     Left = 0
     Top = 41
     Width = 712
@@ -255,6 +255,19 @@ object FormPersonenDetail: TFormPersonenDetail
       TabOrder = 2
       OnClick = buttonSaveClick
     end
+    object checkInTurnierUebernehmen: TCheckBox
+      AlignWithMargins = True
+      Left = 4
+      Top = 4
+      Width = 264
+      Height = 21
+      Align = alLeft
+      Caption = 'beim Schlie'#223'en in aktuelles Turnier '#252'bernehmen'
+      Checked = True
+      State = cbChecked
+      TabOrder = 3
+      Visible = False
+    end
   end
   object queryPerson: TADOQuery
     Parameters = <>
@@ -291,7 +304,7 @@ object FormPersonenDetail: TFormPersonenDetail
     Left = 640
     Top = 152
     Bitmap = {
-      494C010103000800540010001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
+      494C010103000800580010001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
       0000000000003600000028000000400000001000000001002000000000000010
       0000000000000000000000000000000000000000000000000000000000000000
       000000000000FDFDFD00FAFAFA00FEFEFE000000000000000000000000000000

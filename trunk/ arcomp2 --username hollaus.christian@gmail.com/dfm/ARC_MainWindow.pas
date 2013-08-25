@@ -20,7 +20,9 @@ uses
   //ArComp
   ARC_DAL_Tools,
   ARC_Tools,
+  ARC_Functions,
   ARC_Personenliste,
+  ARC_PersonenDetail,
   ARC_ImportPersonen,
   ARC_VereinListe,
   ARC_Turnierliste,
@@ -123,6 +125,7 @@ type
     gridBogenkategorieUebersicht: TDBGrid;
     queryBogenkategorieUebersicht: TADOQuery;
     sourceBogenkategorieUebersicht: TDataSource;
+    buttonNeuPerson: TButton;
     procedure Beenden1Click(Sender: TObject);
     procedure Importieren1Click(Sender: TObject);
     procedure Bogenschtzen1Click(Sender: TObject);
@@ -142,6 +145,11 @@ type
     procedure buttonSearchPersonenZugeteiltClick(Sender: TObject);
     procedure gridZugeteiltTitleClick(Column: TColumn);
     procedure buttonZuteilungEntfernenClick(Sender: TObject);
+    procedure editSearchKeyUp(Sender: TObject; var Key: Word; Shift: TShiftState);
+    procedure editSearchNichtZugeteiltKeyUp(Sender: TObject; var Key: Word; Shift: TShiftState);
+    procedure editSearchZugeteiltKeyUp(Sender: TObject; var Key: Word; Shift: TShiftState);
+    procedure gridTeilnehmerDblClick(Sender: TObject);
+    procedure buttonNeuPersonClick(Sender: TObject);
 
   private
     FTU_ID     : string;
@@ -166,6 +174,8 @@ type
     procedure searchPersonenZugeteilt(searchString: string);
     procedure loadBogenkategorieUebersicht;
     procedure alignInfoGrid;
+    procedure openPersonenDetail(PE_ID: string; neuePerson: boolean = false);
+    procedure addPerson;
 
     {Private-Deklarationen}
   public
@@ -187,6 +197,37 @@ end;
 procedure TMainWindow.Bogenschtzen1Click(Sender: TObject);
 begin
   openPersonenliste();
+end;
+
+procedure TMainWindow.buttonNeuPersonClick(Sender: TObject);
+begin
+  addPerson();
+end;
+
+procedure TMainWindow.addPerson;
+var
+  aQuery: TADOQuery;
+  aID   : string;
+begin
+  aQuery := TADOQuery.create(nil);
+  try
+    aID               := newGUID();
+    aQuery.connection := querySelectPersonen.connection;
+    with aQuery.SQL do
+    begin
+      Clear;
+      add('INSERT INTO PERSON(');
+      add('  PE_ID');
+      add(')');
+      add('VALUES(');
+      add('  ' + QuotedStr(aID));
+      add(')');
+    end;
+    aQuery.ExecSQL;
+  finally
+    aQuery.Free;
+  end;
+  openPersonenDetail(aID, true);
 end;
 
 procedure TMainWindow.buttonSearchPersonenNichtZugeteiltClick(Sender: TObject);
@@ -244,6 +285,31 @@ begin
   TARC_Tools.gridSort(gridNichtZugeteilt, Column);
 end;
 
+procedure TMainWindow.gridTeilnehmerDblClick(Sender: TObject);
+begin
+  openPersonenDetail(querySelectPersonen.FieldByName('PE_ID').AsString);
+end;
+
+procedure TMainWindow.openPersonenDetail(PE_ID: string; neuePerson: boolean = false);
+var
+  aDialog: TFormPersonenDetail;
+begin
+  aDialog := TFormPersonenDetail.create(self, querySelectPersonen.connection, PE_ID);
+  if neuePerson then
+  begin
+    aDialog.inTurnierUebernehmen := true;
+  end;
+  if (aDialog.ShowModal = mrOk) then
+  begin
+    if aDialog.inTurnierUebernehmen then
+    begin
+      FBL_Turnier.teilnehmerEinfuegen(FTU_ID, PE_ID);
+    end;
+    searchPersonen('');
+    loadScheibeneinteilungInfo();
+  end;
+end;
+
 procedure TMainWindow.gridTeilnehmerTitleClick(Column: TColumn);
 begin
   TARC_Tools.gridSort(gridTeilnehmer, Column);
@@ -264,44 +330,18 @@ procedure TMainWindow.addPersonenzuteilung;
 var
   aDialog: Tformpersonenliste;
   id     : string;
-  aQuery : TADOQuery;
 begin
   aDialog := Tformpersonenliste.create(nil);
-  aQuery  := TADOQuery.create(nil);
   try
-    aQuery.Connection := DBConnection;
     aDialog.setConnection(DBConnection);
-    if (aDialog.ShowModal = mrOK) then
+    if (aDialog.ShowModal = mrOk) then
     begin
       for id in aDialog.selectedIDs do
       begin
-        with aQuery.SQL do
-        begin
-          clear;
-          add('IF NOT EXISTS(');
-          add('  SELECT PE_ID');
-          add('  FROM TURNIER_ZUTEILUNG');
-          add('  WHERE TU_ID =' + quotedStr(FTU_ID));
-          add('    AND PE_ID =' + quotedStr(id));
-          add(')');
-          add('BEGIN');
-          add('  INSERT INTO TURNIER_ZUTEILUNG(');
-          add('    TZ_ID,');
-          add('    TU_ID,');
-          add('    PE_ID');
-          add('  )');
-          add('  VALUES(');
-          add('    newID(),');
-          add('    ' + quotedStr(FTU_ID) + ',');
-          add('    ' + quotedStr(id));
-          add('  )');
-          add('END');
-        end;
-        aQuery.ExecSQL;
+        FBL_Turnier.teilnehmerEinfuegen(FTU_ID, id);
       end;
     end;
   finally
-    aQuery.Free;
     aDialog.Free;
   end;
   searchPersonen(editSearch.Text);
@@ -325,13 +365,13 @@ begin
       aQuery := TADOQuery.create(nil);
       aID    := querySelectPersonen.FieldByName('PE_ID').AsString;
       try
-        aQuery.Connection := DBConnection;
+        aQuery.connection := DBConnection;
         with aQuery.SQL do
         begin
-          clear;
+          Clear;
           add('DELETE FROM TURNIER_ZUTEILUNG');
-          add('WHERE PE_ID = ' + quotedStr(aID));
-          add('  AND TU_ID = ' + quotedStr(FTU_ID));
+          add('WHERE PE_ID = ' + QuotedStr(aID));
+          add('  AND TU_ID = ' + QuotedStr(FTU_ID));
         end;
         aQuery.ExecSQL;
       finally
@@ -391,8 +431,8 @@ var
   i     : integer;
   aWidth: integer;
 begin
-  aWidth := GetSystemMetrics(SM_CXVSCROLL)*2;
-  for i  := 0 to gridBogenkategorieUebersicht.Columns.Count-1 do
+  aWidth := GetSystemMetrics(SM_CXVSCROLL) * 2;
+  for i  := 0 to gridBogenkategorieUebersicht.Columns.Count - 1 do
   begin
     aWidth := aWidth + gridBogenkategorieUebersicht.Columns[i].Width;
   end;
@@ -411,6 +451,30 @@ begin
   logoArcomp.visible       := not pageControl.visible;
 end;
 
+procedure TMainWindow.editSearchKeyUp(Sender: TObject; var Key: Word; Shift: TShiftState);
+begin
+  if Key = VK_RETURN then
+  begin
+    searchPersonen(editSearch.Text);
+  end;
+end;
+
+procedure TMainWindow.editSearchNichtZugeteiltKeyUp(Sender: TObject; var Key: Word; Shift: TShiftState);
+begin
+  if Key = VK_RETURN then
+  begin
+    searchPersonenNichtZugeteilt(editSearchNichtZugeteilt.Text);
+  end;
+end;
+
+procedure TMainWindow.editSearchZugeteiltKeyUp(Sender: TObject; var Key: Word; Shift: TShiftState);
+begin
+  if Key = VK_RETURN then
+  begin
+    searchPersonenZugeteilt(editSearchZugeteilt.Text);
+  end;
+end;
+
 procedure TMainWindow.openTurnierliste;
 var
   aDialog: TFormTurnierListe;
@@ -419,7 +483,7 @@ begin
   try
     //aDialog.Parent := self;
     aDialog.setConnection(DBConnection);
-    if (aDialog.ShowModal = mrOK) then
+    if (aDialog.ShowModal = mrOk) then
     begin
       FTU_ID := aDialog.TU_ID;
       loadData();
@@ -498,7 +562,7 @@ end;
 procedure TMainWindow.loadTurnierDaten;
 begin
   queryTurnier.Close;
-  queryTurnier.Parameters.ParseSQL(queryTurnier.SQL.Text, True);
+  queryTurnier.Parameters.ParseSQL(queryTurnier.SQL.Text, true);
   queryTurnier.Parameters.ParamByName('ID').value := FTU_ID;
   queryTurnier.Open;
 
@@ -512,7 +576,7 @@ end;
 procedure TMainWindow.loadScheibeneinteilungInfo;
 begin
   queryScheibeneinteilungInfo.Close;
-  queryScheibeneinteilungInfo.Parameters.ParseSQL(queryScheibeneinteilungInfo.SQL.Text, True);
+  queryScheibeneinteilungInfo.Parameters.ParseSQL(queryScheibeneinteilungInfo.SQL.Text, true);
   queryScheibeneinteilungInfo.Parameters.ParamByName('TU_ID').value := FTU_ID;
   queryScheibeneinteilungInfo.Open;
   FBL_Turnier.selectFreieScheibenInfo(queryInfoFreiePlaetze, FTU_ID);
@@ -522,7 +586,7 @@ end;
 procedure TMainWindow.loadBogenkategorieUebersicht;
 begin
   queryBogenkategorieUebersicht.Close;
-  queryBogenkategorieUebersicht.Parameters.ParseSQL(queryBogenkategorieUebersicht.SQL.Text, True);
+  queryBogenkategorieUebersicht.Parameters.ParseSQL(queryBogenkategorieUebersicht.SQL.Text, true);
   queryBogenkategorieUebersicht.Parameters.ParamByName('TU_ID').value := FTU_ID;
   queryBogenkategorieUebersicht.Open;
 end;
@@ -535,8 +599,8 @@ begin
     begin
       querySelectPersonen.Active := false;
     end;
-    querySelectPersonen.Parameters.clear;
-    querySelectPersonen.Parameters.ParseSQL(querySelectPersonen.SQL.Text, True);
+    querySelectPersonen.Parameters.Clear;
+    querySelectPersonen.Parameters.ParseSQL(querySelectPersonen.SQL.Text, true);
     querySelectPersonen.Parameters.ParamByName('SEARCHSTRING').value := '%' + searchString + '%';
     querySelectPersonen.Parameters.ParamByName('ID').value           := FTU_ID;
     querySelectPersonen.Open;
@@ -551,8 +615,8 @@ begin
     begin
       queryScheibeneinteilungNichtZugeteilt.Active := false;
     end;
-    queryScheibeneinteilungNichtZugeteilt.Parameters.clear;
-    queryScheibeneinteilungNichtZugeteilt.Parameters.ParseSQL(queryScheibeneinteilungNichtZugeteilt.SQL.Text, True);
+    queryScheibeneinteilungNichtZugeteilt.Parameters.Clear;
+    queryScheibeneinteilungNichtZugeteilt.Parameters.ParseSQL(queryScheibeneinteilungNichtZugeteilt.SQL.Text, true);
     queryScheibeneinteilungNichtZugeteilt.Parameters.ParamByName('SEARCHSTRING').value := '%' + searchString + '%';
     queryScheibeneinteilungNichtZugeteilt.Parameters.ParamByName('ID').value           := FTU_ID;
     queryScheibeneinteilungNichtZugeteilt.Open;
@@ -567,8 +631,8 @@ begin
     begin
       queryScheibeneinteilungZugeteilt.Active := false;
     end;
-    queryScheibeneinteilungZugeteilt.Parameters.clear;
-    queryScheibeneinteilungZugeteilt.Parameters.ParseSQL(queryScheibeneinteilungZugeteilt.SQL.Text, True);
+    queryScheibeneinteilungZugeteilt.Parameters.Clear;
+    queryScheibeneinteilungZugeteilt.Parameters.ParseSQL(queryScheibeneinteilungZugeteilt.SQL.Text, true);
     queryScheibeneinteilungZugeteilt.Parameters.ParamByName('SEARCHSTRING').value := '%' + searchString + '%';
     queryScheibeneinteilungZugeteilt.Parameters.ParamByName('ID').value           := FTU_ID;
     queryScheibeneinteilungZugeteilt.Open;
