@@ -21698,7 +21698,7 @@ object MainWindow: TMainWindow
       Caption = '-'
     end
     object Label9: TLabel
-      Left = 463
+      Left = 397
       Top = 9
       Width = 100
       Height = 13
@@ -21706,7 +21706,7 @@ object MainWindow: TMainWindow
       Caption = 'Veranstalter'
     end
     object Label8: TLabel
-      Left = 463
+      Left = 397
       Top = 37
       Width = 100
       Height = 13
@@ -21714,7 +21714,7 @@ object MainWindow: TMainWindow
       Caption = 'Turnierleitung'
     end
     object Label11: TLabel
-      Left = 462
+      Left = 396
       Top = 66
       Width = 100
       Height = 13
@@ -21732,7 +21732,7 @@ object MainWindow: TMainWindow
       TabOrder = 1
     end
     object editVeranstalter: TDBEdit
-      Left = 559
+      Left = 467
       Top = 6
       Width = 200
       Height = 21
@@ -21762,7 +21762,7 @@ object MainWindow: TMainWindow
       TabOrder = 0
     end
     object editTurnierleitung: TDBEdit
-      Left = 559
+      Left = 467
       Top = 34
       Width = 200
       Height = 21
@@ -21772,7 +21772,7 @@ object MainWindow: TMainWindow
       TabOrder = 4
     end
     object editSchiedsrichter: TDBEdit
-      Left = 559
+      Left = 467
       Top = 62
       Width = 200
       Height = 21
@@ -21790,6 +21790,36 @@ object MainWindow: TMainWindow
       DataSource = sourceTurnier
       ReadOnly = True
       TabOrder = 6
+    end
+    object gridBogenkategorieUebersicht: TDBGrid
+      Left = 679
+      Top = 6
+      Width = 200
+      Height = 77
+      DataSource = sourceBogenkategorieUebersicht
+      Options = [dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgRowSelect, dgConfirmDelete, dgCancelOnExit, dgTitleClick, dgTitleHotTrack]
+      ReadOnly = True
+      TabOrder = 7
+      TitleFont.Charset = DEFAULT_CHARSET
+      TitleFont.Color = clWindowText
+      TitleFont.Height = -11
+      TitleFont.Name = 'Tahoma'
+      TitleFont.Style = []
+      Columns = <
+        item
+          Expanded = False
+          FieldName = 'BK_NAME'
+          Title.Caption = 'Bogenkategorie'
+          Width = 100
+          Visible = True
+        end
+        item
+          Expanded = False
+          FieldName = 'ANZAHL'
+          Title.Caption = 'Anzahl'
+          Width = 100
+          Visible = True
+        end>
     end
   end
   object MainMenu1: TMainMenu
@@ -22162,5 +22192,35 @@ object MainWindow: TMainWindow
     DataSet = queryScheibeneinteilungZugeteilt
     Left = 488
     Top = 328
+  end
+  object queryBogenkategorieUebersicht: TADOQuery
+    Connection = DBConnection
+    Parameters = <
+      item
+        Name = 'TU_ID'
+        Size = -1
+        Value = Null
+      end>
+    SQL.Strings = (
+      'SELECT '
+      '  bk.BK_NAME,'
+      '  COUNT(bk.BK_NAME) AS ANZAHL'
+      'FROM TURNIER tu'
+      '  INNER JOIN TURNIER_ZUTEILUNG zu'
+      '    ON tu.TU_ID = zu.TU_ID'
+      '  INNER JOIN PERSON pe'
+      '    ON zu.PE_ID = pe.PE_ID'
+      '  INNER JOIN BOGENKATEGORIE bk'
+      '    ON pe.PE_BOGENKATEGORIE = bk.BK_NAME'
+      'WHERE tu.TU_ID = :TU_ID'
+      'GROUP BY bk.BK_NAME'
+      'ORDER BY bk.BK_NAME')
+    Left = 488
+    Top = 400
+  end
+  object sourceBogenkategorieUebersicht: TDataSource
+    DataSet = queryBogenkategorieUebersicht
+    Left = 488
+    Top = 472
   end
 end

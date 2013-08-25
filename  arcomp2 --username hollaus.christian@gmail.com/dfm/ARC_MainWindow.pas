@@ -120,6 +120,9 @@ type
     gridZugeteilt: TDBGrid;
     queryScheibeneinteilungZugeteilt: TADOQuery;
     sourceScheibeneinteilungZugeteilt: TDataSource;
+    gridBogenkategorieUebersicht: TDBGrid;
+    queryBogenkategorieUebersicht: TADOQuery;
+    sourceBogenkategorieUebersicht: TDataSource;
     procedure Beenden1Click(Sender: TObject);
     procedure Importieren1Click(Sender: TObject);
     procedure Bogenschtzen1Click(Sender: TObject);
@@ -161,6 +164,8 @@ type
     procedure searchPersonenNichtZugeteilt(searchString: string);
     procedure loadScheibeneinteilungInfo;
     procedure searchPersonenZugeteilt(searchString: string);
+    procedure loadBogenkategorieUebersicht;
+    procedure alignInfoGrid;
 
     {Private-Deklarationen}
   public
@@ -378,6 +383,20 @@ procedure TMainWindow.FormShow(Sender: TObject);
 begin
   normiereDatenbank();
   disableComponents();
+  alignInfoGrid();
+end;
+
+procedure TMainWindow.alignInfoGrid;
+var
+  i     : integer;
+  aWidth: integer;
+begin
+  aWidth := GetSystemMetrics(SM_CXVSCROLL)*2;
+  for i  := 0 to gridBogenkategorieUebersicht.Columns.Count-1 do
+  begin
+    aWidth := aWidth + gridBogenkategorieUebersicht.Columns[i].Width;
+  end;
+  gridBogenkategorieUebersicht.Width := aWidth;
 end;
 
 procedure TMainWindow.normiereDatenbank;
@@ -484,6 +503,7 @@ begin
   queryTurnier.Open;
 
   loadScheibeneinteilungInfo();
+  loadBogenkategorieUebersicht();
 
   FBL_Turnier.fillComboScheibenanzahl(comboScheibenanzahl, FTU_ID);
   FBL_Turnier.fillComboScheibenPlatz(comboScheibenplatz, FTU_ID);
@@ -497,6 +517,14 @@ begin
   queryScheibeneinteilungInfo.Open;
   FBL_Turnier.selectFreieScheibenInfo(queryInfoFreiePlaetze, FTU_ID);
 
+end;
+
+procedure TMainWindow.loadBogenkategorieUebersicht;
+begin
+  queryBogenkategorieUebersicht.Close;
+  queryBogenkategorieUebersicht.Parameters.ParseSQL(queryBogenkategorieUebersicht.SQL.Text, True);
+  queryBogenkategorieUebersicht.Parameters.ParamByName('TU_ID').value := FTU_ID;
+  queryBogenkategorieUebersicht.Open;
 end;
 
 procedure TMainWindow.searchPersonen(searchString: string);
