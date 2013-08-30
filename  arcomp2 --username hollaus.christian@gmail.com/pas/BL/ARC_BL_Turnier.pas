@@ -34,6 +34,11 @@ type
     procedure teilnehmerEinfuegen(TU_ID: string; PE_ID: string);
 
     procedure selectFreieScheibenInfo(query: TADOQuery; TU_ID: string);
+
+    procedure fillComboScoresScheiben(combo: TCombobox; TU_ID: string);
+    procedure fillComboScoresScheibenPlatz(combo: TCombobox; TU_ID: string; scheibe: integer);
+    procedure selectScores(query: TADOQuery; scheibe: integer; scheibenplatz: string; TU_ID: string);
+    procedure saveScore(TU_ID, PE_ID: string; SC_ID: string; runde, score, zehner, neuner, X: integer);
   end;
 
 implementation
@@ -311,6 +316,131 @@ begin
     aQuery.ExecSQL;
   finally
     aQuery.Free;
+  end;
+end;
+
+procedure TARC_BL_Turnier.selectScores(query: TADOQuery; scheibe: integer; scheibenplatz: string; TU_ID: string);
+begin
+  query.Close;
+  TARC_DAL_Turnier.selectScore(query, TU_ID, scheibe, scheibenplatz);
+  query.open;
+end;
+
+procedure TARC_BL_Turnier.fillComboScoresScheiben(combo: TCombobox; TU_ID: string);
+var
+  aQuery         : TADOQuery;
+  aScheibennummer: integer;
+begin
+  aQuery := TADOQuery.create(nil);
+  try
+    aQuery.connection := FConnection;
+    with aQuery.SQL do
+    begin
+      clear;
+      add('SELECT DISTINCT');
+      add('  SE_NUMMER');
+      add('FROM SCHEIBENEINTEILUNG');
+      add('WHERE TU_ID = ' + quotedStr(TU_ID));
+      add('ORDER BY SE_NUMMER');
+    end;
+    aQuery.open();
+    if aQuery.Active and (aQuery.RecordCount > 0) then
+    begin
+      combo.Items.clear;
+      while not aQuery.Eof do
+      begin
+        combo.Items.add(aQuery.FieldByName('SE_NUMMER').AsString);
+        aQuery.Next;
+      end;
+      combo.ItemIndex := 0;
+    end;
+  finally
+    aQuery.Free;
+  end;
+end;
+
+procedure TARC_BL_Turnier.fillComboScoresScheibenPlatz(combo: TCombobox; TU_ID: string; scheibe: integer);
+var
+  aQuery: TADOQuery;
+begin
+  aQuery := TADOQuery.create(nil);
+  try
+    aQuery.connection := FConnection;
+    with aQuery.SQL do
+    begin
+      clear;
+      add('SELECT DISTINCT');
+      add('  SE_PLATZ');
+      add('FROM SCHEIBENEINTEILUNG');
+      add('WHERE TU_ID = ' + quotedStr(TU_ID));
+      add('  AND SE_NUMMER = ' + IntToStr(scheibe));
+      add('ORDER BY SE_PLATZ');
+    end;
+    aQuery.open();
+    if aQuery.Active and (aQuery.RecordCount > 0) then
+    begin
+      combo.Items.clear;
+      while not aQuery.Eof do
+      begin
+        combo.Items.add(aQuery.FieldByName('SE_PLATZ').AsString);
+        aQuery.Next;
+      end;
+      combo.ItemIndex := 0;
+    end;
+  finally
+    aQuery.Free;
+  end;
+end;
+
+procedure TARC_BL_Turnier.saveScore(TU_ID: string; PE_ID: string; SC_ID: string; runde: integer; score: integer;
+  zehner: integer; neuner: integer; X: integer);
+var
+  aQuerySave: TADOQuery;
+begin
+  aQuerySave := TADOQuery.create(nil);
+  try
+    aQuerySave.connection := FConnection;
+    with aQuerySave.SQL do
+    begin
+      if SC_ID <> '' then
+      //existiert bereits -> update
+      begin
+        add('UPDATE SCORES');
+        add('SET');
+        add('  SC_SCORE = ' + IntToStr(score) + ',');
+        add('  SC_ZEHNER = ' + IntToStr(zehner) + ',');
+        add('  SC_NEUNER = ' + IntToStr(neuner) + ',');
+        add('  SC_X = ' + IntToStr(X));
+        add('WHERE SC_ID = ' + quotedStr(SC_ID));
+      end
+      else
+      //existiert noch nicht -> insert
+      begin
+        add('INSERT INTO SCORES(');
+        add('  SC_ID,');
+        add('  TU_ID,');
+        add('  PE_ID,');
+        add('  SC_RUNDE,');
+        add('  SC_SCORE,');
+        add('  SC_ZEHNER,');
+        add('  SC_NEUNER,');
+        add('  SC_X');
+        add(')');
+        add('VALUES(');
+        add('  newID(),');
+        add('  ' + quotedStr(TU_ID) + ',');
+        add('  ' + quotedStr(PE_ID) + ',');
+        add('  ' + IntToStr(runde) + ',');
+        add('  ' + IntToStr(score) + ',');
+        add('  ' + IntToStr(zehner) + ',');
+        add('  ' + IntToStr(neuner) + ',');
+        add('  ' + IntToStr(X));
+        add(')');
+      end;
+    end;
+    aQuerySave.ExecSQL;
+  finally
+    aQuerySave.Free;
   end;
 end;
 
