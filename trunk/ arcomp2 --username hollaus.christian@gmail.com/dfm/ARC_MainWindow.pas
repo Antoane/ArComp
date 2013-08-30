@@ -34,7 +34,8 @@ uses
   Vcl.ExtCtrls,
   Vcl.StdCtrls,
   Vcl.Mask,
-  Vcl.DBCtrls;
+  Vcl.DBCtrls,
+  Vcl.ImgList;
 
 type
   TMainWindow = class(TForm)
@@ -126,6 +127,32 @@ type
     queryBogenkategorieUebersicht: TADOQuery;
     sourceBogenkategorieUebersicht: TDataSource;
     buttonNeuPerson: TButton;
+    sheetScores: TTabSheet;
+    Panel2: TPanel;
+    panelScheibenauswahl: TPanel;
+    comboScoresScheibe: TComboBox;
+    comboScoresScheibenplatz: TComboBox;
+    DBGrid1: TDBGrid;
+    editScoreName: TDBEdit;
+    editScoreVerein: TDBEdit;
+    editScoreBogenkategorie: TDBEdit;
+    editScoreAlterskategorie: TDBEdit;
+    editScoreGeschlecht: TDBEdit;
+    queryScores: TADOQuery;
+    sourceScores: TDataSource;
+    editScore: TEdit;
+    edit10er: TEdit;
+    edit9er: TEdit;
+    editX: TEdit;
+    Label12: TLabel;
+    Label13: TLabel;
+    Label14: TLabel;
+    Label15: TLabel;
+    checkScoresAutoForward: TCheckBox;
+    buttonSaveScore: TButton;
+    ImageList1: TImageList;
+    Label16: TLabel;
+    editRunde: TDBEdit;
     procedure Beenden1Click(Sender: TObject);
     procedure Importieren1Click(Sender: TObject);
     procedure Bogenschtzen1Click(Sender: TObject);
@@ -150,6 +177,16 @@ type
     procedure editSearchZugeteiltKeyUp(Sender: TObject; var Key: Word; Shift: TShiftState);
     procedure gridTeilnehmerDblClick(Sender: TObject);
     procedure buttonNeuPersonClick(Sender: TObject);
+    procedure comboScoresScheibeChange(Sender: TObject);
+    procedure comboScoresScheibenplatzChange(Sender: TObject);
+    procedure pageControlChange(Sender: TObject);
+    procedure editScoreKeyPress(Sender: TObject; var Key: Char);
+    procedure edit10erKeyPress(Sender: TObject; var Key: Char);
+    procedure edit9erKeyPress(Sender: TObject; var Key: Char);
+    procedure editXKeyPress(Sender: TObject; var Key: Char);
+    procedure queryScoresAfterScroll(DataSet: TDataSet);
+    procedure buttonSaveScoreClick(Sender: TObject);
+    procedure pageControlScheibeneinteilungChange(Sender: TObject);
 
   private
     FTU_ID     : string;
@@ -176,6 +213,12 @@ type
     procedure alignInfoGrid;
     procedure openPersonenDetail(PE_ID: string; neuePerson: boolean = false);
     procedure addPerson;
+    procedure selectScores;
+    procedure fillComboScores;
+    procedure updateEditScores;
+    procedure enterAsTab(Sender: TObject; var Key: Char);
+    procedure saveScore;
+    procedure selectNextScheibe;
 
     {Private-Deklarationen}
   public
@@ -230,6 +273,37 @@ begin
   openPersonenDetail(aID, true);
 end;
 
+procedure TMainWindow.buttonSaveScoreClick(Sender: TObject);
+begin
+  saveScore();
+  selectScores();
+end;
+
+procedure TMainWindow.selectNextScheibe;
+begin
+  //es gibt noch einen weiteren Scheibenplatz
+  if (comboScoresScheibenplatz.ItemIndex < comboScoresScheibenplatz.Items.Count - 1) then
+  begin
+    comboScoresScheibenplatz.ItemIndex := comboScoresScheibenplatz.ItemIndex + 1;
+  end
+  //es gibt noch eine weitere Scheibe
+  else if (comboScoresScheibe.ItemIndex < comboScoresScheibe.Items.Count - 1) then
+  begin
+    comboScoresScheibe.ItemIndex := comboScoresScheibe.ItemIndex + 1;
+    FBL_Turnier.fillComboScoresScheibenPlatz(comboScoresScheibenplatz, FTU_ID, strToInt(comboScoresScheibe.Text));
+  end
+  else
+  //das war die letzte...
+  begin
+    if MessageDlg('Das war die letzte Scheibe. Wollen Sie wieder zur ersten Scheibe springen?', mtConfirmation, mbYesNo,
+      0) = mrYes then
+    begin
+      comboScoresScheibe.ItemIndex := 0;
+      FBL_Turnier.fillComboScoresScheibenPlatz(comboScoresScheibenplatz, FTU_ID, strToInt(comboScoresScheibe.Text));
+    end
+  end;
+end;
+
 procedure TMainWindow.buttonSearchPersonenNichtZugeteiltClick(Sender: TObject);
 begin
   searchPersonenNichtZugeteilt(editSearchNichtZugeteilt.Text);
@@ -267,6 +341,17 @@ begin
   searchPersonenNichtZugeteilt('');
   searchPersonenZugeteilt('');
   loadScheibeneinteilungInfo();
+end;
+
+procedure TMainWindow.comboScoresScheibeChange(Sender: TObject);
+begin
+  FBL_Turnier.fillComboScoresScheibenPlatz(comboScoresScheibenplatz, FTU_ID, strToInt(comboScoresScheibe.Text));
+  selectScores();
+end;
+
+procedure TMainWindow.comboScoresScheibenplatzChange(Sender: TObject);
+begin
+  selectScores();
 end;
 
 constructor TMainWindow.create(aOwner: TComponent);
@@ -451,6 +536,37 @@ begin
   logoArcomp.visible       := not pageControl.visible;
 end;
 
+procedure TMainWindow.edit10erKeyPress(Sender: TObject; var Key: Char);
+begin
+  enterAsTab(Sender, Key);
+end;
+
+procedure TMainWindow.edit9erKeyPress(Sender: TObject; var Key: Char);
+begin
+  enterAsTab(Sender, Key);
+end;
+
+procedure TMainWindow.editScoreKeyPress(Sender: TObject; var Key: Char);
+begin
+  enterAsTab(Sender, Key);
+end;
+
+procedure TMainWindow.enterAsTab(Sender: TObject; var Key: Char);
+begin
+  if Key = #13 then
+  begin
+    if HiWord(GetKeyState(VK_SHIFT)) <> 0 then
+    begin
+      SelectNext(Sender as TWinControl, false, true)
+    end
+    else
+    begin
+      SelectNext(Sender as TWinControl, true, true);
+    end;
+    Key := #0;
+  end;
+end;
+
 procedure TMainWindow.editSearchKeyUp(Sender: TObject; var Key: Word; Shift: TShiftState);
 begin
   if Key = VK_RETURN then
@@ -472,6 +588,46 @@ begin
   if Key = VK_RETURN then
   begin
     searchPersonenZugeteilt(editSearchZugeteilt.Text);
+  end;
+end;
+
+procedure TMainWindow.editXKeyPress(Sender: TObject; var Key: Char);
+var
+  aRunde        : integer;
+  aRundeAusQuery: integer;
+begin
+  if (Key = #13) and (checkScoresAutoForward.Checked) then
+  begin
+    if queryScores.RecNo < queryScores.RecordCount then
+    begin
+      aRunde := queryScores.FieldByName('DI_RUNDE').AsInteger;
+      //score speichern
+      saveScore();
+      //nächste Scheibe auswählen
+      selectNextScheibe();
+      //Scores laden
+      selectScores();
+      //Runde selektieren
+      queryScores.DisableControls;
+      queryScores.first;
+      while not queryScores.Eof do
+      begin
+        if TryStrToInt(queryScores.FieldByName('DI_RUNDE').AsString, aRundeAusQuery) then
+        begin
+          if aRundeAusQuery = aRunde then break;
+          queryScores.Next;
+        end
+        else
+        begin
+          queryScores.Next;
+        end;
+      end;
+      if queryScores.Eof then queryScores.first;
+      queryScores.EnableControls;
+
+      //editScore focus setzen
+      editScore.SetFocus;
+    end;
   end;
 end;
 
@@ -527,6 +683,49 @@ begin
   end;
 end;
 
+procedure TMainWindow.pageControlChange(Sender: TObject);
+begin
+  if pageControl.ActivePage = sheetPersonenzuteilung then
+  begin
+    if not querySelectPersonen.Active then
+    begin
+      searchPersonen('');
+    end;
+  end
+  else if pageControl.ActivePage = sheetScheibeneinteilung then
+  begin
+    //was zu tun?
+  end
+  else if pageControl.ActivePage = sheetScores then
+  begin
+    fillComboScores();
+    selectScores();
+  end;
+end;
+
+procedure TMainWindow.pageControlScheibeneinteilungChange(Sender: TObject);
+begin
+  if pageControlScheibeneinteilung.ActivePage = sheetScheibeneinteilungNichtZugeteilt then
+  begin
+    if not queryScheibeneinteilungNichtZugeteilt.Active then
+    begin
+      searchPersonenNichtZugeteilt('');
+    end;
+  end
+  else if pageControlScheibeneinteilung.ActivePage = sheetScheibeneinteilungZugeteilt then
+  begin
+    if not queryScheibeneinteilungZugeteilt.Active then
+    begin
+      searchPersonenZugeteilt('');
+    end;
+  end;
+end;
+
+procedure TMainWindow.queryScoresAfterScroll(DataSet: TDataSet);
+begin
+  updateEditScores();
+end;
+
 procedure TMainWindow.RundenDistanzen1Click(Sender: TObject);
 var
   aDialog: TFormDistanzen;
@@ -571,6 +770,7 @@ begin
 
   FBL_Turnier.fillComboScheibenanzahl(comboScheibenanzahl, FTU_ID);
   FBL_Turnier.fillComboScheibenPlatz(comboScheibenplatz, FTU_ID);
+
 end;
 
 procedure TMainWindow.loadScheibeneinteilungInfo;
@@ -636,6 +836,79 @@ begin
     queryScheibeneinteilungZugeteilt.Parameters.ParamByName('SEARCHSTRING').value := '%' + searchString + '%';
     queryScheibeneinteilungZugeteilt.Parameters.ParamByName('ID').value           := FTU_ID;
     queryScheibeneinteilungZugeteilt.Open;
+  end;
+end;
+
+procedure TMainWindow.selectScores();
+var
+  aScheibe      : integer;
+  aScheibenplatz: string;
+begin
+  aScheibe       := strToInt(comboScoresScheibe.Text);
+  aScheibenplatz := comboScoresScheibenplatz.Text;
+
+  FBL_Turnier.selectScores(queryScores, aScheibe, aScheibenplatz, FTU_ID);
+  updateEditScores();
+end;
+
+procedure TMainWindow.fillComboScores();
+begin
+  FBL_Turnier.fillComboScoresScheiben(comboScoresScheibe, FTU_ID);
+  FBL_Turnier.fillComboScoresScheibenPlatz(comboScoresScheibenplatz, FTU_ID, strToInt(comboScoresScheibe.Items[0]));
+end;
+
+procedure TMainWindow.updateEditScores;
+begin
+  if queryScores.Active and (queryScores.RecordCount > 1) then
+  begin
+    //letzte Zeile = Summe = nicht editieren!
+    if queryScores.RecNo < queryScores.RecordCount then
+    begin
+      editScore.Text := queryScores.FieldByName('SC_SCORE').AsString;
+      edit10er.Text  := queryScores.FieldByName('SC_ZEHNER').AsString;
+      edit9er.Text   := queryScores.FieldByName('SC_NEUNER').AsString;
+      editX.Text     := queryScores.FieldByName('SC_X').AsString;
+    end;
+  end;
+end;
+
+procedure TMainWindow.saveScore();
+var
+  aPE_ID : string;
+  aSC_ID : string;
+  aRunde : integer;
+  aScore : integer;
+  aZehner: integer;
+  aNeuner: integer;
+  aX     : integer;
+begin
+  if queryScores.Active and (queryScores.RecordCount > 1) then
+  begin
+    //letzte Zeile = Summe = nicht editieren!
+    if queryScores.RecNo < queryScores.RecordCount then
+    begin
+      aPE_ID := queryScores.FieldByName('PE_ID').AsString;
+      aSC_ID := queryScores.FieldByName('SC_ID').AsString;
+      aRunde := queryScores.FieldByName('DI_RUNDE').AsInteger;
+      if not TryStrToInt(editScore.Text, aScore) then
+      begin
+        aScore := 0;
+      end;
+      if not TryStrToInt(edit10er.Text, aZehner) then
+      begin
+        aZehner := 0;
+      end;
+      if not TryStrToInt(edit9er.Text, aNeuner) then
+      begin
+        aNeuner := 0;
+      end;
+      if not TryStrToInt(editX.Text, aX) then
+      begin
+        aX := 0;
+      end;
+
+      FBL_Turnier.saveScore(FTU_ID, aPE_ID, aSC_ID, aRunde, aScore, aZehner, aNeuner, aX);
+    end;
   end;
 end;
 

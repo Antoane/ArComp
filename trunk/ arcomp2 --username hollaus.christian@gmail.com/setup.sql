@@ -156,3 +156,14 @@ CREATE TABLE FINALBERECHTIGUNG(
   FB_FINALBERECHTIGT integer
 )
 
+CREATE TABLE SCORES(
+  SC_ID varchar(36),
+  TU_ID varchar(36),
+  PE_ID varchar(36),
+  SC_RUNDE varchar(36),
+  SC_SCORE integer,
+  SC_ZEHNER integer,
+  SC_NEUNER integer,
+  SC_X integer
+)
+

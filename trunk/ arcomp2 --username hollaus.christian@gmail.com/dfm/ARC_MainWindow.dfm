@@ -2,8 +2,8 @@ object MainWindow: TMainWindow
   Left = 0
   Top = 0
   Caption = 'ArComp'
-  ClientHeight = 644
-  ClientWidth = 1048
+  ClientHeight = 807
+  ClientWidth = 1100
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -3872,16 +3872,16 @@ object MainWindow: TMainWindow
   object panelMain: TPanel
     Left = 0
     Top = 90
-    Width = 1048
-    Height = 554
+    Width = 1100
+    Height = 717
     Align = alClient
     TabOrder = 0
     object logoArcomp: TImage
       AlignWithMargins = True
       Left = 4
       Top = 4
-      Width = 1040
-      Height = 546
+      Width = 1092
+      Height = 709
       Align = alClient
       Center = True
       Picture.Data = {
@@ -21053,11 +21053,12 @@ object MainWindow: TMainWindow
     object pageControl: TPageControl
       Left = 1
       Top = 1
-      Width = 1046
-      Height = 552
+      Width = 1098
+      Height = 715
       ActivePage = sheetPersonenzuteilung
       Align = alClient
       TabOrder = 0
+      OnChange = pageControlChange
       object sheetPersonenzuteilung: TTabSheet
         Caption = 'Turnierteilnehmer'
         Font.Charset = DEFAULT_CHARSET
@@ -21069,8 +21070,8 @@ object MainWindow: TMainWindow
         object gridTeilnehmer: TDBGrid
           Left = 0
           Top = 29
-          Width = 1038
-          Height = 460
+          Width = 1090
+          Height = 623
           Align = alClient
           DataSource = sourcePersonen
           ReadOnly = True
@@ -21153,7 +21154,7 @@ object MainWindow: TMainWindow
         object Panel5: TPanel
           Left = 0
           Top = 0
-          Width = 1038
+          Width = 1090
           Height = 29
           Align = alTop
           TabOrder = 1
@@ -21181,8 +21182,8 @@ object MainWindow: TMainWindow
         end
         object Panel4: TPanel
           Left = 0
-          Top = 489
-          Width = 1038
+          Top = 652
+          Width = 1090
           Height = 35
           Align = alBottom
           TabOrder = 2
@@ -21196,7 +21197,6 @@ object MainWindow: TMainWindow
             Caption = 'Hinzuf'#252'gen'
             TabOrder = 0
             OnClick = buttonHinzufuegenClick
-            ExplicitLeft = 4
           end
           object ButtonLoeschen: TButton
             AlignWithMargins = True
@@ -21208,7 +21208,6 @@ object MainWindow: TMainWindow
             Caption = 'Entfernen'
             TabOrder = 1
             OnClick = ButtonLoeschenClick
-            ExplicitLeft = 110
           end
           object buttonNeuPerson: TButton
             AlignWithMargins = True
@@ -21230,11 +21229,12 @@ object MainWindow: TMainWindow
           AlignWithMargins = True
           Left = 3
           Top = 3
-          Width = 1032
-          Height = 518
-          ActivePage = sheetScheibeneinteilungZugeteilt
+          Width = 1084
+          Height = 681
+          ActivePage = sheetScheibeneinteilungAllgemein
           Align = alClient
           TabOrder = 0
+          OnChange = pageControlScheibeneinteilungChange
           object sheetScheibeneinteilungAllgemein: TTabSheet
             Caption = 'Allgemein'
             object panelScheibeneinteilungInfo: TPanel
@@ -21242,7 +21242,7 @@ object MainWindow: TMainWindow
               Left = 3
               Top = 3
               Width = 325
-              Height = 484
+              Height = 647
               Align = alLeft
               TabOrder = 0
               object Label2: TLabel
@@ -21353,14 +21353,14 @@ object MainWindow: TMainWindow
               Left = 334
               Top = 3
               Width = 185
-              Height = 484
+              Height = 647
               Align = alLeft
               TabOrder = 1
               object DBGrid3: TDBGrid
                 Left = 1
                 Top = 1
                 Width = 183
-                Height = 482
+                Height = 645
                 Align = alClient
                 DataSource = sourceInfoFreiePlaetze
                 ReadOnly = True
@@ -21392,8 +21392,8 @@ object MainWindow: TMainWindow
             object gridNichtZugeteilt: TDBGrid
               Left = 191
               Top = 29
-              Width = 833
-              Height = 461
+              Width = 885
+              Height = 624
               Align = alClient
               DataSource = sourceScheibeneinteilungNichtZugeteilt
               ReadOnly = True
@@ -21475,7 +21475,7 @@ object MainWindow: TMainWindow
             object Panel6: TPanel
               Left = 0
               Top = 0
-              Width = 1024
+              Width = 1076
               Height = 29
               Align = alTop
               TabOrder = 1
@@ -21506,7 +21506,7 @@ object MainWindow: TMainWindow
               Left = 3
               Top = 32
               Width = 185
-              Height = 455
+              Height = 618
               Align = alLeft
               BevelOuter = bvNone
               TabOrder = 2
@@ -21551,7 +21551,7 @@ object MainWindow: TMainWindow
             object Panel3: TPanel
               Left = 0
               Top = 0
-              Width = 1024
+              Width = 1076
               Height = 29
               Align = alTop
               TabOrder = 0
@@ -21582,7 +21582,7 @@ object MainWindow: TMainWindow
               Left = 3
               Top = 32
               Width = 185
-              Height = 455
+              Height = 618
               Align = alLeft
               BevelOuter = bvNone
               TabOrder = 1
@@ -21601,8 +21601,8 @@ object MainWindow: TMainWindow
             object gridZugeteilt: TDBGrid
               Left = 191
               Top = 29
-              Width = 833
-              Height = 461
+              Width = 885
+              Height = 624
               Align = alClient
               DataSource = sourceScheibeneinteilungZugeteilt
               ReadOnly = True
@@ -21696,12 +21696,293 @@ object MainWindow: TMainWindow
           end
         end
       end
+      object sheetScores: TTabSheet
+        Caption = 'Scores'
+        ImageIndex = 2
+        object Panel2: TPanel
+          AlignWithMargins = True
+          Left = 3
+          Top = 3
+          Width = 233
+          Height = 681
+          Align = alLeft
+          BevelInner = bvRaised
+          BevelOuter = bvNone
+          Color = clMenuBar
+          ParentBackground = False
+          TabOrder = 0
+          object panelScheibenauswahl: TPanel
+            AlignWithMargins = True
+            Left = 4
+            Top = 4
+            Width = 225
+            Height = 194
+            Align = alTop
+            Color = clWindow
+            DoubleBuffered = False
+            ParentBackground = False
+            ParentDoubleBuffered = False
+            TabOrder = 0
+            object Label12: TLabel
+              Left = 77
+              Top = 68
+              Width = 27
+              Height = 13
+              Caption = 'Score'
+            end
+            object Label13: TLabel
+              Left = 77
+              Top = 92
+              Width = 22
+              Height = 13
+              Caption = '10er'
+            end
+            object Label14: TLabel
+              Left = 77
+              Top = 140
+              Width = 6
+              Height = 13
+              Caption = 'X'
+            end
+            object Label15: TLabel
+              Left = 77
+              Top = 116
+              Width = 16
+              Height = 13
+              Caption = '9er'
+            end
+            object Label16: TLabel
+              Left = 77
+              Top = 44
+              Width = 31
+              Height = 13
+              Caption = 'Runde'
+            end
+            object comboScoresScheibe: TComboBox
+              AlignWithMargins = True
+              Left = 7
+              Top = 16
+              Width = 100
+              Height = 21
+              Margins.Bottom = 0
+              Style = csDropDownList
+              TabOrder = 0
+              OnChange = comboScoresScheibeChange
+            end
+            object comboScoresScheibenplatz: TComboBox
+              AlignWithMargins = True
+              Left = 114
+              Top = 16
+              Width = 100
+              Height = 21
+              Margins.Bottom = 0
+              Style = csDropDownList
+              TabOrder = 1
+              OnChange = comboScoresScheibenplatzChange
+            end
+            object editScore: TEdit
+              AlignWithMargins = True
+              Left = 115
+              Top = 65
+              Width = 100
+              Height = 21
+              Margins.Bottom = 0
+              TabOrder = 2
+              OnKeyPress = editScoreKeyPress
+            end
+            object edit10er: TEdit
+              AlignWithMargins = True
+              Left = 115
+              Top = 89
+              Width = 100
+              Height = 21
+              Margins.Bottom = 0
+              TabOrder = 3
+              OnKeyPress = edit10erKeyPress
+            end
+            object edit9er: TEdit
+              AlignWithMargins = True
+              Left = 115
+              Top = 113
+              Width = 100
+              Height = 21
+              Margins.Bottom = 0
+              TabOrder = 4
+              OnKeyPress = edit9erKeyPress
+            end
+            object editX: TEdit
+              AlignWithMargins = True
+              Left = 115
+              Top = 137
+              Width = 100
+              Height = 21
+              Margins.Bottom = 0
+              TabOrder = 5
+              OnKeyPress = editXKeyPress
+            end
+            object checkScoresAutoForward: TCheckBox
+              Left = 7
+              Top = 172
+              Width = 182
+              Height = 17
+              Caption = 'Automatisch speichern und weiter'
+              Checked = True
+              State = cbChecked
+              TabOrder = 6
+            end
+            object buttonSaveScore: TButton
+              AlignWithMargins = True
+              Left = 188
+              Top = 169
+              Width = 27
+              Height = 21
+              Margins.Right = 0
+              ImageAlignment = iaCenter
+              ImageIndex = 2
+              Images = ImageList1
+              TabOrder = 7
+              OnClick = buttonSaveScoreClick
+            end
+            object editRunde: TDBEdit
+              AlignWithMargins = True
+              Left = 115
+              Top = 41
+              Width = 100
+              Height = 21
+              Margins.Bottom = 0
+              DataField = 'DI_RUNDE'
+              DataSource = sourceScores
+              Enabled = False
+              TabOrder = 8
+              OnKeyPress = editScoreKeyPress
+            end
+          end
+          object editScoreName: TDBEdit
+            AlignWithMargins = True
+            Left = 4
+            Top = 204
+            Width = 225
+            Height = 21
+            Margins.Bottom = 0
+            Align = alTop
+            DataField = 'NAME'
+            DataSource = sourceScores
+            Enabled = False
+            TabOrder = 1
+          end
+          object editScoreVerein: TDBEdit
+            AlignWithMargins = True
+            Left = 4
+            Top = 228
+            Width = 225
+            Height = 21
+            Margins.Bottom = 0
+            Align = alTop
+            DataField = 'VE_NAME'
+            DataSource = sourceScores
+            Enabled = False
+            TabOrder = 2
+          end
+          object editScoreBogenkategorie: TDBEdit
+            AlignWithMargins = True
+            Left = 4
+            Top = 252
+            Width = 225
+            Height = 21
+            Margins.Bottom = 0
+            Align = alTop
+            DataField = 'BK_NAME'
+            DataSource = sourceScores
+            Enabled = False
+            TabOrder = 3
+          end
+          object editScoreAlterskategorie: TDBEdit
+            AlignWithMargins = True
+            Left = 4
+            Top = 276
+            Width = 225
+            Height = 21
+            Margins.Bottom = 0
+            Align = alTop
+            DataField = 'AK_NAME'
+            DataSource = sourceScores
+            Enabled = False
+            TabOrder = 4
+          end
+          object editScoreGeschlecht: TDBEdit
+            AlignWithMargins = True
+            Left = 4
+            Top = 300
+            Width = 225
+            Height = 21
+            Margins.Bottom = 0
+            Align = alTop
+            DataField = 'GE_NAME'
+            DataSource = sourceScores
+            Enabled = False
+            TabOrder = 5
+          end
+        end
+        object DBGrid1: TDBGrid
+          Left = 239
+          Top = 0
+          Width = 851
+          Height = 687
+          Align = alClient
+          DataSource = sourceScores
+          Options = [dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgRowSelect, dgConfirmDelete, dgCancelOnExit, dgTitleClick, dgTitleHotTrack]
+          ReadOnly = True
+          TabOrder = 1
+          TitleFont.Charset = DEFAULT_CHARSET
+          TitleFont.Color = clWindowText
+          TitleFont.Height = -11
+          TitleFont.Name = 'Tahoma'
+          TitleFont.Style = []
+          Columns = <
+            item
+              Expanded = False
+              FieldName = 'DI_RUNDE'
+              Title.Caption = 'Runde'
+              Visible = True
+            end
+            item
+              Expanded = False
+              FieldName = 'DI_DISTANZ'
+              Title.Caption = 'Distanz'
+              Visible = True
+            end
+            item
+              Expanded = False
+              FieldName = 'SC_SCORE'
+              Title.Caption = 'Score'
+              Visible = True
+            end
+            item
+              Expanded = False
+              FieldName = 'SC_ZEHNER'
+              Title.Caption = '10er'
+              Visible = True
+            end
+            item
+              Expanded = False
+              FieldName = 'SC_NEUNER'
+              Title.Caption = '9er'
+              Visible = True
+            end
+            item
+              Expanded = False
+              FieldName = 'SC_X'
+              Title.Caption = 'X'
+              Visible = True
+            end>
+        end
+      end
     end
   end
   object panelTurnierinfo: TPanel
     Left = 0
     Top = 0
-    Width = 1048
+    Width = 1100
     Height = 90
     Align = alTop
     TabOrder = 1
@@ -22238,5 +22519,179 @@ object MainWindow: TMainWindow
     DataSet = queryBogenkategorieUebersicht
     Left = 488
     Top = 472
+  end
+  object queryScores: TADOQuery
+    Connection = DBConnection
+    AfterScroll = queryScoresAfterScroll
+    Parameters = <
+      item
+        Name = 'TU_ID'
+        Size = -1
+        Value = Null
+      end>
+    SQL.Strings = (
+      'SELECT '
+      '  bk.BK_NAME,'
+      '  COUNT(bk.BK_NAME) AS ANZAHL'
+      'FROM TURNIER tu'
+      '  INNER JOIN TURNIER_ZUTEILUNG zu'
+      '    ON tu.TU_ID = zu.TU_ID'
+      '  INNER JOIN PERSON pe'
+      '    ON zu.PE_ID = pe.PE_ID'
+      '  INNER JOIN BOGENKATEGORIE bk'
+      '    ON pe.PE_BOGENKATEGORIE = bk.BK_NAME'
+      'WHERE tu.TU_ID = :TU_ID'
+      'GROUP BY bk.BK_NAME'
+      'ORDER BY bk.BK_NAME')
+    Left = 488
+    Top = 536
+  end
+  object sourceScores: TDataSource
+    DataSet = queryScores
+    Left = 480
+    Top = 592
+  end
+  object ImageList1: TImageList
+    Left = 480
+    Top = 160
+    Bitmap = {
+      494C010103000800640010001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
+      0000000000003600000028000000400000001000000001002000000000000010
+      0000000000000000000000000000000000000000000000000000000000000000
+      000000000000FDFDFD00FAFAFA00FEFEFE000000000000000000000000000000
+      00000000000000000000000000000000000000000000EBEBEC00F9F9F9000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      00000000000000000000000000000000000000000000423D3500313132003536
+      3900353639003536390035363900353639003536390035373900353739003537
+      3900353739003333320046403500E7E1D6000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000FAFBFB00D6D7D700C9CACB00F3F3F4000000000000000000000000000000
+      000000000000000000000000000000000000E8E9E900777980004A4D5D00FBFB
+      FB00000000000000000000000000000000000000000000000000000000000000
+      0000EFEFEF008E909200D4D5D60000000000413C3500B36E00004C413000E5E5
+      E600FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+      FF00DBDBDC00584A2E00D48A0000454035000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      000000000000000000000000000000000000000000000000000000000000F7F7
+      F700CACBCC005D5F630039474600C3C4C5000000000000000000000000000000
+      000000000000000000000000000000000000808184001D203D001E2482007375
+      8A00FCFCFC000000000000000000000000000000000000000000F9F9F900A2A3
+      A500292C3D00242A76007E7F830000000000403B3400AD6800004B403000F1F1
+      F100FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+      FF00E8E8E90056482E00CD850000443F34000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000EEEEEE00B3B4
+      B6005B5F61003852490046715E006A6F71000000000000000000000000000000
+      000000000000000000000000000000000000C9CACB00777A9E002025A000252C
+      B80041434C00FDFDFD00000000000000000000000000EFEFEF007C7D8E002529
+      62001D23A4002C305D00B0B1B80000000000403A3400A76300004A3F3000F1F1
+      F100FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+      FF00E8E8E90055472E00C57F0000433E34000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      00000000000000000000000000000000000000000000EDEDED00AAABAD003D44
+      4500314840005890720050816700404C4B00FAFAFA0000000000000000000000
+      00000000000000000000000000000000000000000000F9F9F9004D4F63001F23
+      8700282C99005E606B00FDFDFD0000000000E5E5E60040435C001B1F6000262B
+      8A00575A7300DBDBDC0000000000000000003F393400A25D0000493E3000F1F1
+      F100FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+      FF00E8E8E90054472E00C17B0000423D34000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      000000000000000000000000000000000000F0F0F000A4A5A7003C4445004870
+      5800518464002F39380049755C002D3A3700DADADB0000000000000000000000
+      0000000000000000000000000000000000000000000000000000FAFAFA006265
+      7A00222793002C30AE003C3F4600DFE0E000282B3F001E249C002C3058008C8E
+      9400000000000000000000000000000000003F3934009C570000483D3000F1F1
+      F100FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+      FF00E8E8E90053452E00BF790000423D34000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      000000000000000000000000000000000000C8C9CA004D53540041644F005F9B
+      7000606C6700D1D1D20032413C00446B530072767700FCFCFC00000000000000
+      000000000000000000000000000000000000000000000000000000000000FBFB
+      FB005C5E6C0020246D00262B82002B2F51002126BA002D304C00F7F7F8000000
+      0000000000000000000000000000000000003E38340097510000473C3000F1F1
+      F100FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+      FF00E8E8E90052442E00B9730000423D34000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      000000000000000000000000000000000000BBBCBD0031393800497654005C68
+      620000000000FAFBFB003F4746004E7F5B00303C3800ECECED00000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000FCFCFC007577840022257C002025A10032355400E9E9EA00000000000000
+      0000000000000000000000000000000000003E383400944D0000413224005E5C
+      5B007B7874007B7874007B7874007C7874007C7874007C7974007C7974007C79
+      74007B7771004D3C2100B36E0000413C34000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      00000000000000000000000000000000000000000000F8F8F80063676800EBEB
+      EC000000000000000000AFB0B200334B3B003E6246006D707200F9F9F9000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000EEEEEE002C2F3D00212594001D204B00292E9C006C6E7C00FCFCFC000000
+      0000000000000000000000000000000000003D383400924B0000944D00005C36
+      0D004A2E11004B3011004C3011004C3211004E3311004F341100503511005035
+      110085510700AA660000AD680000403B34000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      00000000000000000000F7F7F7003E46440047754B0029332F00D1D1D200FCFC
+      FC0000000000000000000000000000000000000000000000000000000000F8F8
+      F800515361002125850024274200C8C9CE00292D580022267A004B4D5900FBFB
+      FB00000000000000000000000000000000003D3834008D450100382418002E25
+      29006E6D70006F6E71006F6E71006F6E71005454580052525600525256003A3B
+      3E00A25D0000A5600000A7630000403B34000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000B3B4B500242F2A00477847002F373500DCDC
+      DD00FDFDFD000000000000000000000000000000000000000000FDFDFD005D5F
+      6500292C860025286800A4A6AD0000000000BDBEC100282B4200252994003437
+      4200F9F9F9000000000000000000000000003C373600883F090035201A003D2D
+      3400CBCCCC00DDDEDE00DDDEDE00DDDEDE0035383C001D2025002C2F34006F6E
+      71005B390E009F5A0000A25D0000403A34000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000EAEAEB0055585A0042693D00416D3B002A30
+      3100D4D5D600FAFBFB0000000000000000000000000000000000E1E1E2002124
+      38001F226D0080819300000000000000000000000000EFEFEF002E3043002529
+      94004C4F6500F6F6F60000000000000000003C36370083371800341F1D003D2D
+      3400CBCCCC00DDDEDE00DDDEDE00DDDEDE0034373B00171A1F002B2E32006F6E
+      710059360E009A5400009C5700003F3934000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      000000000000000000000000000000000000F7F7F700606563003C6231003C66
+      2F00303A3500C8C9CA00F5F5F5000000000000000000F8F8F800353841002427
+      9A00282B3E00FCFCFC0000000000000000000000000000000000F6F6F6004649
+      590021246500383A5100F1F2F200000000003B3538007E301F00331E1F003D2D
+      3400CBCCCC00DDDEDE00DDDEDE00DDDEDE0034373B00171A1F002B2E32006F6E
+      710057340E00954E0000975100003F3934000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      00000000000000000000000000000000000000000000F7F7F700393D3E002F46
+      26003A652500242E270095989800FAFBFB0000000000ACADAF0024264E002223
+      6100A8A8B000000000000000000000000000000000000000000000000000FBFB
+      FB006D6F7A0025285D002D304200E0E0E1003A34380078272300321C20003D2D
+      3400CBCCCC00DDDEDE00DDDEDE00DDDEDE0034373B00171A1F002B2E32006F6E
+      710056330E00944D0000944D00003E3834000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000F9F9F9008E92
+      90002630250024351D00575D5900FAFBFB00F7F7F70067697100202242003638
+      4C00000000000000000000000000000000000000000000000000000000000000
+      0000FDFDFD0096989D005F616D00E8E9E9003A333900731E2600311B21003D2D
+      3400CBCCCC00DDDEDE00DDDEDE00DDDEDE005A5C5F003B3E4200434549006C6B
+      6F0054300F00904800009B673100C0BDBB000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      000000000000000000000000000000000000000000000000000000000000FCFC
+      FC00DADADB004D505000E7E8E800FEFEFE00FEFEFE00EAEAEB00A9AAAC007C7E
+      8100000000000000000000000000000000000000000000000000000000000000
+      00000000000000000000F6F6F60000000000DFD8DA003A333900272026002827
+      2C002E2F34002E2F34002E2F34002E2F34002E2F34002E2F34002E2F34002527
+      2C00292729003D37340080808000FFFFFF000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      000000000000000000000000000000000000424D3E000000000000003E000000
+      2800000040000000100000000100010000000000800000000000000000000000
+      000000000000000000000000FFFFFF00F8FF9FFF80000000F0FF0FF100000000
+      E0FF07C100000000C0FF038100000000807F810300000000007FC00F00000000
+      003FE01F00000000083FF03F000000008C1FF01F00000000FC0FE00F00000000
+      FE07C10700000000FE03C38300000000FF0183C100000000FF8087E000000000
+      FFC00FF000000000FFE00FFD0000000000000000000000000000000000000000
+      000000000000}
   end
 end
