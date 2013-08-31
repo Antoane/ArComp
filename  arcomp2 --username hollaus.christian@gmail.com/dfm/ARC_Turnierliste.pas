@@ -43,6 +43,7 @@ type
     Button2: TButton;
     buttonHinzufuegen: TButton;
     ButtonLoeschen: TButton;
+    buttonAlle: TButton;
     procedure FormShow(Sender: TObject);
     procedure buttonCancelClick(Sender: TObject);
     procedure DBGrid1TitleClick(Column: TColumn);
@@ -54,6 +55,7 @@ type
     procedure ButtonLoeschenClick(Sender: TObject);
     procedure buttonHinzufuegenClick(Sender: TObject);
     procedure buttonOKClick(Sender: TObject);
+    procedure buttonAlleClick(Sender: TObject);
 
   private
     FTU_ID: string;
@@ -100,6 +102,11 @@ begin
   querySelectTurnier.Parameters.ParseSQL(querySelectTurnier.SQL.Text, True);
   querySelectTurnier.Parameters.ParamByName('SEARCHSTRING').value := '%' + editSearch.Text + '%';
   querySelectTurnier.Open;
+end;
+
+procedure TFormTurnierListe.buttonAlleClick(Sender: TObject);
+begin
+  searchData('');
 end;
 
 procedure TFormTurnierListe.buttonCancelClick(Sender: TObject);

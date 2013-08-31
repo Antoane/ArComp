@@ -154,6 +154,9 @@ type
     ImageList1: TImageList;
     Label16: TLabel;
     editRunde: TDBEdit;
+    buttonAlleTeilnehmer: TButton;
+    buttonAlleNichtZugeteilt: TButton;
+    buttonAlleZugeteilt: TButton;
     procedure Beenden1Click(Sender: TObject);
     procedure Importieren1Click(Sender: TObject);
     procedure Bogenschtzen1Click(Sender: TObject);
@@ -188,6 +191,9 @@ type
     procedure queryScoresAfterScroll(DataSet: TDataSet);
     procedure buttonSaveScoreClick(Sender: TObject);
     procedure pageControlScheibeneinteilungChange(Sender: TObject);
+    procedure buttonAlleTeilnehmerClick(Sender: TObject);
+    procedure buttonAlleNichtZugeteiltClick(Sender: TObject);
+    procedure buttonAlleZugeteiltClick(Sender: TObject);
 
   private
     FTU_ID     : string;
@@ -221,6 +227,7 @@ type
     procedure saveScore;
     procedure selectNextScheibe;
     procedure createMissingTables;
+    procedure setStartTabs;
 
     {Private-Deklarationen}
   public
@@ -407,6 +414,21 @@ begin
   searchPersonen(editSearch.Text);
 end;
 
+procedure TMainWindow.buttonAlleNichtZugeteiltClick(Sender: TObject);
+begin
+  searchPersonenNichtZugeteilt('');
+end;
+
+procedure TMainWindow.buttonAlleTeilnehmerClick(Sender: TObject);
+begin
+  searchPersonen('');
+end;
+
+procedure TMainWindow.buttonAlleZugeteiltClick(Sender: TObject);
+begin
+  searchPersonenZugeteilt('');
+end;
+
 procedure TMainWindow.buttonHinzufuegenClick(Sender: TObject);
 begin
   addPersonenzuteilung();
@@ -525,6 +547,13 @@ begin
   normiereDatenbank();
   disableComponents();
   alignInfoGrid();
+  setStartTabs();
+end;
+
+procedure TMainWindow.setStartTabs;
+begin
+  pageControl.ActivePage                   := sheetPersonenzuteilung;
+  pageControlScheibeneinteilung.ActivePage := sheetScheibeneinteilungAllgemein;
 end;
 
 procedure TMainWindow.alignInfoGrid;

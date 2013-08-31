@@ -39,19 +39,21 @@ type
     DBGrid1: ARC_DbGrid.TDBGrid;
     Panel5: TPanel;
     editSearch: TEdit;
-    Button2: TButton;
+    buttonSuchen: TButton;
     ButtonLoeschen: TButton;
     buttonHinzufuegen: TButton;
+    buttonAlle: TButton;
     procedure FormShow(Sender: TObject);
     procedure buttonCancelClick(Sender: TObject);
     procedure DBGrid1TitleClick(Column: TColumn);
-    procedure Button2Click(Sender: TObject);
+    procedure buttonSuchenClick(Sender: TObject);
     procedure FormKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
     procedure FormKeyUp(Sender: TObject; var Key: Word; Shift: TShiftState);
     procedure DBGrid1DblClick(Sender: TObject);
     procedure buttonHinzufuegenClick(Sender: TObject);
     procedure ButtonLoeschenClick(Sender: TObject);
     procedure editSearchKeyUp(Sender: TObject; var Key: Word; Shift: TShiftState);
+    procedure buttonAlleClick(Sender: TObject);
 
   private
     procedure CreateParams(var Params: TCreateParams);
@@ -75,7 +77,7 @@ implementation
 
 {$R *.dfm}
 
-procedure TFormVereinsListe.Button2Click(Sender: TObject);
+procedure TFormVereinsListe.buttonSuchenClick(Sender: TObject);
 begin
   searchData(editSearch.Text);
 end;
@@ -92,6 +94,11 @@ begin
   querySelectVereine.Parameters.ParamByName('SEARCHSTRING').value := '%' + editSearch.Text + '%';
   querySelectVereine.Active                                       := True;
   querySelectVereine.Open;
+end;
+
+procedure TFormVereinsListe.buttonAlleClick(Sender: TObject);
+begin
+  searchData('');
 end;
 
 procedure TFormVereinsListe.buttonCancelClick(Sender: TObject);

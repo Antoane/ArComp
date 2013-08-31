@@ -3875,7 +3875,7 @@ object MainWindow: TMainWindow
     Width = 1100
     Height = 717
     Align = alClient
-    TabOrder = 0
+    TabOrder = 1
     object logoArcomp: TImage
       AlignWithMargins = True
       Left = 4
@@ -21055,7 +21055,7 @@ object MainWindow: TMainWindow
       Top = 1
       Width = 1098
       Height = 715
-      ActivePage = sheetPersonenzuteilung
+      ActivePage = sheetScores
       Align = alClient
       TabOrder = 0
       OnChange = pageControlChange
@@ -21075,7 +21075,7 @@ object MainWindow: TMainWindow
           Align = alClient
           DataSource = sourcePersonen
           ReadOnly = True
-          TabOrder = 0
+          TabOrder = 1
           TitleFont.Charset = DEFAULT_CHARSET
           TitleFont.Color = clWindowText
           TitleFont.Height = -11
@@ -21157,7 +21157,7 @@ object MainWindow: TMainWindow
           Width = 1090
           Height = 29
           Align = alTop
-          TabOrder = 1
+          TabOrder = 0
           object editSearch: TEdit
             AlignWithMargins = True
             Left = 4
@@ -21179,6 +21179,19 @@ object MainWindow: TMainWindow
             TabOrder = 1
             OnClick = Button3Click
           end
+          object buttonAlleTeilnehmer: TButton
+            AlignWithMargins = True
+            Left = 323
+            Top = 4
+            Width = 75
+            Height = 21
+            Align = alLeft
+            Caption = 'Alle'
+            TabOrder = 2
+            OnClick = buttonAlleTeilnehmerClick
+            ExplicitLeft = 362
+            ExplicitTop = 2
+          end
         end
         object Panel4: TPanel
           Left = 0
@@ -21195,7 +21208,7 @@ object MainWindow: TMainWindow
             Height = 27
             Align = alLeft
             Caption = 'Hinzuf'#252'gen'
-            TabOrder = 0
+            TabOrder = 1
             OnClick = buttonHinzufuegenClick
           end
           object ButtonLoeschen: TButton
@@ -21206,7 +21219,7 @@ object MainWindow: TMainWindow
             Height = 27
             Align = alLeft
             Caption = 'Entfernen'
-            TabOrder = 1
+            TabOrder = 2
             OnClick = ButtonLoeschenClick
           end
           object buttonNeuPerson: TButton
@@ -21217,7 +21230,7 @@ object MainWindow: TMainWindow
             Height = 27
             Align = alLeft
             Caption = 'Neu'
-            TabOrder = 2
+            TabOrder = 0
             OnClick = buttonNeuPersonClick
           end
         end
@@ -21225,26 +21238,18 @@ object MainWindow: TMainWindow
       object sheetScheibeneinteilung: TTabSheet
         Caption = 'Scheibeneinteilung'
         ImageIndex = 1
-        ExplicitLeft = 0
-        ExplicitTop = 0
-        ExplicitWidth = 0
-        ExplicitHeight = 0
         object pageControlScheibeneinteilung: TPageControl
           AlignWithMargins = True
           Left = 3
           Top = 3
           Width = 1084
           Height = 681
-          ActivePage = sheetScheibeneinteilungAllgemein
+          ActivePage = sheetScheibeneinteilungZugeteilt
           Align = alClient
           TabOrder = 0
           OnChange = pageControlScheibeneinteilungChange
           object sheetScheibeneinteilungAllgemein: TTabSheet
             Caption = 'Allgemein'
-            ExplicitLeft = 0
-            ExplicitTop = 0
-            ExplicitWidth = 0
-            ExplicitHeight = 0
             object panelScheibeneinteilungInfo: TPanel
               AlignWithMargins = True
               Left = 3
@@ -21323,7 +21328,7 @@ object MainWindow: TMainWindow
                 DataField = 'TEILNEHMER'
                 DataSource = sourceScheibeneinteilungInfo
                 ReadOnly = True
-                TabOrder = 2
+                TabOrder = 3
               end
               object editAnzahlTeilnehmerMitLizenz: TDBEdit
                 Left = 144
@@ -21333,7 +21338,7 @@ object MainWindow: TMainWindow
                 DataField = 'TEILNEHMER_MIT_LIZENZ'
                 DataSource = sourceScheibeneinteilungInfo
                 ReadOnly = True
-                TabOrder = 3
+                TabOrder = 4
               end
               object editTeilnehmerOhneScheibe: TDBEdit
                 Left = 144
@@ -21343,7 +21348,7 @@ object MainWindow: TMainWindow
                 DataField = 'TEILNEHMER_NICHT_ZUGETEILT'
                 DataSource = sourceScheibeneinteilungInfo
                 ReadOnly = True
-                TabOrder = 4
+                TabOrder = 5
               end
               object editPlaetze: TDBEdit
                 Left = 144
@@ -21353,7 +21358,7 @@ object MainWindow: TMainWindow
                 DataField = 'PLAETZE'
                 DataSource = sourceScheibeneinteilungInfo
                 ReadOnly = True
-                TabOrder = 5
+                TabOrder = 2
               end
             end
             object panelFreieScheiben: TPanel
@@ -21397,10 +21402,6 @@ object MainWindow: TMainWindow
           object sheetScheibeneinteilungNichtZugeteilt: TTabSheet
             Caption = 'nicht zugeteilt'
             ImageIndex = 1
-            ExplicitLeft = 0
-            ExplicitTop = 0
-            ExplicitWidth = 0
-            ExplicitHeight = 0
             object gridNichtZugeteilt: TDBGrid
               Left = 191
               Top = 29
@@ -21409,7 +21410,7 @@ object MainWindow: TMainWindow
               Align = alClient
               DataSource = sourceScheibeneinteilungNichtZugeteilt
               ReadOnly = True
-              TabOrder = 0
+              TabOrder = 1
               TitleFont.Charset = DEFAULT_CHARSET
               TitleFont.Color = clWindowText
               TitleFont.Height = -11
@@ -21490,7 +21491,7 @@ object MainWindow: TMainWindow
               Width = 1076
               Height = 29
               Align = alTop
-              TabOrder = 1
+              TabOrder = 0
               object editSearchNichtZugeteilt: TEdit
                 AlignWithMargins = True
                 Left = 4
@@ -21511,6 +21512,19 @@ object MainWindow: TMainWindow
                 Caption = 'Suchen'
                 TabOrder = 1
                 OnClick = buttonSearchPersonenNichtZugeteiltClick
+              end
+              object buttonAlleNichtZugeteilt: TButton
+                AlignWithMargins = True
+                Left = 323
+                Top = 4
+                Width = 75
+                Height = 21
+                Align = alLeft
+                Caption = 'Alle'
+                TabOrder = 2
+                OnClick = buttonAlleNichtZugeteiltClick
+                ExplicitLeft = 362
+                ExplicitTop = 2
               end
             end
             object panelScheibenEinteilen: TPanel
@@ -21560,10 +21574,6 @@ object MainWindow: TMainWindow
           object sheetScheibeneinteilungZugeteilt: TTabSheet
             Caption = 'zugeteilt'
             ImageIndex = 2
-            ExplicitLeft = 0
-            ExplicitTop = 0
-            ExplicitWidth = 0
-            ExplicitHeight = 0
             object Panel3: TPanel
               Left = 0
               Top = 0
@@ -21592,6 +21602,19 @@ object MainWindow: TMainWindow
                 TabOrder = 1
                 OnClick = buttonSearchPersonenZugeteiltClick
               end
+              object buttonAlleZugeteilt: TButton
+                AlignWithMargins = True
+                Left = 323
+                Top = 4
+                Width = 75
+                Height = 21
+                Align = alLeft
+                Caption = 'Alle'
+                TabOrder = 2
+                OnClick = buttonAlleZugeteiltClick
+                ExplicitLeft = 362
+                ExplicitTop = 2
+              end
             end
             object Panel7: TPanel
               AlignWithMargins = True
@@ -21601,7 +21624,7 @@ object MainWindow: TMainWindow
               Height = 618
               Align = alLeft
               BevelOuter = bvNone
-              TabOrder = 1
+              TabOrder = 2
               object buttonZuteilungEntfernen: TButton
                 AlignWithMargins = True
                 Left = 3
@@ -21622,7 +21645,7 @@ object MainWindow: TMainWindow
               Align = alClient
               DataSource = sourceScheibeneinteilungZugeteilt
               ReadOnly = True
-              TabOrder = 2
+              TabOrder = 1
               TitleFont.Charset = DEFAULT_CHARSET
               TitleFont.Color = clWindowText
               TitleFont.Height = -11
@@ -21715,10 +21738,6 @@ object MainWindow: TMainWindow
       object sheetScores: TTabSheet
         Caption = 'Scores'
         ImageIndex = 2
-        ExplicitLeft = 0
-        ExplicitTop = 0
-        ExplicitWidth = 0
-        ExplicitHeight = 0
         object Panel2: TPanel
           AlignWithMargins = True
           Left = 3
@@ -21807,7 +21826,7 @@ object MainWindow: TMainWindow
               Width = 100
               Height = 21
               Margins.Bottom = 0
-              TabOrder = 2
+              TabOrder = 3
               OnKeyPress = editScoreKeyPress
             end
             object edit10er: TEdit
@@ -21817,7 +21836,7 @@ object MainWindow: TMainWindow
               Width = 100
               Height = 21
               Margins.Bottom = 0
-              TabOrder = 3
+              TabOrder = 4
               OnKeyPress = edit10erKeyPress
             end
             object edit9er: TEdit
@@ -21827,7 +21846,7 @@ object MainWindow: TMainWindow
               Width = 100
               Height = 21
               Margins.Bottom = 0
-              TabOrder = 4
+              TabOrder = 5
               OnKeyPress = edit9erKeyPress
             end
             object editX: TEdit
@@ -21837,7 +21856,7 @@ object MainWindow: TMainWindow
               Width = 100
               Height = 21
               Margins.Bottom = 0
-              TabOrder = 5
+              TabOrder = 6
               OnKeyPress = editXKeyPress
             end
             object checkScoresAutoForward: TCheckBox
@@ -21848,7 +21867,7 @@ object MainWindow: TMainWindow
               Caption = 'Automatisch speichern und weiter'
               Checked = True
               State = cbChecked
-              TabOrder = 6
+              TabOrder = 7
             end
             object buttonSaveScore: TButton
               AlignWithMargins = True
@@ -21860,7 +21879,7 @@ object MainWindow: TMainWindow
               ImageAlignment = iaCenter
               ImageIndex = 2
               Images = ImageList1
-              TabOrder = 7
+              TabOrder = 8
               OnClick = buttonSaveScoreClick
             end
             object editRunde: TDBEdit
@@ -21873,7 +21892,7 @@ object MainWindow: TMainWindow
               DataField = 'DI_RUNDE'
               DataSource = sourceScores
               Enabled = False
-              TabOrder = 8
+              TabOrder = 2
               OnKeyPress = editScoreKeyPress
             end
           end
@@ -22005,7 +22024,7 @@ object MainWindow: TMainWindow
     Width = 1100
     Height = 90
     Align = alTop
-    TabOrder = 1
+    TabOrder = 0
     object Label5: TLabel
       Left = 112
       Top = 39
@@ -22046,7 +22065,7 @@ object MainWindow: TMainWindow
       DataField = 'TU_BEGINN'
       DataSource = sourceTurnier
       ReadOnly = True
-      TabOrder = 1
+      TabOrder = 2
     end
     object editVeranstalter: TDBEdit
       Left = 467
@@ -22056,7 +22075,7 @@ object MainWindow: TMainWindow
       DataField = 'TU_VERANSTALTER'
       DataSource = sourceTurnier
       ReadOnly = True
-      TabOrder = 3
+      TabOrder = 4
     end
     object editEnde: TDBEdit
       Left = 126
@@ -22066,7 +22085,7 @@ object MainWindow: TMainWindow
       DataField = 'TU_ENDE'
       DataSource = sourceTurnier
       ReadOnly = True
-      TabOrder = 2
+      TabOrder = 3
     end
     object editTurniername: TDBEdit
       Left = 5
@@ -22086,7 +22105,7 @@ object MainWindow: TMainWindow
       DataField = 'TU_TURNIERLEITUNG'
       DataSource = sourceTurnier
       ReadOnly = True
-      TabOrder = 4
+      TabOrder = 5
     end
     object editSchiedsrichter: TDBEdit
       Left = 467
@@ -22096,7 +22115,7 @@ object MainWindow: TMainWindow
       DataField = 'TU_SCHIEDSRICHTER'
       DataSource = sourceTurnier
       ReadOnly = True
-      TabOrder = 5
+      TabOrder = 6
     end
     object editTurnierart: TDBEdit
       Left = 238
@@ -22106,7 +22125,7 @@ object MainWindow: TMainWindow
       DataField = 'TA_NAME'
       DataSource = sourceTurnier
       ReadOnly = True
-      TabOrder = 6
+      TabOrder = 1
     end
     object gridBogenkategorieUebersicht: TDBGrid
       Left = 679

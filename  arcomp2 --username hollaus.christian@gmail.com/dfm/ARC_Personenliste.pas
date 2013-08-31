@@ -44,6 +44,7 @@ type
     Button2: TButton;
     buttonHinzufuegen: TButton;
     ButtonLoeschen: TButton;
+    buttonAlle: TButton;
     procedure FormShow(Sender: TObject);
     procedure buttonCancelClick(Sender: TObject);
     procedure gridPersonenTitleClick(Column: TColumn);
@@ -55,6 +56,7 @@ type
     procedure ButtonLoeschenClick(Sender: TObject);
     procedure buttonHinzufuegenClick(Sender: TObject);
     procedure buttonOKClick(Sender: TObject);
+    procedure buttonAlleClick(Sender: TObject);
 
   private
     FselectedIDs: TStringList;
@@ -102,6 +104,11 @@ begin
   querySelectPersonen.Parameters.ParamByName('SEARCHSTRING').value := '%' + editSearch.Text + '%';
   querySelectPersonen.Active                                       := True;
   querySelectPersonen.Open;
+end;
+
+procedure TFormPersonenListe.buttonAlleClick(Sender: TObject);
+begin
+  searchData('');
 end;
 
 procedure TFormPersonenListe.buttonCancelClick(Sender: TObject);
