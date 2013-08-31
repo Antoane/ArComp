@@ -21225,6 +21225,10 @@ object MainWindow: TMainWindow
       object sheetScheibeneinteilung: TTabSheet
         Caption = 'Scheibeneinteilung'
         ImageIndex = 1
+        ExplicitLeft = 0
+        ExplicitTop = 0
+        ExplicitWidth = 0
+        ExplicitHeight = 0
         object pageControlScheibeneinteilung: TPageControl
           AlignWithMargins = True
           Left = 3
@@ -21237,6 +21241,10 @@ object MainWindow: TMainWindow
           OnChange = pageControlScheibeneinteilungChange
           object sheetScheibeneinteilungAllgemein: TTabSheet
             Caption = 'Allgemein'
+            ExplicitLeft = 0
+            ExplicitTop = 0
+            ExplicitWidth = 0
+            ExplicitHeight = 0
             object panelScheibeneinteilungInfo: TPanel
               AlignWithMargins = True
               Left = 3
@@ -21389,6 +21397,10 @@ object MainWindow: TMainWindow
           object sheetScheibeneinteilungNichtZugeteilt: TTabSheet
             Caption = 'nicht zugeteilt'
             ImageIndex = 1
+            ExplicitLeft = 0
+            ExplicitTop = 0
+            ExplicitWidth = 0
+            ExplicitHeight = 0
             object gridNichtZugeteilt: TDBGrid
               Left = 191
               Top = 29
@@ -21548,6 +21560,10 @@ object MainWindow: TMainWindow
           object sheetScheibeneinteilungZugeteilt: TTabSheet
             Caption = 'zugeteilt'
             ImageIndex = 2
+            ExplicitLeft = 0
+            ExplicitTop = 0
+            ExplicitWidth = 0
+            ExplicitHeight = 0
             object Panel3: TPanel
               Left = 0
               Top = 0
@@ -21699,6 +21715,10 @@ object MainWindow: TMainWindow
       object sheetScores: TTabSheet
         Caption = 'Scores'
         ImageIndex = 2
+        ExplicitLeft = 0
+        ExplicitTop = 0
+        ExplicitWidth = 0
+        ExplicitHeight = 0
         object Panel2: TPanel
           AlignWithMargins = True
           Left = 3
@@ -22555,7 +22575,7 @@ object MainWindow: TMainWindow
     Left = 480
     Top = 160
     Bitmap = {
-      494C010103000800640010001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
+      494C010103000800680010001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
       0000000000003600000028000000400000001000000001002000000000000010
       0000000000000000000000000000000000000000000000000000000000000000
       000000000000FDFDFD00FAFAFA00FEFEFE000000000000000000000000000000

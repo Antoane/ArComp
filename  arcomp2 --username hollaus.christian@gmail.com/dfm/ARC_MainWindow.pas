@@ -20,6 +20,7 @@ uses
   //ArComp
   ARC_DAL_Tools,
   ARC_Tools,
+  ARC_DAL_SETUP,
   ARC_Functions,
   ARC_Personenliste,
   ARC_PersonenDetail,
@@ -219,6 +220,7 @@ type
     procedure enterAsTab(Sender: TObject; var Key: Char);
     procedure saveScore;
     procedure selectNextScheibe;
+    procedure createMissingTables;
 
     {Private-Deklarationen}
   public
@@ -501,7 +503,21 @@ begin
   finally
     aRowList.Free;
   end;
+  createMissingTables();
+end;
 
+procedure TMainWindow.createMissingTables;
+var
+  aQuery: TADOQuery;
+begin
+  aQuery := TADOQuery.create(nil);
+  try
+    aQuery.connection := DBConnection;
+    TARC_DAL_Setup.createMissingTables(aQuery);
+    aQuery.ExecSQL;
+  finally
+    aQuery.Free;
+  end;
 end;
 
 procedure TMainWindow.FormShow(Sender: TObject);
