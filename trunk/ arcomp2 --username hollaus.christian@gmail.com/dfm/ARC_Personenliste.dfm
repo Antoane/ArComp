@@ -163,6 +163,19 @@ object FormPersonenListe: TFormPersonenListe
         TabOrder = 1
         OnClick = Button2Click
       end
+      object buttonAlle: TButton
+        AlignWithMargins = True
+        Left = 323
+        Top = 4
+        Width = 75
+        Height = 21
+        Align = alLeft
+        Caption = 'Alle'
+        TabOrder = 2
+        OnClick = buttonAlleClick
+        ExplicitLeft = 362
+        ExplicitTop = 2
+      end
     end
   end
   object Panel4: TPanel
@@ -183,7 +196,7 @@ object FormPersonenListe: TFormPersonenListe
       ImageAlignment = iaCenter
       ImageIndex = 0
       Images = ImageList1
-      TabOrder = 0
+      TabOrder = 2
       OnClick = buttonOKClick
     end
     object buttonCancel: TButton
@@ -196,7 +209,7 @@ object FormPersonenListe: TFormPersonenListe
       ImageAlignment = iaCenter
       ImageIndex = 1
       Images = ImageList1
-      TabOrder = 1
+      TabOrder = 3
       OnClick = buttonCancelClick
     end
     object buttonHinzufuegen: TButton
@@ -207,7 +220,7 @@ object FormPersonenListe: TFormPersonenListe
       Height = 27
       Align = alLeft
       Caption = 'Neu'
-      TabOrder = 2
+      TabOrder = 0
       OnClick = buttonHinzufuegenClick
     end
     object ButtonLoeschen: TButton
@@ -218,7 +231,7 @@ object FormPersonenListe: TFormPersonenListe
       Height = 27
       Align = alLeft
       Caption = 'L'#246'schen'
-      TabOrder = 3
+      TabOrder = 1
       OnClick = ButtonLoeschenClick
     end
   end
@@ -262,7 +275,7 @@ object FormPersonenListe: TFormPersonenListe
     Left = 640
     Top = 152
     Bitmap = {
-      494C010102000800500010001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
+      494C010102000800540010001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
       0000000000003600000028000000400000001000000001002000000000000010
       0000000000000000000000000000000000000000000000000000000000000000
       000000000000FDFDFD00FAFAFA00FEFEFE000000000000000000000000000000

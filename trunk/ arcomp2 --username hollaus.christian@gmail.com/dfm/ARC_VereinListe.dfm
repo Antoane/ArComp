@@ -93,7 +93,7 @@ object FormVereinsListe: TFormVereinsListe
         TabOrder = 0
         OnKeyUp = editSearchKeyUp
       end
-      object Button2: TButton
+      object buttonSuchen: TButton
         AlignWithMargins = True
         Left = 242
         Top = 4
@@ -102,7 +102,20 @@ object FormVereinsListe: TFormVereinsListe
         Align = alLeft
         Caption = 'Suchen'
         TabOrder = 1
-        OnClick = Button2Click
+        OnClick = buttonSuchenClick
+      end
+      object buttonAlle: TButton
+        AlignWithMargins = True
+        Left = 323
+        Top = 4
+        Width = 75
+        Height = 21
+        Align = alLeft
+        Caption = 'Alle'
+        TabOrder = 2
+        OnClick = buttonAlleClick
+        ExplicitLeft = 362
+        ExplicitTop = 2
       end
     end
   end
@@ -124,7 +137,7 @@ object FormVereinsListe: TFormVereinsListe
       ImageAlignment = iaCenter
       ImageIndex = 0
       Images = ImageList1
-      TabOrder = 0
+      TabOrder = 2
     end
     object buttonCancel: TButton
       AlignWithMargins = True
@@ -136,7 +149,7 @@ object FormVereinsListe: TFormVereinsListe
       ImageAlignment = iaCenter
       ImageIndex = 1
       Images = ImageList1
-      TabOrder = 1
+      TabOrder = 3
       OnClick = buttonCancelClick
     end
     object ButtonLoeschen: TButton
@@ -147,7 +160,7 @@ object FormVereinsListe: TFormVereinsListe
       Height = 27
       Align = alLeft
       Caption = 'L'#246'schen'
-      TabOrder = 2
+      TabOrder = 1
       OnClick = ButtonLoeschenClick
     end
     object buttonHinzufuegen: TButton
@@ -158,7 +171,7 @@ object FormVereinsListe: TFormVereinsListe
       Height = 27
       Align = alLeft
       Caption = 'Hinzuf'#252'gen'
-      TabOrder = 3
+      TabOrder = 0
       OnClick = buttonHinzufuegenClick
     end
   end
@@ -188,7 +201,7 @@ object FormVereinsListe: TFormVereinsListe
     Left = 640
     Top = 152
     Bitmap = {
-      494C0101020008003C0010001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
+      494C010102000800400010001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
       0000000000003600000028000000400000001000000001002000000000000010
       0000000000000000000000000000000000000000000000000000000000000000
       000000000000FDFDFD00FAFAFA00FEFEFE000000000000000000000000000000
