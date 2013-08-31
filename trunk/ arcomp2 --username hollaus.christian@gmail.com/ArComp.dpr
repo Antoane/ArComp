@@ -22,7 +22,8 @@ uses
   ARC_Finalberechtigungen in 'dfm\ARC_Finalberechtigungen.pas' {FormFinalberechtigung},
   ARC_DAL_Finalberechtigungen in 'pas\DAL\ARC_DAL_Finalberechtigungen.pas',
   ARC_BL_Turnier in 'pas\BL\ARC_BL_Turnier.pas',
-  ARC_DAL_Turnier in 'pas\DAL\ARC_DAL_Turnier.pas';
+  ARC_DAL_Turnier in 'pas\DAL\ARC_DAL_Turnier.pas',
+  ARC_DAL_SETUP in 'pas\DAL\ARC_DAL_SETUP.pas';
 
 {$R *.res}
 
