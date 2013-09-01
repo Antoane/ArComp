@@ -58,6 +58,7 @@ type
     Label10: TLabel;
     comboVerein: TDBComboBox;
     checkInTurnierUebernehmen: TCheckBox;
+    Label11: TLabel;
     procedure FormShow(Sender: TObject);
     procedure buttonSaveClick(Sender: TObject);
     procedure buttonOKClick(Sender: TObject);

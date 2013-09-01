@@ -157,6 +157,7 @@ type
     buttonAlleTeilnehmer: TButton;
     buttonAlleNichtZugeteilt: TButton;
     buttonAlleZugeteilt: TButton;
+    buttonZumScore: TButton;
     procedure Beenden1Click(Sender: TObject);
     procedure Importieren1Click(Sender: TObject);
     procedure Bogenschtzen1Click(Sender: TObject);
@@ -194,6 +195,8 @@ type
     procedure buttonAlleTeilnehmerClick(Sender: TObject);
     procedure buttonAlleNichtZugeteiltClick(Sender: TObject);
     procedure buttonAlleZugeteiltClick(Sender: TObject);
+    procedure buttonZumScoreClick(Sender: TObject);
+    procedure gridZugeteiltDblClick(Sender: TObject);
 
   private
     FTU_ID     : string;
@@ -228,6 +231,7 @@ type
     procedure selectNextScheibe;
     procedure createMissingTables;
     procedure setStartTabs;
+    procedure goToScore;
 
     {Private-Deklarationen}
   public
@@ -323,6 +327,28 @@ begin
   searchPersonenZugeteilt(editSearchZugeteilt.Text);
 end;
 
+procedure TMainWindow.buttonZumScoreClick(Sender: TObject);
+begin
+  goToScore();
+end;
+
+procedure TMainWindow.goToScore;
+begin
+  if queryScheibeneinteilungZugeteilt.Active and (queryScheibeneinteilungZugeteilt.RecordCount > 0) then
+  begin
+    fillComboScores();
+
+    comboScoresScheibe.ItemIndex := comboScoresScheibe.Items.IndexOf
+      (queryScheibeneinteilungZugeteilt.FieldByName('SE_NUMMER').AsString);
+    comboScoresScheibenplatz.ItemIndex := comboScoresScheibenplatz.Items.IndexOf
+      (queryScheibeneinteilungZugeteilt.FieldByName('SE_PLATZ').AsString);
+
+    selectScores();
+
+    pageControl.ActivePage := sheetScores;
+  end;
+end;
+
 procedure TMainWindow.buttonZuteilenClick(Sender: TObject);
 var
   aPE_ID: string;
@@ -367,6 +393,11 @@ constructor TMainWindow.create(aOwner: TComponent);
 begin
   inherited create(aOwner);
   FBL_Turnier := TARC_BL_Turnier.create(self, DBConnection);
+end;
+
+procedure TMainWindow.gridZugeteiltDblClick(Sender: TObject);
+begin
+  goToScore();
 end;
 
 procedure TMainWindow.gridZugeteiltTitleClick(Column: TColumn);
