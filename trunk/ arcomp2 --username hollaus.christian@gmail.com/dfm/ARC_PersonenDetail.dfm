@@ -86,12 +86,27 @@ object FormPersonenDetail: TFormPersonenDetail
       Caption = 'Geschlecht'
     end
     object Label10: TLabel
-      Left = 23
-      Top = 155
+      Left = 24
+      Top = 154
       Width = 100
       Height = 13
       AutoSize = False
       Caption = 'Verein'
+    end
+    object Label11: TLabel
+      Left = 24
+      Top = 289
+      Width = 315
+      Height = 13
+      Caption = 'Achtung! '#196'nderungen wirken sich auch auf fr'#252'here Turniere aus! '
+      Color = clNone
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clRed
+      Font.Height = -11
+      Font.Name = 'Tahoma'
+      Font.Style = []
+      ParentColor = False
+      ParentFont = False
     end
     object editNachname: TDBEdit
       Left = 120
@@ -304,7 +319,7 @@ object FormPersonenDetail: TFormPersonenDetail
     Left = 640
     Top = 152
     Bitmap = {
-      494C010103000800580010001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
+      494C0101030008005C0010001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
       0000000000003600000028000000400000001000000001002000000000000010
       0000000000000000000000000000000000000000000000000000000000000000
       000000000000FDFDFD00FAFAFA00FEFEFE000000000000000000000000000000
@@ -462,7 +477,7 @@ object FormPersonenDetail: TFormPersonenDetail
       'WHERE PE_ID = :ID'
       ''
       '')
-    Left = 320
-    Top = 312
+    Left = 472
+    Top = 216
   end
 end
