@@ -52,13 +52,13 @@ type
     checkLizenz: TDBCheckBox;
     buttonOK: TButton;
     buttonCancel: TButton;
-    ImageList1: TImageList;
     buttonSave: TButton;
     updatePerson: TADOQuery;
     Label10: TLabel;
     comboVerein: TDBComboBox;
     checkInTurnierUebernehmen: TCheckBox;
     Label11: TLabel;
+    ImageList: TImageList;
     procedure FormShow(Sender: TObject);
     procedure buttonSaveClick(Sender: TObject);
     procedure buttonOKClick(Sender: TObject);

@@ -36,9 +36,9 @@ type
     Panel4: TPanel;
     dataSource: TDataSource;
     buttonCancel: TButton;
-    ImageList1: TImageList;
     queryUpdate: TADOQuery;
     DBGrid1: TDBGrid;
+    ImageList: TImageList;
     procedure FormShow(Sender: TObject);
     procedure buttonCancelClick(Sender: TObject);
     procedure DBGrid1CellClick(Column: TColumn);

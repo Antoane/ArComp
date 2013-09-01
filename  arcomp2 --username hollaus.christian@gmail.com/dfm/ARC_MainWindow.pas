@@ -153,7 +153,7 @@ type
     Label15: TLabel;
     checkScoresAutoForward: TCheckBox;
     buttonSaveScore: TButton;
-    ImageList1: TImageList;
+    ImageList: TImageList;
     Label16: TLabel;
     editRunde: TDBEdit;
     buttonAlleTeilnehmer: TButton;

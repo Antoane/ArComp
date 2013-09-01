@@ -46,7 +46,6 @@ type
     editTurnierleitung: TDBEdit;
     buttonOK: TButton;
     buttonCancel: TButton;
-    ImageList1: TImageList;
     buttonSave: TButton;
     updateTurnier: TADOQuery;
     Label10: TLabel;
@@ -55,6 +54,7 @@ type
     editAnzahlScheiben: TDBEdit;
     Label9: TLabel;
     editSchuetzenProScheibe: TDBEdit;
+    ImageList: TImageList;
     procedure FormShow(Sender: TObject);
     procedure buttonSaveClick(Sender: TObject);
     procedure buttonOKClick(Sender: TObject);
