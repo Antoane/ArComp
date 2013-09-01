@@ -23,6 +23,7 @@ uses
 
   //ARComp
   ARC_PersonenDetail,
+  ARC_Tools,
   ARC_DbGrid;
 
 type
@@ -36,7 +37,7 @@ type
     buttonCancel: TButton;
     ImageList1: TImageList;
     labelCaption: TLabel;
-    DBGrid1: ARC_DbGrid.TDBGrid;
+    gridVereine: TDBGrid;
     Panel5: TPanel;
     editSearch: TEdit;
     buttonSuchen: TButton;
@@ -45,11 +46,11 @@ type
     buttonAlle: TButton;
     procedure FormShow(Sender: TObject);
     procedure buttonCancelClick(Sender: TObject);
-    procedure DBGrid1TitleClick(Column: TColumn);
+    procedure gridVereineTitleClick(Column: TColumn);
     procedure buttonSuchenClick(Sender: TObject);
     procedure FormKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
     procedure FormKeyUp(Sender: TObject; var Key: Word; Shift: TShiftState);
-    procedure DBGrid1DblClick(Sender: TObject);
+    procedure gridVereineDblClick(Sender: TObject);
     procedure buttonHinzufuegenClick(Sender: TObject);
     procedure ButtonLoeschenClick(Sender: TObject);
     procedure editSearchKeyUp(Sender: TObject; var Key: Word; Shift: TShiftState);
@@ -94,6 +95,7 @@ begin
   querySelectVereine.Parameters.ParamByName('SEARCHSTRING').value := '%' + editSearch.Text + '%';
   querySelectVereine.Active                                       := True;
   querySelectVereine.Open;
+  TARC_Tools.autoSizeColumns(querySelectVereine, gridVereine);
 end;
 
 procedure TFormVereinsListe.buttonAlleClick(Sender: TObject);
@@ -210,7 +212,7 @@ begin
   //Params.Style := WS_CHILD or WS_DLGFRAME or WS_VISIBLE or DS_CONTROL;
 end;
 
-procedure TFormVereinsListe.DBGrid1DblClick(Sender: TObject);
+procedure TFormVereinsListe.gridVereineDblClick(Sender: TObject);
 var
   aDialog: TFormPersonenDetail;
 begin
@@ -225,20 +227,20 @@ begin
   end;
 end;
 
-procedure TFormVereinsListe.DBGrid1TitleClick(Column: TColumn);
+procedure TFormVereinsListe.gridVereineTitleClick(Column: TColumn);
 {$J+}
 const
   PreviousColumnIndex: integer = -1;
 {$J-}
 begin
-  if DBGrid1.DataSource.DataSet is TCustomADODataSet then
-    with TCustomADODataSet(DBGrid1.DataSource.DataSet) do
+  if gridVereine.DataSource.DataSet is TCustomADODataSet then
+    with TCustomADODataSet(gridVereine.DataSource.DataSet) do
     begin
       try
         if PreviousColumnIndex >= 0 then
         begin
-          DBGrid1.Columns[PreviousColumnIndex].title.Font.Style := DBGrid1.Columns[PreviousColumnIndex].title.Font.Style
-            - [fsBold];
+          gridVereine.Columns[PreviousColumnIndex].title.Font.Style := gridVereine.Columns[PreviousColumnIndex]
+            .title.Font.Style - [fsBold];
         end;
       except
       end;

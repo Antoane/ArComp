@@ -52,7 +52,7 @@ object FormVereinsListe: TFormVereinsListe
     Align = alClient
     Caption = 'Panel2'
     TabOrder = 1
-    object DBGrid1: TDBGrid
+    object gridVereine: TDBGrid
       Left = 1
       Top = 30
       Width = 874
@@ -66,8 +66,8 @@ object FormVereinsListe: TFormVereinsListe
       TitleFont.Height = -11
       TitleFont.Name = 'Tahoma'
       TitleFont.Style = []
-      OnDblClick = DBGrid1DblClick
-      OnTitleClick = DBGrid1TitleClick
+      OnDblClick = gridVereineDblClick
+      OnTitleClick = gridVereineTitleClick
       Columns = <
         item
           Expanded = False
@@ -114,8 +114,6 @@ object FormVereinsListe: TFormVereinsListe
         Caption = 'Alle'
         TabOrder = 2
         OnClick = buttonAlleClick
-        ExplicitLeft = 362
-        ExplicitTop = 2
       end
     end
   end
@@ -201,7 +199,7 @@ object FormVereinsListe: TFormVereinsListe
     Left = 640
     Top = 152
     Bitmap = {
-      494C010102000800400010001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
+      494C010102000800440010001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
       0000000000003600000028000000400000001000000001002000000000000010
       0000000000000000000000000000000000000000000000000000000000000000
       000000000000FDFDFD00FAFAFA00FEFEFE000000000000000000000000000000
