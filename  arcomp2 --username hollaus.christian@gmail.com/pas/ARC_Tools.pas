@@ -7,6 +7,7 @@ uses
   vcl.stdctrls,
   vcl.dbGrids,
   Graphics,
+  Generics.Collections,
   Data.Win.ADODB;
 
 type
@@ -19,6 +20,8 @@ type
       connection: TADOConnection); static;
     class procedure fillComboFromTable(combo: TComboBox; table, key, value: string; connection: TADOConnection); static;
     class procedure gridSort(grid: TDbGrid; Column: TColumn); static;
+    class procedure fixDBGridColumnsWidth(const DBGrid: TDbGrid); static;
+    class procedure autoSizeColumns(query: TADOQuery; grid: TDbGrid); static;
 
   published
 
@@ -121,6 +124,129 @@ begin
           Sort  := Column.Field.FieldName + ' DESC'
       else Sort := Column.Field.FieldName + ' ASC';
     end;
+end;
+
+class procedure TARC_Tools.fixDBGridColumnsWidth(const DBGrid: TDbGrid);
+var
+  i                   : integer;
+  TotWidth            : integer;
+  VarWidth            : integer;
+  ResizableColumnCount: integer;
+  AColumn             : TColumn;
+begin
+  //total width of all columns before resize
+  TotWidth := 0;
+  //how to divide any extra space in the grid
+  VarWidth := 0;
+  //how many columns need to be auto-resized
+  ResizableColumnCount := 0;
+
+  for i := 0 to (DBGrid.Columns.Count - 1) do
+  begin
+    TotWidth := TotWidth + DBGrid.Columns[i].Width;
+    if DBGrid.Columns[i].Field.Tag <> 0 then Inc(ResizableColumnCount);
+  end;
+
+  //add 1px for the column separator line
+  if dgColLines in DBGrid.Options then TotWidth := TotWidth + DBGrid.Columns.Count;
+
+  //add indicator column width
+  if dgIndicator in DBGrid.Options then TotWidth := TotWidth + IndicatorWidth;
+
+  //width vale "left"
+  VarWidth := DBGrid.ClientWidth - TotWidth;
+
+  //Equally distribute VarWidth
+  //to all auto-resizable columns
+  if ResizableColumnCount > 0 then VarWidth := VarWidth div ResizableColumnCount;
+
+  for i := 0 to -1 + DBGrid.Columns.Count do
+  begin
+    AColumn := DBGrid.Columns[i];
+    if AColumn.Field.Tag <> 0 then
+    begin
+      AColumn.Width                                           := AColumn.Width + VarWidth;
+      if AColumn.Width < AColumn.Field.Tag then AColumn.Width := AColumn.Field.Tag;
+    end;
+  end;
+end;
+
+class procedure TARC_Tools.autoSizeColumns(query: TADOQuery; grid: TDbGrid);
+var
+  maxData         : integer;
+  minwidth        : integer; //min. Breite
+  breitenKorrektur: integer; //Korr. der Spaltenbreite wg. besserer Optik
+  currentWidth    : integer;
+  currentRecord   : integer;
+  spaltenAnzahl   : integer;
+  i               : integer;
+  spaltenbreiten  : TDictionary<integer, integer>;
+begin
+  if not query.Active then
+  begin
+    exit
+  end
+  else
+  begin
+    currentRecord := query.RecNo;
+
+    maxData          := 300;
+    minwidth         := 20;
+    breitenKorrektur := 10;
+
+    spaltenbreiten := TDictionary<integer, integer>.Create();
+    try
+      query.DisableControls;
+      spaltenAnzahl := grid.Columns.Count;
+
+      //minimals Spaltenbreite eintragen
+      for i := 0 to spaltenAnzahl - 1 do
+      begin
+        spaltenbreiten.AddOrSetValue(i, minwidth);
+      end;
+
+      //Spaltenbreite bzgl. Überschriften anpassen
+      for i := 0 to spaltenAnzahl - 1 do
+      begin
+        currentWidth := grid.Canvas.TextWidth(grid.Columns.Items[i].title.Caption);
+        if currentWidth > spaltenbreiten.Items[i] then
+        begin
+          spaltenbreiten.AddOrSetValue(i, currentWidth);
+        end;
+      end;
+
+      //durch alle Zeilen iterieren
+      query.First;
+      while not query.Eof do
+      begin
+        //durch alle Spalten iterieren
+        for i := 0 to spaltenAnzahl - 1 do
+        begin
+          currentWidth := grid.Canvas.TextWidth(grid.Columns.grid.Fields[i].Text);
+          if currentWidth > spaltenbreiten.Items[i] then
+          begin
+            spaltenbreiten.AddOrSetValue(i, currentWidth);
+          end;
+        end;
+        query.Next;
+      end;
+
+      //Spaltenbreiten setzen
+      for i := 0 to spaltenAnzahl - 1 do
+      begin
+        try
+          grid.Columns[i].Width := spaltenbreiten.Items[i] + breitenKorrektur;
+        except
+          grid.Columns[i].Width := grid.Columns[i].Width;
+        end;
+      end;
+
+    finally
+      query.RecNo := currentRecord;
+      query.EnableControls;
+      spaltenbreiten.Free;
+    end;
+  end;
 end;
 
 end.

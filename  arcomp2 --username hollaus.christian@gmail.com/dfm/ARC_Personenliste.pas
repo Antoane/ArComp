@@ -110,6 +110,7 @@ begin
   querySelectPersonen.Parameters.ParamByName('SEARCHSTRING').value := '%' + editSearch.Text + '%';
   querySelectPersonen.Active                                       := True;
   querySelectPersonen.Open;
+  TARC_Tools.autoSizeColumns(querySelectPersonen,gridPersonen);
 end;
 
 procedure TFormPersonenListe.buttonAlleClick(Sender: TObject);

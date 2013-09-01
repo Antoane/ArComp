@@ -23,6 +23,7 @@ uses
 
   //ARComp
   ARC_TurnierDetail,
+  ARC_Tools,
   ARC_Types,
   ARC_Functions,
   ARC_DbGrid;
@@ -108,6 +109,7 @@ begin
   querySelectTurnier.Parameters.ParseSQL(querySelectTurnier.SQL.Text, True);
   querySelectTurnier.Parameters.ParamByName('SEARCHSTRING').value := '%' + editSearch.Text + '%';
   querySelectTurnier.Open;
+  TARC_Tools.autoSizeColumns(querySelectTurnier, gridTurniere);
 end;
 
 procedure TFormTurnierListe.buttonAlleClick(Sender: TObject);

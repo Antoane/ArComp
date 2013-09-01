@@ -928,6 +928,7 @@ begin
     querySelectPersonen.Parameters.ParamByName('SEARCHSTRING').value := '%' + searchString + '%';
     querySelectPersonen.Parameters.ParamByName('ID').value           := FTU_ID;
     querySelectPersonen.Open;
+    TARC_Tools.autoSizeColumns(querySelectPersonen, gridTeilnehmer);
   end;
 end;
 
@@ -945,6 +946,7 @@ begin
     queryScheibeneinteilungNichtZugeteilt.Parameters.ParamByName('SEARCHSTRING').value := '%' + searchString + '%';
     queryScheibeneinteilungNichtZugeteilt.Parameters.ParamByName('ID').value           := FTU_ID;
     queryScheibeneinteilungNichtZugeteilt.Open;
+    TARC_Tools.autoSizeColumns(queryScheibeneinteilungNichtZugeteilt, gridNichtZugeteilt);
   end;
 end;
 
@@ -962,6 +964,7 @@ begin
     queryScheibeneinteilungZugeteilt.Parameters.ParamByName('SEARCHSTRING').value := '%' + searchString + '%';
     queryScheibeneinteilungZugeteilt.Parameters.ParamByName('ID').value           := FTU_ID;
     queryScheibeneinteilungZugeteilt.Open;
+    TARC_Tools.autoSizeColumns(queryScheibeneinteilungZugeteilt, gridZugeteilt);
   end;
 end;
 

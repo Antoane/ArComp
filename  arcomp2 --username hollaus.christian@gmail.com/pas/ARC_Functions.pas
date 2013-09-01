@@ -4,6 +4,7 @@ interface
 
 uses
   SysUtils,
+  Vcl.DBGrids,
 
   //ArComp
   ARC_Types;
