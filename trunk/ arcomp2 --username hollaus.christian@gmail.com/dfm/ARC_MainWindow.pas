@@ -19,6 +19,7 @@ uses
 
   //ArComp
   ARC_DAL_Tools,
+  ARC_Types,
   ARC_Tools,
   ARC_DAL_SETUP,
   ARC_Functions,
@@ -27,6 +28,7 @@ uses
   ARC_ImportPersonen,
   ARC_VereinListe,
   ARC_Turnierliste,
+  ARC_TurnierDetail,
   ARC_Distanzen,
   ARC_BL_Turnier,
   ARC_Finalberechtigungen,
@@ -42,15 +44,15 @@ type
   TMainWindow = class(TForm)
     MainMenu1: TMainMenu;
     test1: TMenuItem;
-    Bearbeiten1: TMenuItem;
+    menuNeuesTurnier: TMenuItem;
     Bearbeiten2: TMenuItem;
     Optionen1: TMenuItem;
     Drucken1: TMenuItem;
-    ffnen1: TMenuItem;
+    menuOeffnen: TMenuItem;
     Speichern1: TMenuItem;
     Importieren1: TMenuItem;
     Beenden1: TMenuItem;
-    Bogenschtzen1: TMenuItem;
+    menuSchuetzenBearbeiten: TMenuItem;
     DBConnection: TADOConnection;
     Vereine1: TMenuItem;
     panelMain: TPanel;
@@ -158,11 +160,12 @@ type
     buttonAlleNichtZugeteilt: TButton;
     buttonAlleZugeteilt: TButton;
     buttonZumScore: TButton;
+    urniere1: TMenuItem;
     procedure Beenden1Click(Sender: TObject);
     procedure Importieren1Click(Sender: TObject);
-    procedure Bogenschtzen1Click(Sender: TObject);
+    procedure menuSchuetzenBearbeitenClick(Sender: TObject);
     procedure Vereine1Click(Sender: TObject);
-    procedure ffnen1Click(Sender: TObject);
+    procedure menuOeffnenClick(Sender: TObject);
     procedure Button3Click(Sender: TObject);
     procedure ButtonLoeschenClick(Sender: TObject);
     procedure buttonHinzufuegenClick(Sender: TObject);
@@ -197,6 +200,8 @@ type
     procedure buttonAlleZugeteiltClick(Sender: TObject);
     procedure buttonZumScoreClick(Sender: TObject);
     procedure gridZugeteiltDblClick(Sender: TObject);
+    procedure urniere1Click(Sender: TObject);
+    procedure menuNeuesTurnierClick(Sender: TObject);
 
   private
     FTU_ID     : string;
@@ -232,6 +237,7 @@ type
     procedure createMissingTables;
     procedure setStartTabs;
     procedure goToScore;
+    procedure openTurnierDetail(TU_ID: string);
 
     {Private-Deklarationen}
   public
@@ -245,12 +251,51 @@ implementation
 
 {$R *.dfm}
 
+procedure TMainWindow.menuNeuesTurnierClick(Sender: TObject);
+var
+  aQuery: TADOQuery;
+  aID   : string;
+begin
+  aQuery := TADOQuery.create(nil);
+  try
+    aID               := newGUID();
+    aQuery.connection := DBConnection;
+    with aQuery.SQL do
+    begin
+      Clear;
+      add('INSERT INTO TURNIER(');
+      add('  TU_ID');
+      add(')');
+      add('VALUES(');
+      add('  ' + QuotedStr(aID));
+      add(')');
+    end;
+    aQuery.ExecSQL;
+  finally
+    aQuery.Free;
+  end;
+  openTurnierDetail(aID);
+end;
+
+procedure TMainWindow.openTurnierDetail(TU_ID: string);
+var
+  aDialog: TFormTurnierDetail;
+begin
+  aDialog := TFormTurnierDetail.create(self, DBConnection, TU_ID);
+  if (aDialog.ShowModal = mrOk) then
+  begin
+    FTU_ID := TU_ID;
+    loadData();
+    disableComponents();
+  end;
+end;
+
 procedure TMainWindow.Beenden1Click(Sender: TObject);
 begin
   self.Close;
 end;
 
-procedure TMainWindow.Bogenschtzen1Click(Sender: TObject);
+procedure TMainWindow.menuSchuetzenBearbeitenClick(Sender: TObject);
 begin
   openPersonenliste();
 end;
@@ -474,6 +519,7 @@ begin
   aDialog := Tformpersonenliste.create(nil);
   try
     aDialog.setConnection(DBConnection);
+    aDialog.DataState := dsSelectMode;
     if (aDialog.ShowModal = mrOk) then
     begin
       for id in aDialog.selectedIDs do
@@ -528,7 +574,7 @@ begin
   inherited destroy;
 end;
 
-procedure TMainWindow.ffnen1Click(Sender: TObject);
+procedure TMainWindow.menuOeffnenClick(Sender: TObject);
 begin
   openTurnierliste();
 end;
@@ -715,6 +761,7 @@ begin
   try
     //aDialog.Parent := self;
     aDialog.setConnection(DBConnection);
+    aDialog.DataState := dsSelectMode;
     if (aDialog.ShowModal = mrOk) then
     begin
       FTU_ID := aDialog.TU_ID;
@@ -732,11 +779,11 @@ var
 begin
   aDialog := Tformpersonenliste.create(nil);
   try
-    //aDialog.Parent := self;
     aDialog.setConnection(DBConnection);
+    aDialog.DataState := dsEditMode;
     aDialog.ShowModal;
   finally
-    //aDialog.Free;
+    aDialog.Free;
   end;
 end;
 
@@ -869,6 +916,7 @@ end;
 
 procedure TMainWindow.searchPersonen(searchString: string);
 begin
+
   begin
     querySelectPersonen.Close;
     if querySelectPersonen.Active and (querySelectPersonen.RecordCount > 0) then
@@ -885,6 +933,7 @@ end;
 
 procedure TMainWindow.searchPersonenNichtZugeteilt(searchString: string);
 begin
+
   begin
     queryScheibeneinteilungNichtZugeteilt.Close;
     if queryScheibeneinteilungNichtZugeteilt.Active and (queryScheibeneinteilungNichtZugeteilt.RecordCount > 0) then
@@ -901,6 +950,7 @@ end;
 
 procedure TMainWindow.searchPersonenZugeteilt(searchString: string);
 begin
+
   begin
     queryScheibeneinteilungZugeteilt.Close;
     if queryScheibeneinteilungZugeteilt.Active and (queryScheibeneinteilungZugeteilt.RecordCount > 0) then
@@ -945,6 +995,21 @@ begin
       edit9er.Text   := queryScores.FieldByName('SC_NEUNER').AsString;
       editX.Text     := queryScores.FieldByName('SC_X').AsString;
     end;
+  end;
+end;
+
+procedure TMainWindow.urniere1Click(Sender: TObject);
+var
+  aDialog: TFormTurnierListe;
+begin
+  aDialog := TFormTurnierListe.create(nil);
+  try
+    //aDialog.Parent := self;
+    aDialog.setConnection(DBConnection);
+    aDialog.DataState := dsEditMode;
+    aDialog.ShowModal;
+  finally
+    aDialog.Free;
   end;
 end;
 

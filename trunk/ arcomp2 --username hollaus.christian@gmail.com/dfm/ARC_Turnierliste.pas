@@ -23,6 +23,7 @@ uses
 
   //ARComp
   ARC_TurnierDetail,
+  ARC_Types,
   ARC_Functions,
   ARC_DbGrid;
 
@@ -37,7 +38,7 @@ type
     buttonCancel: TButton;
     ImageList1: TImageList;
     labelCaption: TLabel;
-    DBGrid1: ARC_DbGrid.TDBGrid;
+    gridTurniere: TDBGrid;
     Panel5: TPanel;
     editSearch: TEdit;
     Button2: TButton;
@@ -46,11 +47,11 @@ type
     buttonAlle: TButton;
     procedure FormShow(Sender: TObject);
     procedure buttonCancelClick(Sender: TObject);
-    procedure DBGrid1TitleClick(Column: TColumn);
+    procedure gridTurniereTitleClick(Column: TColumn);
     procedure Button2Click(Sender: TObject);
     procedure FormKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
     procedure FormKeyUp(Sender: TObject; var Key: Word; Shift: TShiftState);
-    procedure DBGrid1DblClick(Sender: TObject);
+    procedure gridTurniereDblClick(Sender: TObject);
     procedure editSearchKeyUp(Sender: TObject; var Key: Word; Shift: TShiftState);
     procedure ButtonLoeschenClick(Sender: TObject);
     procedure buttonHinzufuegenClick(Sender: TObject);
@@ -58,7 +59,8 @@ type
     procedure buttonAlleClick(Sender: TObject);
 
   private
-    FTU_ID: string;
+    FTU_ID    : string;
+    FDataState: TDataState;
     procedure CreateParams(var Params: TCreateParams);
     procedure searchData(searchString: string);
     procedure deleteTurnier;
@@ -76,6 +78,10 @@ type
     property TU_ID: string
       read   FTU_ID
       write  FTU_ID;
+
+    property DataState: TDataState
+      read   FDataState
+      write  FDataState;
   end;
 
 var
@@ -212,6 +218,7 @@ end;
 
 procedure TFormTurnierListe.FormShow(Sender: TObject);
 begin
+  buttonOK.Visible := DataState = dsSelectMode;
   searchData(editSearch.Text);
 end;
 
@@ -221,11 +228,20 @@ begin
   //Params.Style := WS_CHILD or WS_DLGFRAME or WS_VISIBLE or DS_CONTROL;
 end;
 
-procedure TFormTurnierListe.DBGrid1DblClick(Sender: TObject);
+procedure TFormTurnierListe.gridTurniereDblClick(Sender: TObject);
 begin
   if querySelectTurnier.Active and (querySelectTurnier.RecordCount > 0) then
   begin
-    openTurnierDetail(querySelectTurnier.FieldByName('TU_ID').AsString);
+    if DataState = dsSelectMode then
+    begin
+      FTU_ID      := querySelectTurnier.FieldByName('TU_ID').AsString;
+      ModalResult := mrOk;
+      self.CloseModal;
+    end
+    else if DataState = dsEditMode then
+    begin
+      openTurnierDetail(querySelectTurnier.FieldByName('TU_ID').AsString);
+    end;
   end;
 end;
 
@@ -240,20 +256,20 @@ begin
   end;
 end;
 
-procedure TFormTurnierListe.DBGrid1TitleClick(Column: TColumn);
+procedure TFormTurnierListe.gridTurniereTitleClick(Column: TColumn);
 {$J+}
 const
   PreviousColumnIndex: integer = -1;
 {$J-}
 begin
-  if DBGrid1.DataSource.DataSet is TCustomADODataSet then
-    with TCustomADODataSet(DBGrid1.DataSource.DataSet) do
+  if gridTurniere.DataSource.DataSet is TCustomADODataSet then
+    with TCustomADODataSet(gridTurniere.DataSource.DataSet) do
     begin
       try
         if PreviousColumnIndex >= 0 then
         begin
-          DBGrid1.Columns[PreviousColumnIndex].title.Font.Style := DBGrid1.Columns[PreviousColumnIndex].title.Font.Style
-            - [fsBold];
+          gridTurniere.Columns[PreviousColumnIndex].title.Font.Style := gridTurniere.Columns[PreviousColumnIndex]
+            .title.Font.Style - [fsBold];
         end;
       except
       end;

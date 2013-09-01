@@ -88,6 +88,7 @@ procedure TFormTurnierDetail.buttonOKClick(Sender: TObject);
 begin
   if saveData() then
   begin
+
     ModalResult := mrOk;
     self.CloseModal;
   end;
