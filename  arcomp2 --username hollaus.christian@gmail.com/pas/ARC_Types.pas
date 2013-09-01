@@ -3,6 +3,9 @@ unit ARC_Types;
 interface
 
 type
+  TDataState = (dsSelectMode, dsEditMode);
+
+type
   TExplodeArray = array of string;
 
 type

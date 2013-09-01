@@ -25,6 +25,7 @@ uses
   ARC_PersonenDetail,
   ARC_Functions,
   ARC_Tools,
+  ARC_Types,
   ARC_DbGrid;
 
 type
@@ -60,6 +61,7 @@ type
 
   private
     FselectedIDs: TStringList;
+    FDataState  : TDataState;
     procedure CreateParams(var Params: TCreateParams);
     procedure searchData(searchString: string);
     procedure deletePerson;
@@ -77,6 +79,10 @@ type
     property selectedIDs: TStringList
       read   FselectedIDs
       write  FselectedIDs;
+
+    property DataState: TDataState
+      read   FDataState
+      write  FDataState;
   end;
 
 var
@@ -224,6 +230,7 @@ end;
 
 procedure TFormPersonenListe.FormShow(Sender: TObject);
 begin
+  buttonOK.Visible := DataState = dsSelectMode;
   searchData(editSearch.Text);
 end;
 
@@ -237,7 +244,16 @@ procedure TFormPersonenListe.gridPersonenDblClick(Sender: TObject);
 begin
   if querySelectPersonen.Active and (querySelectPersonen.RecordCount > 0) then
   begin
-    openPersonDetail(querySelectPersonen.FieldByName('PE_ID').AsString);
+    if DataState = dsSelectMode then
+    begin
+      setProps();
+      ModalResult := mrOk;
+      self.CloseModal;
+    end
+    else if DataState = dsEditMode then
+    begin
+      openPersonDetail(querySelectPersonen.FieldByName('PE_ID').AsString);
+    end;
   end;
 end;
 

@@ -50,7 +50,7 @@ object FormTurnierListe: TFormTurnierListe
     Align = alClient
     Caption = 'Panel2'
     TabOrder = 1
-    object DBGrid1: TDBGrid
+    object gridTurniere: TDBGrid
       Left = 1
       Top = 30
       Width = 874
@@ -64,8 +64,8 @@ object FormTurnierListe: TFormTurnierListe
       TitleFont.Height = -11
       TitleFont.Name = 'Tahoma'
       TitleFont.Style = []
-      OnDblClick = DBGrid1DblClick
-      OnTitleClick = DBGrid1TitleClick
+      OnDblClick = gridTurniereDblClick
+      OnTitleClick = gridTurniereTitleClick
       Columns = <
         item
           Expanded = False
@@ -148,8 +148,6 @@ object FormTurnierListe: TFormTurnierListe
         Caption = 'Alle'
         TabOrder = 2
         OnClick = buttonAlleClick
-        ExplicitLeft = 362
-        ExplicitTop = 2
       end
     end
   end
@@ -243,7 +241,7 @@ object FormTurnierListe: TFormTurnierListe
     Left = 640
     Top = 152
     Bitmap = {
-      494C010102000800500010001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
+      494C010102000800540010001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
       0000000000003600000028000000400000001000000001002000000000000010
       0000000000000000000000000000000000000000000000000000000000000000
       000000000000FDFDFD00FAFAFA00FEFEFE000000000000000000000000000000
