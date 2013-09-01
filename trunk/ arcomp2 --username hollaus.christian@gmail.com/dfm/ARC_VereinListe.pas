@@ -35,7 +35,6 @@ type
     DataSource1: TDataSource;
     buttonOK: TButton;
     buttonCancel: TButton;
-    ImageList1: TImageList;
     labelCaption: TLabel;
     gridVereine: TDBGrid;
     Panel5: TPanel;
@@ -44,6 +43,7 @@ type
     ButtonLoeschen: TButton;
     buttonHinzufuegen: TButton;
     buttonAlle: TButton;
+    ImageList: TImageList;
     procedure FormShow(Sender: TObject);
     procedure buttonCancelClick(Sender: TObject);
     procedure gridVereineTitleClick(Column: TColumn);
