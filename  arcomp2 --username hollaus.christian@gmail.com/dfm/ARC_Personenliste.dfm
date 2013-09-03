@@ -65,6 +65,7 @@ object FormPersonenListe: TFormPersonenListe
       TitleFont.Height = -11
       TitleFont.Name = 'Tahoma'
       TitleFont.Style = []
+      OnDrawColumnCell = gridPersonenDrawColumnCell
       OnDblClick = gridPersonenDblClick
       OnTitleClick = gridPersonenTitleClick
       Columns = <
@@ -279,7 +280,7 @@ object FormPersonenListe: TFormPersonenListe
     Left = 480
     Top = 176
     Bitmap = {
-      494C010109004801BC0010001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
+      494C010109004801C40010001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
       0000000000003600000028000000400000003000000001002000000000000030
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
