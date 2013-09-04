@@ -5,6 +5,7 @@ interface
 uses
   SysUtils,
   Vcl.DBGrids,
+  graphics,
 
   //ArComp
   ARC_Types;
@@ -14,6 +15,8 @@ function strToBool(const text: string): boolean;
 function boolToInt(val: boolean): Integer;
 function intToBool(val: Integer): boolean;
 function newGUID: string;
+function RGB2TColor(const R, G, B: Byte): Integer;
+procedure TColor2RGB(const Color: TColor; var R, G, B: Byte);
 
 implementation
 
@@ -75,6 +78,20 @@ begin
   Result := GUIDToString(newGUID);
   Result := StringReplace(Result, '{', '', [rfReplaceAll]);
   Result := StringReplace(Result, '}', '', [rfReplaceAll]);
+end;
+
+function RGB2TColor(const R, G, B: Byte): Integer;
+begin
+  //convert hexa-decimal values to RGB
+  Result := R + G shl 8 + B shl 16;
+end;
+
+procedure TColor2RGB(const Color: TColor; var R, G, B: Byte);
+begin
+  //convert hexa-decimal values to RGB
+  R := Color and $FF;
+  G := (Color shr 8) and $FF;
+  B := (Color shr 16) and $FF;
 end;
 
 end.

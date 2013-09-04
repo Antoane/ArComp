@@ -262,30 +262,8 @@ end;
 
 procedure TFormPersonenListe.gridPersonenDrawColumnCell(Sender: TObject; const Rect: TRect; DataCol: Integer;
   Column: TColumn; State: TGridDrawState);
-const
-  //the integer value will return according to the boolean
-  //value sent into this array
-  CtrlState: array [boolean] of Integer = (DFCS_BUTTONCHECK, DFCS_BUTTONCHECK or DFCS_CHECKED);
 begin
-  //make sure we are adding this for int fields only
-  if Column.Field.DataType = ftInteger then
-  begin
-    //Make sure selected cells are highlighted
-    if (gdSelected in State) then
-    begin
-      gridPersonen.Canvas.Brush.Color := clWhite;
-    end
-    else
-    begin
-      gridPersonen.Canvas.Brush.Color := gridPersonen.Color;
-    end;
-    //gridPersonen.Canvas.Brush.Color := clWhite;
-    //todo Background color auf weiﬂ setzen
-    gridPersonen.Canvas.FillRect(Rect);
-    DrawFrameControl(gridPersonen.Canvas.Handle, Rect, DFC_BUTTON, CtrlState[intToBool(Column.Field.AsInteger)]);
-    //Todo value ausblenden??
-  end;
-
+  TARC_Tools.DrawColumnCell(Sender, Rect, DataCol, Column, State, gridPersonen);
 end;
 
 procedure TFormPersonenListe.openPersonDetail(PE_ID: string);
