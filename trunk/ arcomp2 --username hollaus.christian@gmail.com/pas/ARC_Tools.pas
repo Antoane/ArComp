@@ -6,9 +6,17 @@ uses
   vcl.dbctrls,
   vcl.stdctrls,
   vcl.dbGrids,
+  vcl.grids,
   Graphics,
+  classes,
   Generics.Collections,
-  Data.Win.ADODB;
+  Data.Win.ADODB,
+  system.types,
+  winapi.windows,
+  Data.db,
+
+  //ArComp
+  ARC_Functions;
 
 type
   TARC_Tools = class(TObject)
@@ -22,6 +30,8 @@ type
     class procedure gridSort(grid: TDbGrid; Column: TColumn); static;
     class procedure fixDBGridColumnsWidth(const DBGrid: TDbGrid); static;
     class procedure autoSizeColumns(query: TADOQuery; grid: TDbGrid); static;
+    class procedure DrawColumnCell(Sender: TObject; const Rect: TRect; DataCol: Integer; Column: TColumn;
+      State: TGridDrawState; grid: TDbGrid); static;
 
   published
 
@@ -102,7 +112,7 @@ end;
 class procedure TARC_Tools.gridSort(grid: TDbGrid; Column: TColumn);
 {$J+}
 const
-  PreviousColumnIndex: integer = -1;
+  PreviousColumnIndex: Integer = -1;
 {$J-}
 begin
   if grid.DataSource.DataSet is TCustomADODataSet then
@@ -128,10 +138,10 @@ end;
 
 class procedure TARC_Tools.fixDBGridColumnsWidth(const DBGrid: TDbGrid);
 var
-  i                   : integer;
-  TotWidth            : integer;
-  VarWidth            : integer;
-  ResizableColumnCount: integer;
+  i                   : Integer;
+  TotWidth            : Integer;
+  VarWidth            : Integer;
+  ResizableColumnCount: Integer;
   AColumn             : TColumn;
 begin
   //total width of all columns before resize
@@ -173,14 +183,14 @@ end;
 
 class procedure TARC_Tools.autoSizeColumns(query: TADOQuery; grid: TDbGrid);
 var
-  maxData         : integer;
-  minwidth        : integer; //min. Breite
-  breitenKorrektur: integer; //Korr. der Spaltenbreite wg. besserer Optik
-  currentWidth    : integer;
-  currentRecord   : integer;
-  spaltenAnzahl   : integer;
-  i               : integer;
-  spaltenbreiten  : TDictionary<integer, integer>;
+  maxData         : Integer;
+  minwidth        : Integer; //min. Breite
+  breitenKorrektur: Integer; //Korr. der Spaltenbreite wg. besserer Optik
+  currentWidth    : Integer;
+  currentRecord   : Integer;
+  spaltenAnzahl   : Integer;
+  i               : Integer;
+  spaltenbreiten  : TDictionary<Integer, Integer>;
 begin
   if not query.Active then
   begin
@@ -194,7 +204,7 @@ begin
     minwidth         := 20;
     breitenKorrektur := 10;
 
-    spaltenbreiten := TDictionary<integer, integer>.Create();
+    spaltenbreiten := TDictionary<Integer, Integer>.Create();
     try
       query.DisableControls;
       spaltenAnzahl := grid.Columns.Count;
@@ -246,6 +256,33 @@ begin
       query.EnableControls;
       spaltenbreiten.Free;
     end;
+  end;
+end;
+
+class procedure TARC_Tools.DrawColumnCell(Sender: TObject; const Rect: TRect; DataCol: Integer; Column: TColumn;
+  State: TGridDrawState; grid: TDbGrid);
+const
+  CtrlState: array [boolean] of Integer = (DFCS_BUTTONCHECK, DFCS_BUTTONCHECK or DFCS_CHECKED);
+begin
+  //make sure we are adding this for int fields only
+  if Column.Field.DataType = ftInteger then
+  begin
+    //Make sure selected cells are highlighted
+    if (gdSelected in State) then
+    begin
+      grid.Canvas.Brush.Color := RGB2TColor(222, 239, 255);
+
+      grid.Canvas.Pen.Color := RGB2TColor(127, 181, 236);
+      grid.Canvas.Polyline([point(Rect.left, Rect.Top - 1), point(Rect.Right, Rect.Top - 1)]);
+      grid.Canvas.Polyline([point(Rect.left, Rect.Bottom + 1), point(Rect.Right, Rect.Bottom + 1)]);
+    end
+    else
+    begin
+      grid.Canvas.Brush.Color := grid.Color;
+    end;
+
+    grid.Canvas.FillRect(Rect);
+    DrawFrameControl(grid.Canvas.Handle, Rect, DFC_BUTTON, CtrlState[intToBool(Column.Field.AsInteger)]);
   end;
 end;
 
