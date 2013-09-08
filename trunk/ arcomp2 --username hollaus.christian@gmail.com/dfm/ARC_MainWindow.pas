@@ -19,6 +19,7 @@ uses
 
   //ArComp
   ARC_DAL_Tools,
+  ARC_ParameterRangliste,
   ARC_Types,
   ARC_Tools,
   ARC_DAL_SETUP,
@@ -38,7 +39,11 @@ uses
   Vcl.StdCtrls,
   Vcl.Mask,
   Vcl.DBCtrls,
-  Vcl.ImgList;
+  Vcl.ImgList,
+  frxDesgn,
+  frxClass,
+  frxVariables,
+  frxADOComponents;
 
 type
   TMainWindow = class(TForm)
@@ -47,7 +52,7 @@ type
     menuNeuesTurnier: TMenuItem;
     Bearbeiten2: TMenuItem;
     Optionen1: TMenuItem;
-    Drucken1: TMenuItem;
+    menuItemDrucken: TMenuItem;
     menuOeffnen: TMenuItem;
     Speichern1: TMenuItem;
     Importieren1: TMenuItem;
@@ -161,6 +166,11 @@ type
     buttonAlleZugeteilt: TButton;
     buttonZumScore: TButton;
     urniere1: TMenuItem;
+    menuItemReportDesigner: TMenuItem;
+    frxDesigner: TfrxDesigner;
+    frxReport: TfrxReport;
+    frxADOComponents: TfrxADOComponents;
+    menuItemRangliste: TMenuItem;
     procedure Beenden1Click(Sender: TObject);
     procedure Importieren1Click(Sender: TObject);
     procedure menuSchuetzenBearbeitenClick(Sender: TObject);
@@ -202,6 +212,8 @@ type
     procedure gridZugeteiltDblClick(Sender: TObject);
     procedure urniere1Click(Sender: TObject);
     procedure menuNeuesTurnierClick(Sender: TObject);
+    procedure menuItemReportDesignerClick(Sender: TObject);
+    procedure menuItemRanglisteClick(Sender: TObject);
 
   private
     FTU_ID     : string;
@@ -251,6 +263,39 @@ implementation
 
 {$R *.dfm}
 
+procedure TMainWindow.menuItemRanglisteClick(Sender: TObject);
+var
+  aDialog: TFormParameterRangliste;
+  aQuery : TADOQuery;
+begin
+  aDialog := TFormParameterRangliste.create(nil);
+  aQuery  := TADOQuery.create(nil);
+  try
+    aDialog.setConnection(DBConnection);
+    aQuery.Connection := DBConnection;
+    aDialog.Rangliste := aQuery;
+    if aDialog.ShowModal = mrOK then
+    begin
+      frxReport.LoadFromFile('D:\Privat\ArComp\Win32\Release\Reports\Rangliste.fr3');
+      frxReport.Variables[' ' + 'ArComp']         := Null;
+      frxReport.Variables['TU_ID']                := quotedStr(FTU_ID);
+      frxReport.Variables['FILTER_BOGENKATEGORIE'] := '1';//aDialog.Bogenkategorien;
+      frxReport.Variables['PARAM_BOGENKATEGORIE'] := quotedStr('-');//aDialog.Bogenkategorien;
+      frxReport.DesignReport();
+      //frxReport.ShowReport(true);
+    end;
+  finally
+    aDialog.Free;
+    aQuery.Free();
+  end;
+end;
+
+procedure TMainWindow.menuItemReportDesignerClick(Sender: TObject);
+begin
+  frxReport.Script.Variables['TU_ID'] := 'BLA';
+  frxReport.DesignReport();
+end;
+
 procedure TMainWindow.menuNeuesTurnierClick(Sender: TObject);
 var
   aQuery: TADOQuery;
@@ -259,7 +304,7 @@ begin
   aQuery := TADOQuery.create(nil);
   try
     aID               := newGUID();
-    aQuery.connection := DBConnection;
+    aQuery.Connection := DBConnection;
     with aQuery.SQL do
     begin
       Clear;
@@ -267,7 +312,7 @@ begin
       add('  TU_ID');
       add(')');
       add('VALUES(');
-      add('  ' + QuotedStr(aID));
+      add('  ' + quotedStr(aID));
       add(')');
     end;
     aQuery.ExecSQL;
@@ -282,7 +327,7 @@ var
   aDialog: TFormTurnierDetail;
 begin
   aDialog := TFormTurnierDetail.create(self, DBConnection, TU_ID);
-  if (aDialog.ShowModal = mrOk) then
+  if (aDialog.ShowModal = mrOK) then
   begin
     FTU_ID := TU_ID;
     loadData();
@@ -313,7 +358,7 @@ begin
   aQuery := TADOQuery.create(nil);
   try
     aID               := newGUID();
-    aQuery.connection := querySelectPersonen.connection;
+    aQuery.Connection := querySelectPersonen.Connection;
     with aQuery.SQL do
     begin
       Clear;
@@ -321,7 +366,7 @@ begin
       add('  PE_ID');
       add(')');
       add('VALUES(');
-      add('  ' + QuotedStr(aID));
+      add('  ' + quotedStr(aID));
       add(')');
     end;
     aQuery.ExecSQL;
@@ -464,12 +509,12 @@ procedure TMainWindow.openPersonenDetail(PE_ID: string; neuePerson: boolean = fa
 var
   aDialog: TFormPersonenDetail;
 begin
-  aDialog := TFormPersonenDetail.create(self, querySelectPersonen.connection, PE_ID);
+  aDialog := TFormPersonenDetail.create(self, querySelectPersonen.Connection, PE_ID);
   if neuePerson then
   begin
     aDialog.inTurnierUebernehmen := true;
   end;
-  if (aDialog.ShowModal = mrOk) then
+  if (aDialog.ShowModal = mrOK) then
   begin
     if aDialog.inTurnierUebernehmen then
     begin
@@ -520,7 +565,7 @@ begin
   try
     aDialog.setConnection(DBConnection);
     aDialog.DataState := dsSelectMode;
-    if (aDialog.ShowModal = mrOk) then
+    if (aDialog.ShowModal = mrOK) then
     begin
       for id in aDialog.selectedIDs do
       begin
@@ -551,13 +596,13 @@ begin
       aQuery := TADOQuery.create(nil);
       aID    := querySelectPersonen.FieldByName('PE_ID').AsString;
       try
-        aQuery.connection := DBConnection;
+        aQuery.Connection := DBConnection;
         with aQuery.SQL do
         begin
           Clear;
           add('DELETE FROM TURNIER_ZUTEILUNG');
-          add('WHERE PE_ID = ' + QuotedStr(aID));
-          add('  AND TU_ID = ' + QuotedStr(FTU_ID));
+          add('WHERE PE_ID = ' + quotedStr(aID));
+          add('  AND TU_ID = ' + quotedStr(FTU_ID));
         end;
         aQuery.ExecSQL;
       finally
@@ -611,7 +656,7 @@ var
 begin
   aQuery := TADOQuery.create(nil);
   try
-    aQuery.connection := DBConnection;
+    aQuery.Connection := DBConnection;
     TARC_DAL_Setup.createMissingTables(aQuery);
     aQuery.ExecSQL;
   finally
@@ -654,6 +699,7 @@ end;
 procedure TMainWindow.disableComponents;
 begin
   pageControl.visible      := queryTurnier.Active and (queryTurnier.RecordCount > 0);
+  menuItemDrucken.visible  := queryTurnier.Active and (queryTurnier.RecordCount > 0);
   panelTurnierinfo.visible := queryTurnier.Active and (queryTurnier.RecordCount > 0);
   logoArcomp.visible       := not pageControl.visible;
 end;
@@ -762,7 +808,7 @@ begin
     //aDialog.Parent := self;
     aDialog.setConnection(DBConnection);
     aDialog.DataState := dsSelectMode;
-    if (aDialog.ShowModal = mrOk) then
+    if (aDialog.ShowModal = mrOK) then
     begin
       FTU_ID := aDialog.TU_ID;
       loadData();
@@ -885,7 +931,7 @@ procedure TMainWindow.loadTurnierDaten;
 begin
   queryTurnier.Close;
   queryTurnier.Parameters.ParseSQL(queryTurnier.SQL.Text, true);
-  queryTurnier.Parameters.ParamByName('ID').value := FTU_ID;
+  queryTurnier.Parameters.ParamByName('ID').Value := FTU_ID;
   queryTurnier.Open;
 
   loadScheibeneinteilungInfo();
@@ -900,7 +946,7 @@ procedure TMainWindow.loadScheibeneinteilungInfo;
 begin
   queryScheibeneinteilungInfo.Close;
   queryScheibeneinteilungInfo.Parameters.ParseSQL(queryScheibeneinteilungInfo.SQL.Text, true);
-  queryScheibeneinteilungInfo.Parameters.ParamByName('TU_ID').value := FTU_ID;
+  queryScheibeneinteilungInfo.Parameters.ParamByName('TU_ID').Value := FTU_ID;
   queryScheibeneinteilungInfo.Open;
   FBL_Turnier.selectFreieScheibenInfo(queryInfoFreiePlaetze, FTU_ID);
 
@@ -910,7 +956,7 @@ procedure TMainWindow.loadBogenkategorieUebersicht;
 begin
   queryBogenkategorieUebersicht.Close;
   queryBogenkategorieUebersicht.Parameters.ParseSQL(queryBogenkategorieUebersicht.SQL.Text, true);
-  queryBogenkategorieUebersicht.Parameters.ParamByName('TU_ID').value := FTU_ID;
+  queryBogenkategorieUebersicht.Parameters.ParamByName('TU_ID').Value := FTU_ID;
   queryBogenkategorieUebersicht.Open;
 end;
 
@@ -925,8 +971,8 @@ begin
     end;
     querySelectPersonen.Parameters.Clear;
     querySelectPersonen.Parameters.ParseSQL(querySelectPersonen.SQL.Text, true);
-    querySelectPersonen.Parameters.ParamByName('SEARCHSTRING').value := '%' + searchString + '%';
-    querySelectPersonen.Parameters.ParamByName('ID').value           := FTU_ID;
+    querySelectPersonen.Parameters.ParamByName('SEARCHSTRING').Value := '%' + searchString + '%';
+    querySelectPersonen.Parameters.ParamByName('ID').Value           := FTU_ID;
     querySelectPersonen.Open;
     TARC_Tools.autoSizeColumns(querySelectPersonen, gridTeilnehmer);
   end;
@@ -943,8 +989,8 @@ begin
     end;
     queryScheibeneinteilungNichtZugeteilt.Parameters.Clear;
     queryScheibeneinteilungNichtZugeteilt.Parameters.ParseSQL(queryScheibeneinteilungNichtZugeteilt.SQL.Text, true);
-    queryScheibeneinteilungNichtZugeteilt.Parameters.ParamByName('SEARCHSTRING').value := '%' + searchString + '%';
-    queryScheibeneinteilungNichtZugeteilt.Parameters.ParamByName('ID').value           := FTU_ID;
+    queryScheibeneinteilungNichtZugeteilt.Parameters.ParamByName('SEARCHSTRING').Value := '%' + searchString + '%';
+    queryScheibeneinteilungNichtZugeteilt.Parameters.ParamByName('ID').Value           := FTU_ID;
     queryScheibeneinteilungNichtZugeteilt.Open;
     TARC_Tools.autoSizeColumns(queryScheibeneinteilungNichtZugeteilt, gridNichtZugeteilt);
   end;
@@ -961,8 +1007,8 @@ begin
     end;
     queryScheibeneinteilungZugeteilt.Parameters.Clear;
     queryScheibeneinteilungZugeteilt.Parameters.ParseSQL(queryScheibeneinteilungZugeteilt.SQL.Text, true);
-    queryScheibeneinteilungZugeteilt.Parameters.ParamByName('SEARCHSTRING').value := '%' + searchString + '%';
-    queryScheibeneinteilungZugeteilt.Parameters.ParamByName('ID').value           := FTU_ID;
+    queryScheibeneinteilungZugeteilt.Parameters.ParamByName('SEARCHSTRING').Value := '%' + searchString + '%';
+    queryScheibeneinteilungZugeteilt.Parameters.ParamByName('ID').Value           := FTU_ID;
     queryScheibeneinteilungZugeteilt.Open;
     TARC_Tools.autoSizeColumns(queryScheibeneinteilungZugeteilt, gridZugeteilt);
   end;
