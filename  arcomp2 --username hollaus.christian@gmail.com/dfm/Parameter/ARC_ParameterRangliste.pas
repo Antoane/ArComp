@@ -37,54 +37,42 @@ type
   TFormParameterRangliste = class(TForm)
     Panel2: TPanel;
     Panel4: TPanel;
-    queryBogenkategorie: TADOQuery;
-    sourceBogenkategorie: TDataSource;
     buttonCancel: TButton;
     labelCaption: TLabel;
     ImageList: TImageList;
-    Panel1: TPanel;
-    panelAlterskategorie: TPanel;
-    gridAlterskategorie: TDBGrid;
-    Panel6: TPanel;
-    Label2: TLabel;
-    panelGeschlecht: TPanel;
-    gridGeschlecht: TDBGrid;
-    Panel5: TPanel;
-    Label1: TLabel;
-    panelBogenkategorie: TPanel;
-    gridBogenkategorie: TDBGrid;
-    Panel8: TPanel;
-    Label3: TLabel;
-    sourceAlterskategorie: TDataSource;
-    queryAlterskategorie: TADOQuery;
-    sourceGeschlecht: TDataSource;
-    queryGeschlecht: TADOQuery;
     buttonOK: TButton;
+    Panel5: TPanel;
+    Label4: TLabel;
+    Label5: TLabel;
+    Label9: TLabel;
+    comboAlterskategorie: TComboBox;
+    comboBogenkategorie: TComboBox;
+    comboGeschlecht: TComboBox;
+    checkAlterskategorie: TCheckBox;
+    checkBogenkategorie: TCheckBox;
+    checkGeschlecht: TCheckBox;
     procedure FormShow(Sender: TObject);
     procedure buttonCancelClick(Sender: TObject);
-    procedure gridGeschlechtDrawColumnCell(Sender: TObject; const Rect: TRect; DataCol: Integer; Column: TColumn;
-      State: TGridDrawState);
-    procedure gridAlterskategorieDrawColumnCell(Sender: TObject; const Rect: TRect; DataCol: Integer; Column: TColumn;
-      State: TGridDrawState);
-    procedure gridBogenkategorieDrawColumnCell(Sender: TObject; const Rect: TRect; DataCol: Integer; Column: TColumn;
-      State: TGridDrawState);
     procedure buttonOKClick(Sender: TObject);
-    procedure gridBogenkategorieCellClick(Column: TColumn);
+    procedure comboAlterskategorieChange(Sender: TObject);
+    procedure comboBogenkategorieChange(Sender: TObject);
+    procedure comboGeschlechtChange(Sender: TObject);
+    procedure checkAlterskategorieClick(Sender: TObject);
+    procedure checkBogenkategorieClick(Sender: TObject);
+    procedure checkGeschlechtClick(Sender: TObject);
 
   private
-    FselectedIDs: TStringList;
-    FDataState  : TDataState;
-    FRangliste  : TADOQuery;
-    procedure CreateParams(var Params: TCreateParams);
-    procedure searchData(searchString: string);
-    procedure deletePerson;
-    procedure addPerson;
-    procedure openPersonDetail(PE_ID: string);
+    FBogenkategorie : string;
+    FAlterskategorie: string;
+    FGeschlecht     : string;
+    FConnection     : Tadoconnection;
+    FselectedIDs    : TStringList;
+    FDataState      : TDataState;
+    FRangliste      : TADOQuery;
     procedure setProps;
-    procedure fillGridAlterskategorie;
-    procedure fillGridBogenketegorie;
-    procedure fillGridGeschlecht;
+    function getAlterskategorie: string;
     function getBogenkategorien: string;
+    function getGeschlecht: string;
 
     {Private-Deklarationen}
   public
@@ -99,16 +87,17 @@ type
 
     property Bogenkategorien: string
       read   getBogenkategorien;
+
+    property Alterskategorien: string
+      read   getAlterskategorie;
+
+    property Geschlecht: string
+      read   getGeschlecht;
   end;
 
 implementation
 
 {$R *.dfm}
-
-procedure TFormParameterRangliste.addPerson;
-begin
-
-end;
 
 procedure TFormParameterRangliste.buttonCancelClick(Sender: TObject);
 begin
@@ -118,113 +107,75 @@ end;
 
 procedure TFormParameterRangliste.buttonOKClick(Sender: TObject);
 begin
-  TARC_DAL_ParameterRangliste.selectRangliste(FRangliste);
-  FRangliste.Open;
+  setProps;
   self.ModalResult := mrOk;
   self.CloseModal;
 end;
 
+procedure TFormParameterRangliste.checkAlterskategorieClick(Sender: TObject);
+begin
+  if checkAlterskategorie.Checked then
+  begin
+    comboAlterskategorie.ItemIndex := 0;
+  end;
+end;
+
+procedure TFormParameterRangliste.checkBogenkategorieClick(Sender: TObject);
+begin
+  if checkBogenkategorie.Checked then
+  begin
+    comboBogenkategorie.ItemIndex := 0;
+  end;
+end;
+
+procedure TFormParameterRangliste.checkGeschlechtClick(Sender: TObject);
+begin
+  if checkGeschlecht.Checked then
+  begin
+    comboGeschlecht.ItemIndex := 0;
+  end;
+end;
+
+procedure TFormParameterRangliste.comboAlterskategorieChange(Sender: TObject);
+begin
+  checkAlterskategorie.Checked := (comboAlterskategorie.Text = '');
+end;
+
+procedure TFormParameterRangliste.comboBogenkategorieChange(Sender: TObject);
+begin
+  checkBogenkategorie.Checked := (comboBogenkategorie.Text = '');
+end;
+
+procedure TFormParameterRangliste.comboGeschlechtChange(Sender: TObject);
+begin
+  checkGeschlecht.Checked := (comboGeschlecht.Text = '');
+end;
+
 procedure TFormParameterRangliste.FormShow(Sender: TObject);
 begin
-  fillGridAlterskategorie();
-  fillGridBogenketegorie();
-  fillGridGeschlecht();
+  TARC_Tools.fillComboFromTable(comboAlterskategorie, 'ALTERSKATEGORIE', 'AK_ID', 'AK_NAME', FConnection);
+  TARC_Tools.fillComboFromTable(comboBogenkategorie, 'BOGENKATEGORIE', 'BK_ID', 'BK_NAME', FConnection);
+  TARC_Tools.fillComboFromTable(comboGeschlecht, 'GESCHLECHT', 'GE_ID', 'GE_NAME', FConnection);
 end;
 
-procedure TFormParameterRangliste.fillGridAlterskategorie();
+function TFormParameterRangliste.getAlterskategorie: string;
 begin
-  TARC_DAL_ParameterRangliste.selectAlterskategorien(queryAlterskategorie);
-  queryAlterskategorie.Open;
-end;
-
-procedure TFormParameterRangliste.fillGridBogenketegorie();
-begin
-  TARC_DAL_ParameterRangliste.selectBogenkategorien(queryBogenkategorie);
-  queryBogenkategorie.Open;
-end;
-
-procedure TFormParameterRangliste.fillGridGeschlecht();
-begin
-  TARC_DAL_ParameterRangliste.selectGeschlecht(queryGeschlecht);
-  queryGeschlecht.Open;
+  result := FAlterskategorie;
 end;
 
 function TFormParameterRangliste.getBogenkategorien: string;
 begin
-  result := '';
-  queryBogenkategorie.First;
-  while not queryBogenkategorie.Eof do
-  begin
-    if queryBogenkategorie.FieldByName('SELECTED').AsInteger = 1 then
-    begin
-      result := queryBogenkategorie.FieldByName('BK_NAME').AsString;
-      exit;
-    end;
-    queryBogenkategorie.Next;
-  end;
+  result := FBogenkategorie;
 end;
 
-procedure TFormParameterRangliste.gridAlterskategorieDrawColumnCell(Sender: TObject; const Rect: TRect;
-  DataCol: Integer; Column: TColumn; State: TGridDrawState);
+function TFormParameterRangliste.getGeschlecht: string;
 begin
-  TARC_Tools.DrawColumnCell(Sender, Rect, DataCol, Column, State, gridAlterskategorie);
-end;
-
-procedure TFormParameterRangliste.gridBogenkategorieCellClick(Column: TColumn);
-var
-  aRecordNumber: Integer;
-begin
-  if Column.FieldName = 'SELECTED' then
-  begin
-    if queryBogenkategorie.FieldByName('SELECTED').AsInteger = 1 then
-    begin
-      aRecordNumber := queryBogenkategorie.RecNo;
-      queryBogenkategorie.DisableControls;
-      queryBogenkategorie.First;
-      while not queryBogenkategorie.Eof do
-      begin
-        queryBogenkategorie.Edit;
-        queryBogenkategorie.FieldByName('SELECTED').AsInteger := 0;
-        queryBogenkategorie.Next;
-      end;
-      queryBogenkategorie.RecNo := aRecordNumber;
-      queryBogenkategorie.Edit;
-      queryBogenkategorie.FieldByName('SELECTED').AsInteger := 1;
-      queryBogenkategorie.EnableControls;
-    end;
-  end;
-end;
-
-procedure TFormParameterRangliste.gridBogenkategorieDrawColumnCell(Sender: TObject; const Rect: TRect; DataCol: Integer;
-  Column: TColumn; State: TGridDrawState);
-begin
-  TARC_Tools.DrawColumnCell(Sender, Rect, DataCol, Column, State, gridBogenkategorie);
-end;
-
-procedure TFormParameterRangliste.gridGeschlechtDrawColumnCell(Sender: TObject; const Rect: TRect; DataCol: Integer;
-  Column: TColumn; State: TGridDrawState);
-begin
-  TARC_Tools.DrawColumnCell(Sender, Rect, DataCol, Column, State, gridGeschlecht);
-end;
-
-procedure TFormParameterRangliste.openPersonDetail(PE_ID: string);
-begin
-
+  result := FGeschlecht;
 end;
 
 constructor TFormParameterRangliste.Create(aOwner: TComponent);
 begin
   inherited Create(aOwner);
-end;
-
-procedure TFormParameterRangliste.CreateParams(var Params: TCreateParams);
-begin
-
-end;
-
-procedure TFormParameterRangliste.deletePerson;
-begin
-
 end;
 
 destructor TFormParameterRangliste.Destroy;
@@ -233,20 +184,39 @@ begin
   inherited;
 end;
 
-procedure TFormParameterRangliste.searchData(searchString: string);
-begin
-
-end;
-
 procedure TFormParameterRangliste.setConnection(connection: Tadoconnection);
 begin
-  queryBogenkategorie.connection  := connection;
-  queryAlterskategorie.connection := connection;
-  queryGeschlecht.connection      := connection;
+  FConnection := connection;
 end;
 
 procedure TFormParameterRangliste.setProps;
 begin
+  if not checkAlterskategorie.Checked then
+  begin
+    FAlterskategorie := comboAlterskategorie.Text;
+  end
+  else
+  begin
+    FAlterskategorie := '';
+  end;
+
+  if not checkBogenkategorie.Checked then
+  begin
+    FBogenkategorie := comboBogenkategorie.Text;
+  end
+  else
+  begin
+    FBogenkategorie := '';
+  end;
+
+  if not checkGeschlecht.Checked then
+  begin
+    FGeschlecht := comboGeschlecht.Text;
+  end
+  else
+  begin
+    FGeschlecht := '';
+  end;
 
 end;
 

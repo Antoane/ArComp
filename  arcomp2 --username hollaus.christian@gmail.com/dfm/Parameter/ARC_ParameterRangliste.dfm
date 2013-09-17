@@ -25,11 +25,11 @@ object FormParameterRangliste: TFormParameterRangliste
       AlignWithMargins = True
       Left = 31
       Top = 4
-      Width = 206
+      Width = 278
       Height = 67
       Margins.Left = 30
       Align = alLeft
-      Caption = 'Bogensch'#252'tzen'
+      Caption = 'Parameter Rangliste'
       Font.Charset = DEFAULT_CHARSET
       Font.Color = clWindowText
       Font.Height = -27
@@ -37,8 +37,7 @@ object FormParameterRangliste: TFormParameterRangliste
       Font.Style = [fsBold]
       ParentFont = False
       Layout = tlCenter
-      ExplicitLeft = 167
-      ExplicitTop = 20
+      ExplicitHeight = 33
     end
   end
   object Panel4: TPanel
@@ -47,7 +46,7 @@ object FormParameterRangliste: TFormParameterRangliste
     Width = 937
     Height = 35
     Align = alBottom
-    TabOrder = 2
+    TabOrder = 1
     object buttonCancel: TButton
       AlignWithMargins = True
       Left = 906
@@ -74,231 +73,110 @@ object FormParameterRangliste: TFormParameterRangliste
       Images = ImageList
       TabOrder = 0
       OnClick = buttonOKClick
-      ExplicitLeft = 651
-      ExplicitHeight = 21
     end
   end
-  object Panel1: TPanel
+  object Panel5: TPanel
     Left = 0
     Top = 75
     Width = 937
     Height = 315
     Align = alClient
-    TabOrder = 1
-    object panelAlterskategorie: TPanel
-      Left = 320
-      Top = 10
-      Width = 300
-      Height = 292
-      TabOrder = 1
-      object gridAlterskategorie: TDBGrid
-        AlignWithMargins = True
-        Left = 4
-        Top = 39
-        Width = 292
-        Height = 249
-        Align = alClient
-        DataSource = sourceAlterskategorie
-        Options = [dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgRowSelect, dgConfirmDelete, dgCancelOnExit, dgMultiSelect, dgTitleClick, dgTitleHotTrack]
-        ReadOnly = True
-        TabOrder = 1
-        TitleFont.Charset = DEFAULT_CHARSET
-        TitleFont.Color = clWindowText
-        TitleFont.Height = -11
-        TitleFont.Name = 'Tahoma'
-        TitleFont.Style = []
-        OnDrawColumnCell = gridAlterskategorieDrawColumnCell
-        Columns = <
-          item
-            Expanded = False
-            FieldName = 'SELECTED'
-            Title.Caption = 'Auswahl'
-            Visible = True
-          end
-          item
-            Expanded = False
-            FieldName = 'AK_NAME'
-            Title.Caption = 'Alterskategorie'
-            Visible = True
-          end>
-      end
-      object Panel6: TPanel
-        AlignWithMargins = True
-        Left = 4
-        Top = 4
-        Width = 292
-        Height = 29
-        Align = alTop
-        TabOrder = 0
-        object Label2: TLabel
-          AlignWithMargins = True
-          Left = 4
-          Top = 4
-          Width = 89
-          Height = 21
-          Align = alLeft
-          Caption = 'Alterskategorie'
-          Font.Charset = DEFAULT_CHARSET
-          Font.Color = clWindowText
-          Font.Height = -11
-          Font.Name = 'Tahoma'
-          Font.Style = [fsBold]
-          ParentFont = False
-          Layout = tlCenter
-          ExplicitHeight = 13
-        end
-      end
+    BevelOuter = bvNone
+    TabOrder = 2
+    ExplicitLeft = 1
+    ExplicitTop = 1
+    ExplicitWidth = 309
+    ExplicitHeight = 543
+    object Label4: TLabel
+      Left = 19
+      Top = 16
+      Width = 100
+      Height = 13
+      AutoSize = False
+      Caption = 'Alterskategorie'
     end
-    object panelGeschlecht: TPanel
-      Left = 626
-      Top = 10
-      Width = 300
-      Height = 292
-      Caption = 'Panel2'
-      TabOrder = 2
-      object gridGeschlecht: TDBGrid
-        AlignWithMargins = True
-        Left = 4
-        Top = 39
-        Width = 292
-        Height = 249
-        Align = alClient
-        DataSource = sourceGeschlecht
-        Options = [dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgRowSelect, dgConfirmDelete, dgCancelOnExit, dgMultiSelect, dgTitleClick, dgTitleHotTrack]
-        ReadOnly = True
-        TabOrder = 1
-        TitleFont.Charset = DEFAULT_CHARSET
-        TitleFont.Color = clWindowText
-        TitleFont.Height = -11
-        TitleFont.Name = 'Tahoma'
-        TitleFont.Style = []
-        OnDrawColumnCell = gridGeschlechtDrawColumnCell
-        Columns = <
-          item
-            Expanded = False
-            FieldName = 'SELECTED'
-            Title.Caption = 'Auswahl'
-            Visible = True
-          end
-          item
-            Expanded = False
-            FieldName = 'GE_NAME'
-            Title.Caption = 'Geschlecht'
-            Visible = True
-          end>
-      end
-      object Panel5: TPanel
-        AlignWithMargins = True
-        Left = 4
-        Top = 4
-        Width = 292
-        Height = 29
-        Align = alTop
-        TabOrder = 0
-        object Label1: TLabel
-          AlignWithMargins = True
-          Left = 4
-          Top = 4
-          Width = 62
-          Height = 21
-          Align = alLeft
-          Caption = 'Geschlecht'
-          Font.Charset = DEFAULT_CHARSET
-          Font.Color = clWindowText
-          Font.Height = -11
-          Font.Name = 'Tahoma'
-          Font.Style = [fsBold]
-          ParentFont = False
-          Layout = tlCenter
-          ExplicitHeight = 13
-        end
-      end
+    object Label5: TLabel
+      Left = 19
+      Top = 43
+      Width = 100
+      Height = 13
+      AutoSize = False
+      Caption = 'Bogenkategorie'
     end
-    object panelBogenkategorie: TPanel
-      Left = 13
-      Top = 10
-      Width = 300
-      Height = 292
-      Caption = 'Panel2'
+    object Label9: TLabel
+      Left = 19
+      Top = 70
+      Width = 100
+      Height = 13
+      AutoSize = False
+      Caption = 'Geschlecht'
+    end
+    object comboAlterskategorie: TComboBox
+      Left = 115
+      Top = 13
+      Width = 145
+      Height = 21
+      Style = csDropDownList
       TabOrder = 0
-      object gridBogenkategorie: TDBGrid
-        AlignWithMargins = True
-        Left = 4
-        Top = 39
-        Width = 292
-        Height = 249
-        Align = alClient
-        DataSource = sourceBogenkategorie
-        Options = [dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgRowSelect, dgConfirmDelete, dgCancelOnExit, dgMultiSelect, dgTitleClick, dgTitleHotTrack]
-        ReadOnly = True
-        TabOrder = 1
-        TitleFont.Charset = DEFAULT_CHARSET
-        TitleFont.Color = clWindowText
-        TitleFont.Height = -11
-        TitleFont.Name = 'Tahoma'
-        TitleFont.Style = []
-        OnCellClick = gridBogenkategorieCellClick
-        OnDrawColumnCell = gridBogenkategorieDrawColumnCell
-        Columns = <
-          item
-            Expanded = False
-            FieldName = 'SELECTED'
-            ReadOnly = False
-            Title.Caption = 'Auswahl'
-            Visible = True
-          end
-          item
-            Expanded = False
-            FieldName = 'BK_NAME'
-            Title.Caption = 'Bogenkategorie'
-            Visible = True
-          end>
-      end
-      object Panel8: TPanel
-        AlignWithMargins = True
-        Left = 4
-        Top = 4
-        Width = 292
-        Height = 29
-        Align = alTop
-        TabOrder = 0
-        object Label3: TLabel
-          AlignWithMargins = True
-          Left = 4
-          Top = 4
-          Width = 90
-          Height = 21
-          Align = alLeft
-          Caption = 'Bogenkategorie'
-          Font.Charset = DEFAULT_CHARSET
-          Font.Color = clWindowText
-          Font.Height = -11
-          Font.Name = 'Tahoma'
-          Font.Style = [fsBold]
-          ParentFont = False
-          Layout = tlCenter
-          ExplicitHeight = 13
-        end
-      end
+      OnChange = comboAlterskategorieChange
     end
-  end
-  object queryBogenkategorie: TADOQuery
-    AutoCalcFields = False
-    CursorType = ctStatic
-    Parameters = <>
-    Left = 168
-    Top = 280
-  end
-  object sourceBogenkategorie: TDataSource
-    DataSet = queryBogenkategorie
-    Left = 168
-    Top = 208
+    object comboBogenkategorie: TComboBox
+      Left = 115
+      Top = 40
+      Width = 145
+      Height = 21
+      Style = csDropDownList
+      TabOrder = 1
+      OnChange = comboBogenkategorieChange
+    end
+    object comboGeschlecht: TComboBox
+      Left = 115
+      Top = 67
+      Width = 145
+      Height = 21
+      Style = csDropDownList
+      TabOrder = 2
+      OnChange = comboGeschlechtChange
+    end
+    object checkAlterskategorie: TCheckBox
+      Left = 267
+      Top = 15
+      Width = 43
+      Height = 17
+      Caption = 'alle'
+      Checked = True
+      State = cbChecked
+      TabOrder = 3
+      OnClick = checkAlterskategorieClick
+    end
+    object checkBogenkategorie: TCheckBox
+      Left = 267
+      Top = 42
+      Width = 43
+      Height = 17
+      Caption = 'alle'
+      Checked = True
+      State = cbChecked
+      TabOrder = 4
+      OnClick = checkBogenkategorieClick
+    end
+    object checkGeschlecht: TCheckBox
+      Left = 267
+      Top = 69
+      Width = 43
+      Height = 17
+      Caption = 'alle'
+      Checked = True
+      State = cbChecked
+      TabOrder = 5
+      OnClick = checkGeschlechtClick
+    end
   end
   object ImageList: TImageList
     Left = 480
     Top = 176
     Bitmap = {
-      494C010109004801D40010001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
+      494C010109004801D80010001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
       0000000000003600000028000000400000003000000001002000000000000030
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
@@ -700,27 +578,5 @@ object FormParameterRangliste: TFormParameterRangliste
       C781C00380018001FFC1C003F81FFFFFFFE3C183F81FFFFFFFF7E3C7F81FFFFF
       FFFFFFFFF81FFFFFFFFFFFFFFC3FFFFF00000000000000000000000000000000
       000000000000}
-  end
-  object sourceAlterskategorie: TDataSource
-    DataSet = queryAlterskategorie
-    Left = 376
-    Top = 208
-  end
-  object queryAlterskategorie: TADOQuery
-    CursorType = ctStatic
-    Parameters = <>
-    Left = 376
-    Top = 280
-  end
-  object sourceGeschlecht: TDataSource
-    DataSet = queryGeschlecht
-    Left = 664
-    Top = 216
-  end
-  object queryGeschlecht: TADOQuery
-    CursorType = ctStatic
-    Parameters = <>
-    Left = 664
-    Top = 288
   end
 end
