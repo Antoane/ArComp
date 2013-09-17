@@ -25,7 +25,9 @@ uses
   ARC_DAL_Turnier in 'pas\DAL\ARC_DAL_Turnier.pas',
   ARC_DAL_SETUP in 'pas\DAL\ARC_DAL_SETUP.pas',
   ARC_ParameterRangliste in 'dfm\Parameter\ARC_ParameterRangliste.pas' {FormParameterRangliste},
-  ARC_DAL_ParameterRangliste in 'pas\DAL\ARC_DAL_ParameterRangliste.pas';
+  ARC_DAL_ParameterRangliste in 'pas\DAL\ARC_DAL_ParameterRangliste.pas',
+  ARC_DAL_Person in 'pas\DAL\ARC_DAL_Person.pas',
+  ARC_ParameterLandeswertung in 'dfm\Parameter\ARC_ParameterLandeswertung.pas' {FormParameterLandeswertung};
 
 {$R *.res}
 

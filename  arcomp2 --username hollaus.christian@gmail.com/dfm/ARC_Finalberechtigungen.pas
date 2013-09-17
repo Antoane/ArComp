@@ -42,6 +42,8 @@ type
     procedure FormShow(Sender: TObject);
     procedure buttonCancelClick(Sender: TObject);
     procedure DBGrid1CellClick(Column: TColumn);
+    procedure DBGrid1DrawColumnCell(Sender: TObject; const Rect: TRect; DataCol: Integer; Column: TColumn;
+      State: TGridDrawState);
 
   private
     {Private-Deklarationen}
@@ -94,6 +96,12 @@ begin
   end;
 end;
 
+procedure TFormFinalberechtigung.DBGrid1DrawColumnCell(Sender: TObject; const Rect: TRect; DataCol: Integer;
+  Column: TColumn; State: TGridDrawState);
+begin
+  TARC_Tools.DrawColumnCell(Sender, Rect, DataCol, Column, State, DBGrid1);
+end;
+
 procedure TFormFinalberechtigung.FormShow(Sender: TObject);
 begin
   loadData();
@@ -109,6 +117,7 @@ begin
   querySelect.Close;
   TARC_DAL_Finalberechtigungen.selectBerechtigung(querySelect);
   querySelect.Open;
+  ARC_Tools.TARC_Tools.autoSizeColumns(querySelect, DBGrid1);
   if querySelect.Active and (querySelect.RecordCount > 0) then
   begin
     querySelect.First;

@@ -21,7 +21,7 @@ object FormDistanzen: TFormDistanzen
     Height = 545
     Align = alClient
     TabOrder = 0
-    object DBGrid1: TDBGrid
+    object gridDistanzen: TDBGrid
       AlignWithMargins = True
       Left = 313
       Top = 4
@@ -37,8 +37,9 @@ object FormDistanzen: TFormDistanzen
       TitleFont.Height = -11
       TitleFont.Name = 'Tahoma'
       TitleFont.Style = []
-      OnCellClick = DBGrid1CellClick
-      OnDblClick = DBGrid1DblClick
+      OnCellClick = gridDistanzenCellClick
+      OnDblClick = gridDistanzenDblClick
+      OnTitleClick = gridDistanzenTitleClick
       Columns = <
         item
           Expanded = False
@@ -285,7 +286,7 @@ object FormDistanzen: TFormDistanzen
     Left = 800
     Top = 208
     Bitmap = {
-      494C010109004801C00010001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
+      494C010109004801C40010001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
       0000000000003600000028000000400000003000000001002000000000000030
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000

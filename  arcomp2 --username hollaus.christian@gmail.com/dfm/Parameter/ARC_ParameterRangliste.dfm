@@ -2,8 +2,8 @@ object FormParameterRangliste: TFormParameterRangliste
   Left = 0
   Top = 0
   Caption = 'Rangliste Parameter'
-  ClientHeight = 425
-  ClientWidth = 937
+  ClientHeight = 221
+  ClientWidth = 370
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -17,10 +17,11 @@ object FormParameterRangliste: TFormParameterRangliste
   object Panel2: TPanel
     Left = 0
     Top = 0
-    Width = 937
+    Width = 370
     Height = 75
     Align = alTop
     TabOrder = 0
+    ExplicitWidth = 937
     object labelCaption: TLabel
       AlignWithMargins = True
       Left = 31
@@ -42,14 +43,16 @@ object FormParameterRangliste: TFormParameterRangliste
   end
   object Panel4: TPanel
     Left = 0
-    Top = 390
-    Width = 937
+    Top = 186
+    Width = 370
     Height = 35
     Align = alBottom
     TabOrder = 1
+    ExplicitTop = 390
+    ExplicitWidth = 937
     object buttonCancel: TButton
       AlignWithMargins = True
-      Left = 906
+      Left = 339
       Top = 4
       Width = 27
       Height = 27
@@ -59,10 +62,11 @@ object FormParameterRangliste: TFormParameterRangliste
       Images = ImageList
       TabOrder = 1
       OnClick = buttonCancelClick
+      ExplicitLeft = 906
     end
     object buttonOK: TButton
       AlignWithMargins = True
-      Left = 876
+      Left = 309
       Top = 4
       Width = 27
       Height = 27
@@ -73,20 +77,19 @@ object FormParameterRangliste: TFormParameterRangliste
       Images = ImageList
       TabOrder = 0
       OnClick = buttonOKClick
+      ExplicitLeft = 876
     end
   end
   object Panel5: TPanel
     Left = 0
     Top = 75
-    Width = 937
-    Height = 315
+    Width = 370
+    Height = 111
     Align = alClient
     BevelOuter = bvNone
     TabOrder = 2
-    ExplicitLeft = 1
-    ExplicitTop = 1
-    ExplicitWidth = 309
-    ExplicitHeight = 543
+    ExplicitWidth = 937
+    ExplicitHeight = 315
     object Label4: TLabel
       Left = 19
       Top = 16
@@ -173,10 +176,10 @@ object FormParameterRangliste: TFormParameterRangliste
     end
   end
   object ImageList: TImageList
-    Left = 480
-    Top = 176
+    Left = 320
+    Top = 24
     Bitmap = {
-      494C010109004801D80010001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
+      494C010109004801DC0010001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
       0000000000003600000028000000400000003000000001002000000000000030
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000

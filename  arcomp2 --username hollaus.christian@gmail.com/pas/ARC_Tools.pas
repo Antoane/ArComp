@@ -264,6 +264,12 @@ class procedure TARC_Tools.DrawColumnCell(Sender: TObject; const Rect: TRect; Da
 const
   CtrlState: array [boolean] of Integer = (DFCS_BUTTONCHECK, DFCS_BUTTONCHECK or DFCS_CHECKED);
 begin
+  //Scheibennummer nicht als Checkbox darstellen!
+  if Column.FieldName = 'SE_NUMMER' then
+  begin
+    exit;
+  end;
+
   //make sure we are adding this for int fields only
   if Column.Field.DataType = ftInteger then
   begin

@@ -20,6 +20,7 @@ uses
   //ArComp
   ARC_DAL_Tools,
   ARC_ParameterRangliste,
+  ARC_ParameterLandeswertung,
   ARC_Types,
   ARC_Tools,
   ARC_DAL_SETUP,
@@ -171,6 +172,7 @@ type
     frxReport: TfrxReport;
     frxADOComponents: TfrxADOComponents;
     menuItemRangliste: TMenuItem;
+    Klasseneinteilung1: TMenuItem;
     procedure Beenden1Click(Sender: TObject);
     procedure Importieren1Click(Sender: TObject);
     procedure menuSchuetzenBearbeitenClick(Sender: TObject);
@@ -214,6 +216,13 @@ type
     procedure menuNeuesTurnierClick(Sender: TObject);
     procedure menuItemReportDesignerClick(Sender: TObject);
     procedure menuItemRanglisteClick(Sender: TObject);
+    procedure gridTeilnehmerDrawColumnCell(Sender: TObject; const Rect: TRect; DataCol: Integer; Column: TColumn;
+      State: TGridDrawState);
+    procedure gridNichtZugeteiltDrawColumnCell(Sender: TObject; const Rect: TRect; DataCol: Integer; Column: TColumn;
+      State: TGridDrawState);
+    procedure gridZugeteiltDrawColumnCell(Sender: TObject; const Rect: TRect; DataCol: Integer; Column: TColumn;
+      State: TGridDrawState);
+    procedure Klasseneinteilung1Click(Sender: TObject);
 
   private
     FTU_ID     : string;
@@ -269,6 +278,7 @@ var
   aAlterskategorie: string;
   aBogenkategorie : string;
   aGeschlecht     : string;
+  aTest           : string;
 begin
   aDialog := TFormParameterRangliste.create(nil);
   try
@@ -279,7 +289,8 @@ begin
       aAlterskategorie := aDialog.Alterskategorien;
       aBogenkategorie  := aDialog.Bogenkategorien;
       aGeschlecht      := aDialog.Geschlecht;
-      frxReport.LoadFromFile('D:\Privat\ArComp\Win32\Release\Reports\Rangliste.fr3');
+      aTest            := GetCurrentDir;
+      frxReport.LoadFromFile('..\Reports\Rangliste.fr3');
       frxReport.Variables[' ' + 'ArComp'] := Null;
       frxReport.Variables['TU_ID']        := quotedStr(FTU_ID);
 
@@ -291,8 +302,9 @@ begin
 
       frxReport.Variables['FILTER_GESCHLECHT'] := boolToInt(aGeschlecht <> '');
       frxReport.Variables['PARAM_GESCHLECHT']  := quotedStr(aGeschlecht);
-      frxReport.DesignReport();
-      //frxReport.ShowReport(true);
+
+      //frxReport.DesignReport();
+      frxReport.ShowReport(true);
     end;
   finally
     aDialog.Free;
@@ -450,9 +462,14 @@ end;
 
 procedure TMainWindow.buttonZuteilenClick(Sender: TObject);
 var
-  aPE_ID: string;
+  aPE_ID       : string;
+  sort         : string;
+  selectedIndex: Integer;
 begin
-  aPE_ID := '';
+  aPE_ID        := '';
+  selectedIndex := queryScheibeneinteilungNichtZugeteilt.RecNo;
+  sort          := queryScheibeneinteilungNichtZugeteilt.sort;
+
   if queryScheibeneinteilungNichtZugeteilt.Active and (queryScheibeneinteilungNichtZugeteilt.RecordCount > 0) then
   begin
     aPE_ID := queryScheibeneinteilungNichtZugeteilt.FieldByName('PE_ID').AsString;
@@ -464,6 +481,12 @@ begin
     begin
       searchPersonenNichtZugeteilt('');
       searchPersonenZugeteilt('');
+      queryScheibeneinteilungNichtZugeteilt.sort := sort;
+      if queryScheibeneinteilungNichtZugeteilt.Active and
+        (queryScheibeneinteilungNichtZugeteilt.RecordCount > selectedIndex) then
+      begin
+        queryScheibeneinteilungNichtZugeteilt.RecNo := selectedIndex;
+      end;
       loadScheibeneinteilungInfo();
     end;
   end;
@@ -499,9 +522,21 @@ begin
   goToScore();
 end;
 
+procedure TMainWindow.gridZugeteiltDrawColumnCell(Sender: TObject; const Rect: TRect; DataCol: Integer; Column: TColumn;
+  State: TGridDrawState);
+begin
+  TARC_Tools.DrawColumnCell(Sender, Rect, DataCol, Column, State, gridZugeteilt);
+end;
+
 procedure TMainWindow.gridZugeteiltTitleClick(Column: TColumn);
 begin
   TARC_Tools.gridSort(gridZugeteilt, Column);
+end;
+
+procedure TMainWindow.gridNichtZugeteiltDrawColumnCell(Sender: TObject; const Rect: TRect; DataCol: Integer;
+  Column: TColumn; State: TGridDrawState);
+begin
+  TARC_Tools.DrawColumnCell(Sender, Rect, DataCol, Column, State, gridNichtZugeteilt);
 end;
 
 procedure TMainWindow.gridNichtZugeteiltTitleClick(Column: TColumn);
@@ -512,6 +547,12 @@ end;
 procedure TMainWindow.gridTeilnehmerDblClick(Sender: TObject);
 begin
   openPersonenDetail(querySelectPersonen.FieldByName('PE_ID').AsString);
+end;
+
+procedure TMainWindow.gridTeilnehmerDrawColumnCell(Sender: TObject; const Rect: TRect; DataCol: Integer;
+  Column: TColumn; State: TGridDrawState);
+begin
+  TARC_Tools.DrawColumnCell(Sender, Rect, DataCol, Column, State, gridTeilnehmer);
 end;
 
 procedure TMainWindow.openPersonenDetail(PE_ID: string; neuePerson: boolean = false);
@@ -690,8 +731,8 @@ end;
 
 procedure TMainWindow.alignInfoGrid;
 var
-  i     : integer;
-  aWidth: integer;
+  i     : Integer;
+  aWidth: Integer;
 begin
   aWidth := GetSystemMetrics(SM_CXVSCROLL) * 2;
   for i  := 0 to gridBogenkategorieUebersicht.Columns.Count - 1 do
@@ -771,8 +812,8 @@ end;
 
 procedure TMainWindow.editXKeyPress(Sender: TObject; var Key: Char);
 var
-  aRunde        : integer;
-  aRundeAusQuery: integer;
+  aRunde        : Integer;
+  aRundeAusQuery: Integer;
 begin
   if (Key = #13) and (checkScoresAutoForward.Checked) then
   begin
@@ -922,6 +963,31 @@ begin
   openCSVImportDialog();
 end;
 
+procedure TMainWindow.Klasseneinteilung1Click(Sender: TObject);
+var
+  aDialog: TFormParameterLandeswertung;
+begin
+  aDialog := TFormParameterLandeswertung.create(nil);
+  try
+    aDialog.setConnection(DBConnection);
+    if aDialog.ShowModal = mrOK then
+    begin
+
+      frxReport.LoadFromFile('..\Reports\Klasseneinteilung.fr3');
+      frxReport.Variables[' ' + 'ArComp'] := Null;
+      frxReport.Variables['TU_ID']        := quotedStr(FTU_ID);
+
+      frxReport.Variables['MIT_LANDESWERTUNG']  := boolToInt(aDialog.MitLAndeswertung);
+      frxReport.Variables['OHNE_LANDESWERTUNG'] := boolToInt(aDialog.OhneLAndeswertung);
+
+      //frxReport.DesignReport();
+      frxReport.ShowReport(true);
+    end;
+  finally
+    aDialog.Free;
+  end;
+end;
+
 procedure TMainWindow.openCSVImportDialog;
 var
   aImport: TFormImportPersonen;
@@ -1026,7 +1092,7 @@ end;
 
 procedure TMainWindow.selectScores();
 var
-  aScheibe      : integer;
+  aScheibe      : Integer;
   aScheibenplatz: string;
 begin
   aScheibe       := strToInt(comboScoresScheibe.Text);
@@ -1076,11 +1142,11 @@ procedure TMainWindow.saveScore();
 var
   aPE_ID : string;
   aSC_ID : string;
-  aRunde : integer;
-  aScore : integer;
-  aZehner: integer;
-  aNeuner: integer;
-  aX     : integer;
+  aRunde : Integer;
+  aScore : Integer;
+  aZehner: Integer;
+  aNeuner: Integer;
+  aX     : Integer;
 begin
   if queryScores.Active and (queryScores.RecordCount > 1) then
   begin

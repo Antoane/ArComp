@@ -141,6 +141,10 @@
 				<Form>FormParameterRangliste</Form>
 			</DCCReference>
 			<DCCReference Include="pas\DAL\ARC_DAL_ParameterRangliste.pas"/>
+			<DCCReference Include="pas\DAL\ARC_DAL_Person.pas"/>
+			<DCCReference Include="dfm\Parameter\ARC_ParameterLandeswertung.pas">
+				<Form>FormParameterLandeswertung</Form>
+			</DCCReference>
 			<BuildConfiguration Include="Release">
 				<Key>Cfg_2</Key>
 				<CfgParent>Base</CfgParent>
