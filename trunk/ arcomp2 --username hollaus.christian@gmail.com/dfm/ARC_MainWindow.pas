@@ -265,28 +265,37 @@ implementation
 
 procedure TMainWindow.menuItemRanglisteClick(Sender: TObject);
 var
-  aDialog: TFormParameterRangliste;
-  aQuery : TADOQuery;
+  aDialog         : TFormParameterRangliste;
+  aAlterskategorie: string;
+  aBogenkategorie : string;
+  aGeschlecht     : string;
 begin
   aDialog := TFormParameterRangliste.create(nil);
-  aQuery  := TADOQuery.create(nil);
   try
     aDialog.setConnection(DBConnection);
-    aQuery.Connection := DBConnection;
-    aDialog.Rangliste := aQuery;
     if aDialog.ShowModal = mrOK then
     begin
+
+      aAlterskategorie := aDialog.Alterskategorien;
+      aBogenkategorie  := aDialog.Bogenkategorien;
+      aGeschlecht      := aDialog.Geschlecht;
       frxReport.LoadFromFile('D:\Privat\ArComp\Win32\Release\Reports\Rangliste.fr3');
-      frxReport.Variables[' ' + 'ArComp']         := Null;
-      frxReport.Variables['TU_ID']                := quotedStr(FTU_ID);
-      frxReport.Variables['FILTER_BOGENKATEGORIE'] := '1';//aDialog.Bogenkategorien;
-      frxReport.Variables['PARAM_BOGENKATEGORIE'] := quotedStr('-');//aDialog.Bogenkategorien;
+      frxReport.Variables[' ' + 'ArComp'] := Null;
+      frxReport.Variables['TU_ID']        := quotedStr(FTU_ID);
+
+      frxReport.Variables['FILTER_BOGENKATEGORIE'] := boolToInt(aBogenkategorie <> '');
+      frxReport.Variables['PARAM_BOGENKATEGORIE']  := quotedStr(aBogenkategorie);
+
+      frxReport.Variables['FILTER_ALTERSKATEGORIE'] := boolToInt(aAlterskategorie <> '');
+      frxReport.Variables['PARAM_ALTERSKATEGORIE']  := quotedStr(aAlterskategorie);
+
+      frxReport.Variables['FILTER_GESCHLECHT'] := boolToInt(aGeschlecht <> '');
+      frxReport.Variables['PARAM_GESCHLECHT']  := quotedStr(aGeschlecht);
       frxReport.DesignReport();
       //frxReport.ShowReport(true);
     end;
   finally
     aDialog.Free;
-    aQuery.Free();
   end;
 end;
 
@@ -553,6 +562,7 @@ end;
 procedure TMainWindow.buttonHinzufuegenClick(Sender: TObject);
 begin
   addPersonenzuteilung();
+  loadBogenkategorieUebersicht();
   loadScheibeneinteilungInfo();
 end;
 
