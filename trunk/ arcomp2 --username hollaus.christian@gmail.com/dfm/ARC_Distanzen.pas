@@ -37,7 +37,7 @@ type
     dataSource: TDataSource;
     buttonCancel: TButton;
     queryUpdate: TADOQuery;
-    DBGrid1: TDBGrid;
+    gridDistanzen: TDBGrid;
     buttonAdd: TButton;
     buttonDelete: TButton;
     Panel5: TPanel;
@@ -68,8 +68,9 @@ type
     procedure comboGeschlechtChange(Sender: TObject);
     procedure buttonAddClick(Sender: TObject);
     procedure buttonDeleteClick(Sender: TObject);
-    procedure DBGrid1DblClick(Sender: TObject);
-    procedure DBGrid1CellClick(Column: TColumn);
+    procedure gridDistanzenDblClick(Sender: TObject);
+    procedure gridDistanzenCellClick(Column: TColumn);
+    procedure gridDistanzenTitleClick(Column: TColumn);
 
   private
     {Private-Deklarationen}
@@ -129,14 +130,14 @@ procedure TFormDistanzen.deleteSelected;
 var
   i: integer;
 begin
-  if DBGrid1.SelectedRows.Count > 0 then
+  if gridDistanzen.SelectedRows.Count > 0 then
   begin
     queryDistanz.DisableControls;
-    with DBGrid1.dataSource.DataSet do
+    with gridDistanzen.dataSource.DataSet do
     begin
-      for i := 0 to DBGrid1.SelectedRows.Count - 1 do
+      for i := 0 to gridDistanzen.SelectedRows.Count - 1 do
       begin
-        GotoBookmark(pointer(DBGrid1.SelectedRows.Items[i]));
+        GotoBookmark(pointer(gridDistanzen.SelectedRows.Items[i]));
         queryDelete.Close;
         TARC_DAL_Distanz.deleteDistanz(queryDelete, queryDistanz.FieldByName('DI_ID').AsString);
         queryDelete.ExecSQL;
@@ -216,27 +217,38 @@ begin
   queryUpdate.connection  := connection;
 end;
 
-procedure TFormDistanzen.DBGrid1CellClick(Column: TColumn);
+procedure TFormDistanzen.gridDistanzenCellClick(Column: TColumn);
 var
-  aDistanzText: string;
-  aDistanz    : integer;
+  aDistanzText : string;
+  aDistanz     : integer;
+  sort         : string;
+  selectedIndex: integer;
 begin
   if Column.FieldName = 'DI_DISTANZ' then
   begin
-    aDistanzText := InputBox('Distanz ändern', 'Bitte geben Sie die Distanz ein', '');
+    selectedIndex := queryDistanz.RecNo;
+    sort          := queryDistanz.sort;
+    aDistanzText  := InputBox('Distanz ändern', 'Bitte geben Sie die Distanz ein', '');
     if TryStrToInt(aDistanzText, aDistanz) then
     begin
       queryUpdate.Close;
       TARC_DAL_Distanz.UpdateDistanz(queryUpdate, queryDistanz.FieldByName('DI_ID').AsString, aDistanz);
       queryUpdate.ExecSQL;
       selectDistanzen();
+      queryDistanz.sort  := sort;
+      queryDistanz.RecNo := selectedIndex;
     end;
   end;
 end;
 
-procedure TFormDistanzen.DBGrid1DblClick(Sender: TObject);
+procedure TFormDistanzen.gridDistanzenDblClick(Sender: TObject);
 begin
   setFilter();
+end;
+
+procedure TFormDistanzen.gridDistanzenTitleClick(Column: TColumn);
+begin
+  TARC_Tools.gridSort(gridDistanzen, Column);
 end;
 
 procedure TFormDistanzen.setFilter();
@@ -275,10 +287,7 @@ begin
   TARC_DAL_Distanz.selectDistanzen(queryDistanz, comboTurnierart.Text, comboBogenkategorie.Text,
     comboAlterskategorie.Text, comboGeschlecht.Text);
   queryDistanz.Open;
-  if queryDistanz.Active and (queryDistanz.RecordCount > 0) then
-  begin
-    queryDistanz.First;
-  end;
+  TARC_Tools.autoSizeColumns(queryDistanz, gridDistanzen);
 end;
 
 end.
