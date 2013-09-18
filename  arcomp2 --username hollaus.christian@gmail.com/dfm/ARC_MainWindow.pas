@@ -173,6 +173,7 @@ type
     frxADOComponents: TfrxADOComponents;
     menuItemRangliste: TMenuItem;
     Klasseneinteilung1: TMenuItem;
+    urnierteilnehmer1: TMenuItem;
     procedure Beenden1Click(Sender: TObject);
     procedure Importieren1Click(Sender: TObject);
     procedure menuSchuetzenBearbeitenClick(Sender: TObject);
@@ -223,6 +224,7 @@ type
     procedure gridZugeteiltDrawColumnCell(Sender: TObject; const Rect: TRect; DataCol: Integer; Column: TColumn;
       State: TGridDrawState);
     procedure Klasseneinteilung1Click(Sender: TObject);
+    procedure urnierteilnehmer1Click(Sender: TObject);
 
   private
     FTU_ID     : string;
@@ -1133,6 +1135,31 @@ begin
     aDialog.setConnection(DBConnection);
     aDialog.DataState := dsEditMode;
     aDialog.ShowModal;
+  finally
+    aDialog.Free;
+  end;
+end;
+
+procedure TMainWindow.urnierteilnehmer1Click(Sender: TObject);
+var
+  aDialog: TFormParameterLandeswertung;
+begin
+  aDialog := TFormParameterLandeswertung.create(nil);
+  try
+    aDialog.setConnection(DBConnection);
+    if aDialog.ShowModal = mrOK then
+    begin
+
+      frxReport.LoadFromFile('..\Reports\Turnierteilnehmer.fr3');
+      frxReport.Variables[' ' + 'ArComp'] := Null;
+      frxReport.Variables['TU_ID']        := quotedStr(FTU_ID);
+
+      frxReport.Variables['MIT_LANDESWERTUNG']  := boolToInt(aDialog.MitLAndeswertung);
+      frxReport.Variables['OHNE_LANDESWERTUNG'] := boolToInt(aDialog.OhneLAndeswertung);
+
+      //frxReport.DesignReport();
+      frxReport.ShowReport(true);
+    end;
   finally
     aDialog.Free;
   end;
