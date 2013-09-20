@@ -60,7 +60,6 @@ type
     Importieren1: TMenuItem;
     Beenden1: TMenuItem;
     menuSchuetzenBearbeiten: TMenuItem;
-    DBConnection: TADOConnection;
     Vereine1: TMenuItem;
     panelMain: TPanel;
     pageControl: TPageControl;
@@ -169,9 +168,7 @@ type
     buttonZumScore: TButton;
     urniere1: TMenuItem;
     menuItemReportDesigner: TMenuItem;
-    frxDesigner: TfrxDesigner;
     frxReport: TfrxReport;
-    frxADOComponents: TfrxADOComponents;
     menuItemRangliste: TMenuItem;
     Klasseneinteilung1: TMenuItem;
     urnierteilnehmer1: TMenuItem;
@@ -193,6 +190,12 @@ type
     Sheet1: TTabSheet;
     comboFinale: TComboBox;
     Button5: TButton;
+    DBConnection: TADOConnection;
+    frxADOComponents1: TfrxADOComponents;
+    frxDesigner1: TfrxDesigner;
+    Scheibeneinteilung1: TMenuItem;
+    Scorekarten1: TMenuItem;
+    ScorekartenBlanko1: TMenuItem;
     procedure Beenden1Click(Sender: TObject);
     procedure Importieren1Click(Sender: TObject);
     procedure menuSchuetzenBearbeitenClick(Sender: TObject);
@@ -251,6 +254,8 @@ type
     procedure comboFinaleBogenkategorieChange(Sender: TObject);
     procedure comboFinalealterskategorieChange(Sender: TObject);
     procedure Button2Click(Sender: TObject);
+    procedure Scheibeneinteilung1Click(Sender: TObject);
+    procedure Scorekarten1Click(Sender: TObject);
 
   private
     FTU_ID     : string;
@@ -1316,6 +1321,41 @@ begin
       FBL_Turnier.saveScore(FTU_ID, aPE_ID, aSC_ID, aRunde, aScore, aZehner, aNeuner, aX);
     end;
   end;
+end;
+
+procedure TMainWindow.Scheibeneinteilung1Click(Sender: TObject);
+var
+  aDialog: TFormParameterLandeswertung;
+begin
+  aDialog := TFormParameterLandeswertung.create(nil);
+  try
+    aDialog.setConnection(DBConnection);
+    if aDialog.ShowModal = mrOK then
+    begin
+
+      frxReport.LoadFromFile('..\Reports\Scheibeneinteilung.fr3');
+      frxReport.Variables[' ' + 'ArComp'] := Null;
+      frxReport.Variables['TU_ID']        := quotedStr(FTU_ID);
+
+      frxReport.Variables['MIT_LANDESWERTUNG']  := boolToInt(aDialog.MitLAndeswertung);
+      frxReport.Variables['OHNE_LANDESWERTUNG'] := boolToInt(aDialog.OhneLAndeswertung);
+
+      //frxReport.DesignReport();
+      frxReport.ShowReport(true);
+    end;
+  finally
+    aDialog.Free;
+  end;
+end;
+
+procedure TMainWindow.Scorekarten1Click(Sender: TObject);
+begin
+  frxReport.LoadFromFile('..\Reports\Scoreblatt.fr3');
+  frxReport.Variables[' ' + 'ArComp'] := Null;
+  frxReport.Variables['TU_ID']        := quotedStr(FTU_ID);
+
+  //frxReport.DesignReport();
+  frxReport.ShowReport(true);
 end;
 
 end.
