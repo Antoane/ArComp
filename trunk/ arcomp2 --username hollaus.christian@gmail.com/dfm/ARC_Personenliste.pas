@@ -60,6 +60,8 @@ type
     procedure buttonAlleClick(Sender: TObject);
     procedure gridPersonenDrawColumnCell(Sender: TObject; const Rect: TRect; DataCol: Integer; Column: TColumn;
       State: TGridDrawState);
+    procedure gridPersonenKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
+    procedure gridPersonenKeyUp(Sender: TObject; var Key: Word; Shift: TShiftState);
 
   private
     FselectedIDs: TStringList;
@@ -70,6 +72,7 @@ type
     procedure addPerson;
     procedure openPersonDetail(PE_ID: string);
     procedure setProps;
+    procedure focusSetting;
 
     {Private-Deklarationen}
   public
@@ -98,6 +101,7 @@ implementation
 procedure TFormPersonenListe.Button2Click(Sender: TObject);
 begin
   searchData(editSearch.Text);
+  focusSetting();
 end;
 
 procedure TFormPersonenListe.searchData(searchString: string);
@@ -118,6 +122,7 @@ end;
 procedure TFormPersonenListe.buttonAlleClick(Sender: TObject);
 begin
   searchData('');
+  focusSetting();
 end;
 
 procedure TFormPersonenListe.buttonCancelClick(Sender: TObject);
@@ -231,6 +236,18 @@ begin
   isCtrlPressed := false;
 end;
 
+procedure TFormPersonenListe.focusSetting;
+begin
+  if querySelectPersonen.Active and (querySelectPersonen.RecordCount > 0) then
+  begin
+    gridPersonen.SetFocus;
+  end
+  else
+  begin
+    editSearch.SetFocus;
+  end;
+end;
+
 procedure TFormPersonenListe.FormShow(Sender: TObject);
 begin
   buttonOK.Visible := DataState = dsSelectMode;
@@ -245,6 +262,11 @@ end;
 
 procedure TFormPersonenListe.gridPersonenDblClick(Sender: TObject);
 begin
+  if gridPersonen.SelectedRows.Count = 0 then
+  begin
+    //todo
+  end;
+
   if querySelectPersonen.Active and (querySelectPersonen.RecordCount > 0) then
   begin
     if DataState = dsSelectMode then
@@ -264,6 +286,33 @@ procedure TFormPersonenListe.gridPersonenDrawColumnCell(Sender: TObject; const R
   Column: TColumn; State: TGridDrawState);
 begin
   TARC_Tools.DrawColumnCell(Sender, Rect, DataCol, Column, State, gridPersonen);
+end;
+
+procedure TFormPersonenListe.gridPersonenKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
+begin
+  if Key = 17 then isCtrlPressed := True;
+
+  if isCtrlPressed and (Key = 30) then
+  begin
+    Key := 0;
+    editSearch.SetFocus;
+  end;
+
+  if Key = VK_RETURN then
+  begin
+    gridPersonenDblClick(nil);
+  end;
+
+  if Key = VK_ESCAPE then
+  begin
+    self.ModalResult := mrCancel;
+    self.CloseModal;
+  end;
+end;
+
+procedure TFormPersonenListe.gridPersonenKeyUp(Sender: TObject; var Key: Word; Shift: TShiftState);
+begin
+  isCtrlPressed := false;
 end;
 
 procedure TFormPersonenListe.openPersonDetail(PE_ID: string);
@@ -294,6 +343,7 @@ begin
   if Key = VK_RETURN then
   begin
     searchData(editSearch.Text);
+    focusSetting();
   end;
 end;
 
