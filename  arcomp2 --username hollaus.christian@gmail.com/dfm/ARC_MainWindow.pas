@@ -33,6 +33,7 @@ uses
   ARC_TurnierDetail,
   ARC_Distanzen,
   ARC_BL_Turnier,
+  ARC_BL_Finale,
   ARC_Finalberechtigungen,
   Vcl.Grids,
   Vcl.DBGrids,
@@ -174,6 +175,24 @@ type
     menuItemRangliste: TMenuItem;
     Klasseneinteilung1: TMenuItem;
     urnierteilnehmer1: TMenuItem;
+    sheetFinale: TTabSheet;
+    PageControl2: TPageControl;
+    sheetFinaleAnlegen: TTabSheet;
+    sourceFinale: TDataSource;
+    sourceTmpFinalauswahl: TDataSource;
+    queryTmpFinalauswahl: TADOQuery;
+    Panel8: TPanel;
+    Panel9: TPanel;
+    gridTmpFinalauswahl: TDBGrid;
+    buttonFinaleAnlegen: TButton;
+    comboFinaleBogenkategorie: TComboBox;
+    comboFinalealterskategorie: TComboBox;
+    comboFinaleGeschlecht: TComboBox;
+    Button2: TButton;
+    comboFinalRaster: TComboBox;
+    Sheet1: TTabSheet;
+    comboFinale: TComboBox;
+    Button5: TButton;
     procedure Beenden1Click(Sender: TObject);
     procedure Importieren1Click(Sender: TObject);
     procedure menuSchuetzenBearbeitenClick(Sender: TObject);
@@ -225,10 +244,18 @@ type
       State: TGridDrawState);
     procedure Klasseneinteilung1Click(Sender: TObject);
     procedure urnierteilnehmer1Click(Sender: TObject);
+    procedure FormKeyUp(Sender: TObject; var Key: Word; Shift: TShiftState);
+    procedure FormKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
+    procedure buttonFinaleAnlegenClick(Sender: TObject);
+    procedure Button5Click(Sender: TObject);
+    procedure comboFinaleBogenkategorieChange(Sender: TObject);
+    procedure comboFinalealterskategorieChange(Sender: TObject);
+    procedure Button2Click(Sender: TObject);
 
   private
     FTU_ID     : string;
     FBL_Turnier: TARC_BL_Turnier;
+    FBL_Finale : TARC_BL_Finale;
 
     constructor create(aOwner: TComponent); override;
     destructor destroy; override;
@@ -502,6 +529,17 @@ begin
   loadScheibeneinteilungInfo();
 end;
 
+procedure TMainWindow.comboFinalealterskategorieChange(Sender: TObject);
+begin
+  FBL_Finale.fillComboFinaleGeschlecht(comboFinaleGeschlecht, FTU_ID, comboFinaleBogenkategorie.Text,
+    comboFinalealterskategorie.Text);
+end;
+
+procedure TMainWindow.comboFinaleBogenkategorieChange(Sender: TObject);
+begin
+  FBL_Finale.fillComboFinaleAlterskategorie(comboFinalealterskategorie, FTU_ID, comboFinaleBogenkategorie.Text);
+end;
+
 procedure TMainWindow.comboScoresScheibeChange(Sender: TObject);
 begin
   FBL_Turnier.fillComboScoresScheibenPlatz(comboScoresScheibenplatz, FTU_ID, strToInt(comboScoresScheibe.Text));
@@ -517,6 +555,7 @@ constructor TMainWindow.create(aOwner: TComponent);
 begin
   inherited create(aOwner);
   FBL_Turnier := TARC_BL_Turnier.create(self, DBConnection);
+  FBL_Finale  := TARC_BL_Finale.create(self, DBConnection);
 end;
 
 procedure TMainWindow.gridZugeteiltDblClick(Sender: TObject);
@@ -582,9 +621,41 @@ begin
   TARC_Tools.gridSort(gridTeilnehmer, Column);
 end;
 
+procedure TMainWindow.Button2Click(Sender: TObject);
+begin
+  FBL_Finale.addToFinale(queryTmpFinalauswahl, FTU_ID, comboFinaleBogenkategorie.Text, comboFinalealterskategorie.Text,
+    comboFinaleGeschlecht.Text);
+  TARC_Tools.autoSizeColumns(queryTmpFinalauswahl, gridTmpFinalauswahl);
+  FBL_Finale.fillComboFinalRaster(comboFinalRaster, queryTmpFinalauswahl);
+end;
+
 procedure TMainWindow.Button3Click(Sender: TObject);
 begin
   searchPersonen(editSearch.Text);
+end;
+
+procedure TMainWindow.buttonFinaleAnlegenClick(Sender: TObject);
+var
+  aName: string;
+begin
+  if comboFinalRaster.Items.Count > 0 then
+  begin
+    aName := InputBox('Bezeichnung', 'Bitte geben Sie die Bezeichnung für dieses Final ein.', '');
+    if trim(aName) <> '' then
+    begin
+      FBL_Finale.finaleAnlegen(FTU_ID, queryTmpFinalauswahl, strToInt(comboFinalRaster.Text), aName);
+      FBL_Finale.fillComboFinale(comboFinale, FTU_ID);
+    end;
+  end;
+end;
+
+procedure TMainWindow.Button5Click(Sender: TObject);
+begin
+  if (MessageDlg('Möchten Sie das gewählte Finale wirlkich löschen?', mtConfirmation, mbYesNo, 0) = mrYes) then
+  begin
+    FBL_Finale.deleteSelectedFinale();
+    FBL_Finale.fillComboFinale(comboFinale, FTU_ID);
+  end;
 end;
 
 procedure TMainWindow.buttonAlleNichtZugeteiltClick(Sender: TObject);
@@ -669,6 +740,7 @@ end;
 destructor TMainWindow.destroy;
 begin
   FBL_Turnier.Free;
+  FBL_Finale.Free;
   inherited destroy;
 end;
 
@@ -701,6 +773,43 @@ begin
     aRowList.Free;
   end;
   createMissingTables();
+  sourceFinale.DataSet := FBL_Finale.Finale;
+end;
+
+procedure TMainWindow.FormKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
+begin
+  if Key = 17 then isCtrlPressed := true;
+
+  //strg-o -> öffnen
+  if isCtrlPressed and (Key = 79) then
+  begin
+    Key := 0;
+    openTurnierliste();
+  end;
+
+  if pageControl.Visible then
+  begin
+    if pageControl.ActivePage = sheetPersonenzuteilung then
+    begin
+      //strg +
+      if isCtrlPressed and (Key = 107) then
+      begin
+        Key := 0;
+        buttonHinzufuegenClick(nil);
+      end;
+
+      if isCtrlPressed and (Key = 109) then
+      begin
+        Key := 0;
+        ButtonLoeschenClick(nil);
+      end;
+    end;
+  end;
+end;
+
+procedure TMainWindow.FormKeyUp(Sender: TObject; var Key: Word; Shift: TShiftState);
+begin
+  isCtrlPressed := false;
 end;
 
 procedure TMainWindow.createMissingTables;
@@ -751,10 +860,10 @@ end;
 
 procedure TMainWindow.disableComponents;
 begin
-  pageControl.visible      := queryTurnier.Active and (queryTurnier.RecordCount > 0);
-  menuItemDrucken.visible  := queryTurnier.Active and (queryTurnier.RecordCount > 0);
-  panelTurnierinfo.visible := queryTurnier.Active and (queryTurnier.RecordCount > 0);
-  logoArcomp.visible       := not pageControl.visible;
+  pageControl.Visible      := queryTurnier.Active and (queryTurnier.RecordCount > 0);
+  menuItemDrucken.Visible  := queryTurnier.Active and (queryTurnier.RecordCount > 0);
+  panelTurnierinfo.Visible := queryTurnier.Active and (queryTurnier.RecordCount > 0);
+  logoArcomp.Visible       := not pageControl.Visible;
 end;
 
 procedure TMainWindow.edit10erKeyPress(Sender: TObject; var Key: Char);
@@ -1017,7 +1126,11 @@ begin
 
   FBL_Turnier.fillComboScheibenanzahl(comboScheibenanzahl, FTU_ID);
   FBL_Turnier.fillComboScheibenPlatz(comboScheibenplatz, FTU_ID);
-
+  FBL_Finale.fillComboFinale(comboFinale, FTU_ID);
+  FBL_Finale.fillComboFinaleBogenkategorie(comboFinaleBogenkategorie, FTU_ID);
+  FBL_Finale.fillComboFinaleAlterskategorie(comboFinalealterskategorie, FTU_ID, comboFinaleBogenkategorie.Text);
+  FBL_Finale.fillComboFinaleGeschlecht(comboFinaleGeschlecht, FTU_ID, comboFinaleBogenkategorie.Text,
+    comboFinalealterskategorie.Text);
 end;
 
 procedure TMainWindow.loadScheibeneinteilungInfo;

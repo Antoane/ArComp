@@ -50,14 +50,13 @@ type
     procedure buttonCancelClick(Sender: TObject);
     procedure gridTurniereTitleClick(Column: TColumn);
     procedure Button2Click(Sender: TObject);
-    procedure FormKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
-    procedure FormKeyUp(Sender: TObject; var Key: Word; Shift: TShiftState);
     procedure gridTurniereDblClick(Sender: TObject);
     procedure editSearchKeyUp(Sender: TObject; var Key: Word; Shift: TShiftState);
     procedure ButtonLoeschenClick(Sender: TObject);
     procedure buttonHinzufuegenClick(Sender: TObject);
     procedure buttonOKClick(Sender: TObject);
     procedure buttonAlleClick(Sender: TObject);
+    procedure gridTurniereKeyUp(Sender: TObject; var Key: Word; Shift: TShiftState);
 
   private
     FTU_ID    : string;
@@ -67,6 +66,7 @@ type
     procedure deleteTurnier;
 
     procedure openTurnierDetail(TU_ID: string);
+    procedure focusSetting;
 
     {Private-Deklarationen}
   public
@@ -110,6 +110,19 @@ begin
   querySelectTurnier.Parameters.ParamByName('SEARCHSTRING').value := '%' + editSearch.Text + '%';
   querySelectTurnier.Open;
   TARC_Tools.autoSizeColumns(querySelectTurnier, gridTurniere);
+  focusSetting();
+end;
+
+procedure TFormTurnierListe.focusSetting;
+begin
+  if querySelectTurnier.Active and (querySelectTurnier.RecordCount > 0) then
+  begin
+    gridTurniere.SetFocus;
+  end
+  else
+  begin
+    editSearch.SetFocus;
+  end;
 end;
 
 procedure TFormTurnierListe.buttonAlleClick(Sender: TObject);
@@ -202,21 +215,7 @@ begin
   end;
 end;
 
-procedure TFormTurnierListe.FormKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
-begin
-  if Key = 17 then isCtrlPressed := True;
 
-  if isCtrlPressed and (Key = 30) then
-  begin
-    Key := 0;
-    editSearch.SetFocus;
-  end;
-end;
-
-procedure TFormTurnierListe.FormKeyUp(Sender: TObject; var Key: Word; Shift: TShiftState);
-begin
-  isCtrlPressed := false;
-end;
 
 procedure TFormTurnierListe.FormShow(Sender: TObject);
 begin
@@ -244,6 +243,20 @@ begin
     begin
       openTurnierDetail(querySelectTurnier.FieldByName('TU_ID').AsString);
     end;
+  end;
+end;
+
+procedure TFormTurnierListe.gridTurniereKeyUp(Sender: TObject; var Key: Word; Shift: TShiftState);
+begin
+  if Key = VK_RETURN then
+  begin
+    gridTurniereDblClick(nil);
+  end;
+
+  if Key = VK_ESCAPE then
+  begin
+    self.ModalResult := mrCancel;
+    self.CloseModal;
   end;
 end;
 
@@ -296,6 +309,12 @@ begin
   if Key = VK_RETURN then
   begin
     searchData(editSearch.Text);
+  end;
+
+  if Key = VK_ESCAPE then
+  begin
+    self.ModalResult := mrCancel;
+    self.CloseModal;
   end;
 end;
 
