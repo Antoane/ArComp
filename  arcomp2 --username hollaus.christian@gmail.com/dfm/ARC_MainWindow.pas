@@ -196,6 +196,7 @@ type
     Scheibeneinteilung1: TMenuItem;
     Scorekarten1: TMenuItem;
     ScorekartenBlanko1: TMenuItem;
+    buttonResetScheibeneinteilung: TButton;
     procedure Beenden1Click(Sender: TObject);
     procedure Importieren1Click(Sender: TObject);
     procedure menuSchuetzenBearbeitenClick(Sender: TObject);
@@ -256,6 +257,8 @@ type
     procedure Button2Click(Sender: TObject);
     procedure Scheibeneinteilung1Click(Sender: TObject);
     procedure Scorekarten1Click(Sender: TObject);
+    procedure ScorekartenBlanko1Click(Sender: TObject);
+    procedure buttonResetScheibeneinteilungClick(Sender: TObject);
 
   private
     FTU_ID     : string;
@@ -403,6 +406,19 @@ end;
 procedure TMainWindow.buttonNeuPersonClick(Sender: TObject);
 begin
   addPerson();
+end;
+
+procedure TMainWindow.buttonResetScheibeneinteilungClick(Sender: TObject);
+begin
+  if MessageDlg('Wollen Sie wirklich die komplette Scheibeneinteilung zurücksetzen?', mtConfirmation, mbYesNo, 0) = mrYes
+  then
+  begin
+    FBL_Turnier.zuteilungResetten(FTU_ID);
+    searchPersonenNichtZugeteilt('');
+    searchPersonenZugeteilt('');
+    loadScheibeneinteilungInfo();
+    pageControlScheibeneinteilung.ActivePage := sheetScheibeneinteilungNichtZugeteilt;
+  end
 end;
 
 procedure TMainWindow.addPerson;
@@ -1351,6 +1367,16 @@ end;
 procedure TMainWindow.Scorekarten1Click(Sender: TObject);
 begin
   frxReport.LoadFromFile('..\Reports\Scoreblatt.fr3');
+  frxReport.Variables[' ' + 'ArComp'] := Null;
+  frxReport.Variables['TU_ID']        := quotedStr(FTU_ID);
+
+  //frxReport.DesignReport();
+  frxReport.ShowReport(true);
+end;
+
+procedure TMainWindow.ScorekartenBlanko1Click(Sender: TObject);
+begin
+  frxReport.LoadFromFile('..\Reports\Scoreblatt_blanco.fr3');
   frxReport.Variables[' ' + 'ArComp'] := Null;
   frxReport.Variables['TU_ID']        := quotedStr(FTU_ID);
 

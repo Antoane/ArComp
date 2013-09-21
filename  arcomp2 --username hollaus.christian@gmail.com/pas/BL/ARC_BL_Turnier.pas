@@ -39,6 +39,8 @@ type
     procedure fillComboScoresScheibenPlatz(combo: TCombobox; TU_ID: string; scheibe: integer);
     procedure selectScores(query: TADOQuery; scheibe: integer; scheibenplatz: string; TU_ID: string);
     procedure saveScore(TU_ID, PE_ID: string; SC_ID: string; runde, score, zehner, neuner, X: integer);
+
+    procedure zuteilungResetten(TU_ID: string);
   end;
 
 implementation
@@ -140,6 +142,26 @@ begin
       add('DELETE');
       add('FROM SCHEIBENEINTEILUNG');
       add('WHERE SE_ID = ' + quotedStr(SE_ID));
+    end;
+    aQuery.ExecSQL;
+  finally
+    aQuery.Free;
+  end;
+end;
+
+procedure TARC_BL_Turnier.zuteilungResetten(TU_ID: string);
+var
+  aQuery: TADOQuery;
+begin
+  aQuery := TADOQuery.create(nil);
+  try
+    aQuery.connection := FConnection;
+    with aQuery.SQL do
+    begin
+      clear;
+      add('DELETE');
+      add('FROM SCHEIBENEINTEILUNG');
+      add('WHERE TU_ID = ' + quotedStr(TU_ID));
     end;
     aQuery.ExecSQL;
   finally
