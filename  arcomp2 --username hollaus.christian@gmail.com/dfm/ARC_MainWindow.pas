@@ -197,6 +197,8 @@ type
     Scorekarten1: TMenuItem;
     ScorekartenBlanko1: TMenuItem;
     buttonResetScheibeneinteilung: TButton;
+    buttonDruckScorekarte: TButton;
+    urnierteilnehmernachKlasse1: TMenuItem;
     procedure Beenden1Click(Sender: TObject);
     procedure Importieren1Click(Sender: TObject);
     procedure menuSchuetzenBearbeitenClick(Sender: TObject);
@@ -259,6 +261,8 @@ type
     procedure Scorekarten1Click(Sender: TObject);
     procedure ScorekartenBlanko1Click(Sender: TObject);
     procedure buttonResetScheibeneinteilungClick(Sender: TObject);
+    procedure buttonDruckScorekarteClick(Sender: TObject);
+    procedure urnierteilnehmernachKlasse1Click(Sender: TObject);
 
   private
     FTU_ID     : string;
@@ -692,6 +696,20 @@ end;
 procedure TMainWindow.buttonAlleZugeteiltClick(Sender: TObject);
 begin
   searchPersonenZugeteilt('');
+end;
+
+procedure TMainWindow.buttonDruckScorekarteClick(Sender: TObject);
+begin
+  if queryScheibeneinteilungZugeteilt.Active and (queryScheibeneinteilungZugeteilt.RecordCount > 0) then
+  begin
+    frxReport.LoadFromFile('..\Reports\Scoreblatt.fr3');
+    frxReport.Variables[' ' + 'ArComp'] := Null;
+    frxReport.Variables['TU_ID']        := quotedStr(FTU_ID);
+    frxReport.Variables['SCHEIBE']      := queryScheibeneinteilungZugeteilt.FieldByName('SE_NUMMER').AsInteger;
+
+    //frxReport.DesignReport();
+    frxReport.ShowReport(true);
+  end;
 end;
 
 procedure TMainWindow.buttonHinzufuegenClick(Sender: TObject);
@@ -1299,6 +1317,31 @@ begin
   end;
 end;
 
+procedure TMainWindow.urnierteilnehmernachKlasse1Click(Sender: TObject);
+var
+  aDialog: TFormParameterLandeswertung;
+begin
+  aDialog := TFormParameterLandeswertung.create(nil);
+  try
+    aDialog.setConnection(DBConnection);
+    if aDialog.ShowModal = mrOK then
+    begin
+
+      frxReport.LoadFromFile('..\Reports\Turnierteilnehmer_nach_Klasse.fr3');
+      frxReport.Variables[' ' + 'ArComp'] := Null;
+      frxReport.Variables['TU_ID']        := quotedStr(FTU_ID);
+
+      frxReport.Variables['MIT_LANDESWERTUNG']  := boolToInt(aDialog.MitLAndeswertung);
+      frxReport.Variables['OHNE_LANDESWERTUNG'] := boolToInt(aDialog.OhneLAndeswertung);
+
+      //frxReport.DesignReport();
+      frxReport.ShowReport(true);
+    end;
+  finally
+    aDialog.Free;
+  end;
+end;
+
 procedure TMainWindow.saveScore();
 var
   aPE_ID : string;
@@ -1369,6 +1412,7 @@ begin
   frxReport.LoadFromFile('..\Reports\Scoreblatt.fr3');
   frxReport.Variables[' ' + 'ArComp'] := Null;
   frxReport.Variables['TU_ID']        := quotedStr(FTU_ID);
+  frxReport.Variables['SCHEIBE']      := 0;
 
   //frxReport.DesignReport();
   frxReport.ShowReport(true);
