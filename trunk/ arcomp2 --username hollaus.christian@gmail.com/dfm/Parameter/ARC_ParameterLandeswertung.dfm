@@ -1,7 +1,7 @@
 object FormParameterLandeswertung: TFormParameterLandeswertung
   Left = 0
   Top = 0
-  Caption = 'Rangliste Parameter'
+  Caption = 'Landeswertung Parameter'
   ClientHeight = 191
   ClientWidth = 431
   Color = clBtnFace
@@ -20,7 +20,6 @@ object FormParameterLandeswertung: TFormParameterLandeswertung
     Height = 75
     Align = alTop
     TabOrder = 0
-    ExplicitWidth = 370
     object labelCaption: TLabel
       AlignWithMargins = True
       Left = 31
@@ -47,8 +46,6 @@ object FormParameterLandeswertung: TFormParameterLandeswertung
     Height = 35
     Align = alBottom
     TabOrder = 1
-    ExplicitTop = 186
-    ExplicitWidth = 370
     object buttonCancel: TButton
       AlignWithMargins = True
       Left = 400
@@ -61,7 +58,6 @@ object FormParameterLandeswertung: TFormParameterLandeswertung
       Images = ImageList
       TabOrder = 1
       OnClick = buttonCancelClick
-      ExplicitLeft = 339
     end
     object buttonOK: TButton
       AlignWithMargins = True
@@ -76,7 +72,6 @@ object FormParameterLandeswertung: TFormParameterLandeswertung
       Images = ImageList
       TabOrder = 0
       OnClick = buttonOKClick
-      ExplicitLeft = 309
     end
   end
   object Panel5: TPanel
@@ -87,8 +82,6 @@ object FormParameterLandeswertung: TFormParameterLandeswertung
     Align = alClient
     BevelOuter = bvNone
     TabOrder = 2
-    ExplicitWidth = 370
-    ExplicitHeight = 111
     object checkMitLandeswertung: TCheckBox
       Left = 31
       Top = 15
@@ -112,7 +105,7 @@ object FormParameterLandeswertung: TFormParameterLandeswertung
     Left = 320
     Top = 24
     Bitmap = {
-      494C010109004801E80010001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
+      494C010109004801EC0010001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
       0000000000003600000028000000400000003000000001002000000000000030
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
