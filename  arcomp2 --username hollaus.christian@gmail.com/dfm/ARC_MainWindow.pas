@@ -316,39 +316,48 @@ implementation
 procedure TMainWindow.menuItemRanglisteClick(Sender: TObject);
 var
   aDialog         : TFormParameterRangliste;
+  aDialog2        : TFormParameterLandeswertung;
   aAlterskategorie: string;
   aBogenkategorie : string;
   aGeschlecht     : string;
   aTest           : string;
 begin
-  aDialog := TFormParameterRangliste.create(nil);
+  aDialog  := TFormParameterRangliste.create(nil);
+  aDialog2 := TFormParameterLandeswertung.create(nil);
   try
     aDialog.setConnection(DBConnection);
+    aDialog2.setConnection(DBConnection);
     if aDialog.ShowModal = mrOK then
     begin
+      if aDialog2.ShowModal = mrOK then
+      begin
+        aAlterskategorie := aDialog.Alterskategorien;
+        aBogenkategorie  := aDialog.Bogenkategorien;
+        aGeschlecht      := aDialog.Geschlecht;
+        aTest            := GetCurrentDir;
+        frxReport.LoadFromFile('..\Reports\Rangliste.fr3');
+        frxReport.Variables[' ' + 'ArComp'] := Null;
+        frxReport.Variables['TU_ID']        := quotedStr(FTU_ID);
 
-      aAlterskategorie := aDialog.Alterskategorien;
-      aBogenkategorie  := aDialog.Bogenkategorien;
-      aGeschlecht      := aDialog.Geschlecht;
-      aTest            := GetCurrentDir;
-      frxReport.LoadFromFile('..\Reports\Rangliste.fr3');
-      frxReport.Variables[' ' + 'ArComp'] := Null;
-      frxReport.Variables['TU_ID']        := quotedStr(FTU_ID);
+        frxReport.Variables['FILTER_BOGENKATEGORIE'] := boolToInt(aBogenkategorie <> '');
+        frxReport.Variables['PARAM_BOGENKATEGORIE']  := quotedStr(aBogenkategorie);
 
-      frxReport.Variables['FILTER_BOGENKATEGORIE'] := boolToInt(aBogenkategorie <> '');
-      frxReport.Variables['PARAM_BOGENKATEGORIE']  := quotedStr(aBogenkategorie);
+        frxReport.Variables['FILTER_ALTERSKATEGORIE'] := boolToInt(aAlterskategorie <> '');
+        frxReport.Variables['PARAM_ALTERSKATEGORIE']  := quotedStr(aAlterskategorie);
 
-      frxReport.Variables['FILTER_ALTERSKATEGORIE'] := boolToInt(aAlterskategorie <> '');
-      frxReport.Variables['PARAM_ALTERSKATEGORIE']  := quotedStr(aAlterskategorie);
+        frxReport.Variables['FILTER_GESCHLECHT'] := boolToInt(aGeschlecht <> '');
+        frxReport.Variables['PARAM_GESCHLECHT']  := quotedStr(aGeschlecht);
 
-      frxReport.Variables['FILTER_GESCHLECHT'] := boolToInt(aGeschlecht <> '');
-      frxReport.Variables['PARAM_GESCHLECHT']  := quotedStr(aGeschlecht);
+        frxReport.Variables['MIT_LANDESWERTUNG']  := boolToInt(aDialog2.MitLAndeswertung);
+        frxReport.Variables['OHNE_LANDESWERTUNG'] := boolToInt(aDialog2.OhneLAndeswertung);
 
-      //frxReport.DesignReport();
-      frxReport.ShowReport(true);
+        //frxReport.DesignReport();
+        frxReport.ShowReport(true);
+      end;
     end;
   finally
     aDialog.Free;
+    aDialog2.Free;
   end;
 end;
 
