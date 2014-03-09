@@ -26,14 +26,15 @@ type
   public
     class procedure fillDBComboFromTable(combo: TDBComboBox; table, key, value: string;
       connection: TADOConnection); static;
+    class procedure fillDBComboFromQuery(combo: TDBComboBox; query: TADOQuery; key, value: string); static;
+    class procedure fillComboFromQuery(combo: TComboBox; query: TADOQuery; key, value: string); static;
     class procedure fillComboFromTable(combo: TComboBox; table, key, value: string; connection: TADOConnection); static;
     class procedure gridSort(grid: TDbGrid; Column: TColumn); static;
     class procedure fixDBGridColumnsWidth(const DBGrid: TDbGrid); static;
     class procedure autoSizeColumns(query: TADOQuery; grid: TDbGrid); static;
     class procedure DrawColumnCell(Sender: TObject; const Rect: TRect; DataCol: Integer; Column: TColumn;
       State: TGridDrawState; grid: TDbGrid); static;
-
-  published
+    class function getKeyToValue(query: TADOQuery; keyCol, valCol, value: string): string;
 
   end;
 
@@ -74,6 +75,36 @@ begin
   end;
 end;
 
+class procedure TARC_Tools.fillDBComboFromQuery(combo: TDBComboBox; query: TADOQuery; key: string; value: string);
+begin
+  if query.RecordCount > 0 then
+  begin
+    combo.Clear;
+    combo.Items.add('');
+    query.First;
+    while not query.Eof do
+    begin
+      combo.Items.add(query.FieldByName(value).AsString);
+      query.Next;
+    end;
+  end;
+end;
+
+class procedure TARC_Tools.fillComboFromQuery(combo: TComboBox; query: TADOQuery; key: string; value: string);
+begin
+  if query.RecordCount > 0 then
+  begin
+    combo.Clear;
+    combo.Items.add('');
+    query.First;
+    while not query.Eof do
+    begin
+      combo.Items.add(query.FieldByName(value).AsString);
+      query.Next;
+    end;
+  end;
+end;
+
 class procedure TARC_Tools.fillComboFromTable(combo: TComboBox; table: string; key: string; value: string;
   connection: TADOConnection);
 var
@@ -106,6 +137,18 @@ begin
     end;
   finally
     aQuery.Free;
+  end;
+end;
+
+class function TARC_Tools.getKeyToValue(query: TADOQuery; keyCol, valCol, value: string): string;
+begin
+  if query.Locate(valCol, value, []) then
+  begin
+    result := query.FieldByName(keyCol).AsString;
+  end
+  else
+  begin
+    result := '';
   end;
 end;
 
