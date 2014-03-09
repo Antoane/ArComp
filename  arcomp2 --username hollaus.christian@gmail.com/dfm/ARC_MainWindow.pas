@@ -45,6 +45,7 @@ uses
   frxDesgn,
   frxClass,
   frxVariables,
+  ARC_DAL_Teamwertung,
   frxADOComponents;
 
 type
@@ -199,6 +200,29 @@ type
     buttonResetScheibeneinteilung: TButton;
     buttonDruckScorekarte: TButton;
     urnierteilnehmernachKlasse1: TMenuItem;
+    sheetTeamwertung: TTabSheet;
+    gridTeamwertung: TDBGrid;
+    Panel1: TPanel;
+    panelTeam: TPanel;
+    comboVerein: TComboBox;
+    comboTeamPerson1: TComboBox;
+    comboTeamPerson2: TComboBox;
+    comboTeamPerson3: TComboBox;
+    editTeamname: TEdit;
+    buttonTeamHinzufuegen: TButton;
+    queryTeamPerson1: TADOQuery;
+    queryTeamPerson2: TADOQuery;
+    queryTeamPerson3: TADOQuery;
+    sourceTeamPerson1: TDataSource;
+    sourceTeamPerson2: TDataSource;
+    sourceTeamPerson3: TDataSource;
+    queryVerein: TADOQuery;
+    sourceVerein: TDataSource;
+    queryTeamwertung: TADOQuery;
+    sourceTeamwertung: TDataSource;
+    buttonTeamEntfernen: TButton;
+    buttonSaveTeamwertung: TButton;
+    urnierteilnehmermitScheibe1: TMenuItem;
     procedure Beenden1Click(Sender: TObject);
     procedure Importieren1Click(Sender: TObject);
     procedure menuSchuetzenBearbeitenClick(Sender: TObject);
@@ -263,6 +287,12 @@ type
     procedure buttonResetScheibeneinteilungClick(Sender: TObject);
     procedure buttonDruckScorekarteClick(Sender: TObject);
     procedure urnierteilnehmernachKlasse1Click(Sender: TObject);
+    procedure comboVereinChange(Sender: TObject);
+    procedure buttonTeamHinzufuegenClick(Sender: TObject);
+    procedure queryTeamwertungAfterScroll(DataSet: TDataSet);
+    procedure buttonTeamEntfernenClick(Sender: TObject);
+    procedure buttonSaveTeamwertungClick(Sender: TObject);
+    procedure urnierteilnehmermitScheibe1Click(Sender: TObject);
 
   private
     FTU_ID     : string;
@@ -300,6 +330,12 @@ type
     procedure setStartTabs;
     procedure goToScore;
     procedure openTurnierDetail(TU_ID: string);
+    procedure loadTeamWertung;
+    procedure setTeamDaten;
+    procedure updatePersonenDropdowns;
+    procedure saveTeamwertung;
+    procedure insertTeamwertung;
+    procedure deleteTeamWertung;
 
     {Private-Deklarationen}
   public
@@ -466,6 +502,13 @@ begin
   selectScores();
 end;
 
+procedure TMainWindow.buttonSaveTeamwertungClick(Sender: TObject);
+begin
+  deleteTeamWertung();
+  saveTeamwertung();
+  loadTeamWertung();
+end;
+
 procedure TMainWindow.selectNextScheibe;
 begin
   //es gibt noch einen weiteren Scheibenplatz
@@ -499,6 +542,91 @@ end;
 procedure TMainWindow.buttonSearchPersonenZugeteiltClick(Sender: TObject);
 begin
   searchPersonenZugeteilt(editSearchZugeteilt.Text);
+end;
+
+procedure TMainWindow.loadTeamWertung;
+begin
+  TARC_DAL_Teamwertung.SQL_Teamwertung(queryTeamwertung, FTU_ID);
+  queryTeamwertung.Open;
+end;
+
+procedure TMainWindow.buttonTeamEntfernenClick(Sender: TObject);
+begin
+  deleteTeamWertung();
+  loadTeamWertung();
+end;
+
+procedure TMainWindow.deleteTeamWertung;
+begin
+  TARC_DAL_Teamwertung.SQL_TeamEntfernen(queryTeamwertung.FieldByName('TE_ID').AsString, DBConnection);
+end;
+
+procedure TMainWindow.insertTeamwertung;
+var
+  aTE_ID   : string;
+  aVE_ID   : string;
+  aTeamname: string;
+  aPE_ID1  : string;
+  aPE_ID2  : string;
+  aPE_ID3  : string;
+begin
+  aVE_ID    := TARC_Tools.getKeyToValue(queryVerein, 'VE_ID', 'VE_NAME', comboVerein.Text);
+  aTeamname := editTeamname.Text;
+  aPE_ID1   := TARC_Tools.getKeyToValue(queryTeamPerson1, 'PE_ID', 'NAME', comboTeamPerson1.Text);
+  aPE_ID2   := TARC_Tools.getKeyToValue(queryTeamPerson1, 'PE_ID', 'NAME', comboTeamPerson2.Text);
+  aPE_ID3   := TARC_Tools.getKeyToValue(queryTeamPerson1, 'PE_ID', 'NAME', comboTeamPerson3.Text);
+
+  aTE_ID := TARC_DAL_Teamwertung.addTeam(FTU_ID, aTeamname, aVE_ID, DBConnection);
+
+  if aPE_ID1 <> '' then
+  begin
+    TARC_DAL_Teamwertung.addTeamMember(aTE_ID, aPE_ID1, DBConnection);
+  end;
+  if aPE_ID2 <> '' then
+  begin
+    TARC_DAL_Teamwertung.addTeamMember(aTE_ID, aPE_ID2, DBConnection);
+  end;
+  if aPE_ID3 <> '' then
+  begin
+    TARC_DAL_Teamwertung.addTeamMember(aTE_ID, aPE_ID3, DBConnection);
+  end;
+end;
+
+procedure TMainWindow.buttonTeamHinzufuegenClick(Sender: TObject);
+begin
+  insertTeamwertung();
+  loadTeamWertung();
+end;
+
+procedure TMainWindow.saveTeamwertung;
+var
+  aTE_ID   : string;
+  aVE_ID   : string;
+  aTeamname: string;
+  aPE_ID1  : string;
+  aPE_ID2  : string;
+  aPE_ID3  : string;
+begin
+  aVE_ID    := TARC_Tools.getKeyToValue(queryVerein, 'VE_ID', 'VE_NAME', comboVerein.Text);
+  aTeamname := editTeamname.Text;
+  aPE_ID1   := TARC_Tools.getKeyToValue(queryTeamPerson1, 'PE_ID', 'NAME', comboTeamPerson1.Text);
+  aPE_ID2   := TARC_Tools.getKeyToValue(queryTeamPerson1, 'PE_ID', 'NAME', comboTeamPerson2.Text);
+  aPE_ID3   := TARC_Tools.getKeyToValue(queryTeamPerson1, 'PE_ID', 'NAME', comboTeamPerson3.Text);
+
+  aTE_ID := TARC_DAL_Teamwertung.addTeam(FTU_ID, aTeamname, aVE_ID, DBConnection);
+
+  if aPE_ID1 <> '' then
+  begin
+    TARC_DAL_Teamwertung.addTeamMember(aTE_ID, aPE_ID1, DBConnection);
+  end;
+  if aPE_ID2 <> '' then
+  begin
+    TARC_DAL_Teamwertung.addTeamMember(aTE_ID, aPE_ID2, DBConnection);
+  end;
+  if aPE_ID3 <> '' then
+  begin
+    TARC_DAL_Teamwertung.addTeamMember(aTE_ID, aPE_ID3, DBConnection);
+  end;
 end;
 
 procedure TMainWindow.buttonZumScoreClick(Sender: TObject);
@@ -583,6 +711,24 @@ end;
 procedure TMainWindow.comboScoresScheibenplatzChange(Sender: TObject);
 begin
   selectScores();
+end;
+
+procedure TMainWindow.comboVereinChange(Sender: TObject);
+begin
+  updatePersonenDropdowns();
+end;
+
+procedure TMainWindow.updatePersonenDropdowns;
+var
+  aVE_ID: string;
+begin
+  aVE_ID := TARC_Tools.getKeyToValue(queryVerein, 'VE_ID', 'VE_NAME', comboVerein.Text);
+  TARC_DAL_Teamwertung.selectPersonenZuVerein(queryTeamPerson1, aVE_ID, FTU_ID);
+  queryTeamPerson1.Open;
+  TARC_Tools.fillComboFromQuery(comboTeamPerson1, queryTeamPerson1, 'PE_ID', 'NAME');
+  TARC_Tools.fillComboFromQuery(comboTeamPerson2, queryTeamPerson1, 'PE_ID', 'NAME');
+  TARC_Tools.fillComboFromQuery(comboTeamPerson3, queryTeamPerson1, 'PE_ID', 'NAME');
+  //TODO aus verschiedenen queries befüllen?
 end;
 
 constructor TMainWindow.create(aOwner: TComponent);
@@ -772,6 +918,14 @@ begin
         with aQuery.SQL do
         begin
           Clear;
+          add('DELETE FROM SCHEIBENEINTEILUNG');
+          add('WHERE PE_ID = ' + quotedStr(aID));
+          add('  AND TU_ID = ' + quotedStr(FTU_ID));
+
+          add('DELETE FROM SCORES');
+          add('WHERE PE_ID = ' + quotedStr(aID));
+          add('  AND TU_ID = ' + quotedStr(FTU_ID));
+
           add('DELETE FROM TURNIER_ZUTEILUNG');
           add('WHERE PE_ID = ' + quotedStr(aID));
           add('  AND TU_ID = ' + quotedStr(FTU_ID));
@@ -1079,6 +1233,10 @@ begin
   begin
     fillComboScores();
     selectScores();
+  end
+  else if pageControl.ActivePage = sheetTeamwertung then
+  begin
+    loadTeamWertung();
   end;
 end;
 
@@ -1103,6 +1261,62 @@ end;
 procedure TMainWindow.queryScoresAfterScroll(DataSet: TDataSet);
 begin
   updateEditScores();
+end;
+
+procedure TMainWindow.queryTeamwertungAfterScroll(DataSet: TDataSet);
+begin
+  setTeamDaten();
+end;
+
+procedure TMainWindow.setTeamDaten;
+var
+  aQuery : TADOQuery;
+  aVE_ID : string;
+  aPE_ID1: string;
+  aPE_ID2: string;
+  aPE_ID3: string;
+begin
+  aQuery := TADOQuery.create(nil);
+  try
+    aQuery.Connection := DBConnection;
+    TARC_DAL_Teamwertung.selectTeam(aQuery, queryTeamwertung.FieldByName('TE_ID').AsString);
+    aQuery.Open;
+
+    if aQuery.RecordCount = 3 then
+    begin
+      editTeamname.Text := aQuery.FieldByName('TE_NAME').AsString;
+      aVE_ID            := aQuery.FieldByName('VE_ID').AsString;
+      if queryVerein.Locate('VE_ID', aVE_ID, []) then
+      begin
+        comboVerein.ItemIndex := comboVerein.Items.IndexOf(queryVerein.FieldByName('VE_NAME').AsString);
+      end;
+      updatePersonenDropdowns();
+
+      aQuery.RecNo := 1;
+      aPE_ID1      := aQuery.FieldByName('PE_ID').AsString;
+      if queryTeamPerson1.Locate('PE_ID', aPE_ID1, []) then
+      begin
+        comboTeamPerson1.ItemIndex := comboTeamPerson1.Items.IndexOf(queryTeamPerson1.FieldByName('NAME').AsString);
+      end;
+
+      aQuery.RecNo := 2;
+      aPE_ID2      := aQuery.FieldByName('PE_ID').AsString;
+      if queryTeamPerson1.Locate('PE_ID', aPE_ID2, []) then
+      begin
+        comboTeamPerson2.ItemIndex := comboTeamPerson2.Items.IndexOf(queryTeamPerson1.FieldByName('NAME').AsString);
+      end;
+
+      aQuery.RecNo := 3;
+      aPE_ID3      := aQuery.FieldByName('PE_ID').AsString;
+      if queryTeamPerson1.Locate('PE_ID', aPE_ID3, []) then
+      begin
+        comboTeamPerson3.ItemIndex := comboTeamPerson3.Items.IndexOf(queryTeamPerson1.FieldByName('NAME').AsString);
+      end;
+    end;
+
+  finally
+    aQuery.Free;
+  end;
 end;
 
 procedure TMainWindow.RundenDistanzen1Click(Sender: TObject);
@@ -1179,6 +1393,11 @@ begin
   FBL_Finale.fillComboFinaleAlterskategorie(comboFinalealterskategorie, FTU_ID, comboFinaleBogenkategorie.Text);
   FBL_Finale.fillComboFinaleGeschlecht(comboFinaleGeschlecht, FTU_ID, comboFinaleBogenkategorie.Text,
     comboFinalealterskategorie.Text);
+
+  TARC_DAL_Teamwertung.selectVereine(queryVerein);
+  queryVerein.Open;
+  TARC_Tools.fillComboFromQuery(comboVerein, queryVerein, 'VE_ID', 'VE_NAME');
+
 end;
 
 procedure TMainWindow.loadScheibeneinteilungInfo;
@@ -1312,6 +1531,31 @@ begin
     begin
 
       frxReport.LoadFromFile('..\Reports\Turnierteilnehmer.fr3');
+      frxReport.Variables[' ' + 'ArComp'] := Null;
+      frxReport.Variables['TU_ID']        := quotedStr(FTU_ID);
+
+      frxReport.Variables['MIT_LANDESWERTUNG']  := boolToInt(aDialog.MitLAndeswertung);
+      frxReport.Variables['OHNE_LANDESWERTUNG'] := boolToInt(aDialog.OhneLAndeswertung);
+
+      //frxReport.DesignReport();
+      frxReport.ShowReport(true);
+    end;
+  finally
+    aDialog.Free;
+  end;
+end;
+
+procedure TMainWindow.urnierteilnehmermitScheibe1Click(Sender: TObject);
+var
+  aDialog: TFormParameterLandeswertung;
+begin
+  aDialog := TFormParameterLandeswertung.create(nil);
+  try
+    aDialog.setConnection(DBConnection);
+    if aDialog.ShowModal = mrOK then
+    begin
+
+      frxReport.LoadFromFile('..\Reports\Turnierteilnehmer_mit_Scheibe.fr3');
       frxReport.Variables[' ' + 'ArComp'] := Null;
       frxReport.Variables['TU_ID']        := quotedStr(FTU_ID);
 

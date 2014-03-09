@@ -28,7 +28,8 @@ uses
   ARC_DAL_ParameterRangliste in 'pas\DAL\ARC_DAL_ParameterRangliste.pas',
   ARC_DAL_Person in 'pas\DAL\ARC_DAL_Person.pas',
   ARC_ParameterLandeswertung in 'dfm\Parameter\ARC_ParameterLandeswertung.pas' {FormParameterLandeswertung},
-  ARC_BL_Finale in 'pas\BL\ARC_BL_Finale.pas';
+  ARC_BL_Finale in 'pas\BL\ARC_BL_Finale.pas',
+  ARC_DAL_Teamwertung in 'pas\DAL\ARC_DAL_Teamwertung.pas';
 
 {$R *.res}
 

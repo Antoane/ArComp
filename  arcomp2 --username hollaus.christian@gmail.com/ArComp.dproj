@@ -146,6 +146,7 @@
 				<Form>FormParameterLandeswertung</Form>
 			</DCCReference>
 			<DCCReference Include="pas\BL\ARC_BL_Finale.pas"/>
+			<DCCReference Include="pas\DAL\ARC_DAL_Teamwertung.pas"/>
 			<BuildConfiguration Include="Release">
 				<Key>Cfg_2</Key>
 				<CfgParent>Base</CfgParent>
