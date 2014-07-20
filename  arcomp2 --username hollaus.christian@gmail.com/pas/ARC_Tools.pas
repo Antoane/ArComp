@@ -92,9 +92,9 @@ end;
 
 class procedure TARC_Tools.fillComboFromQuery(combo: TComboBox; query: TADOQuery; key: string; value: string);
 begin
+  combo.Clear;
   if query.RecordCount > 0 then
   begin
-    combo.Clear;
     combo.Items.add('');
     query.First;
     while not query.Eof do

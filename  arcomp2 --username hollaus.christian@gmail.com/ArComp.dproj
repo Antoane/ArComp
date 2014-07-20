@@ -64,7 +64,7 @@
 			<DCC_UsePackage>vclib;vclimg;vclactnband;vcldb;vcldsnap;bindcompvcl;vclie;vcltouch;websnap;VclSmp;vcl;dsnapcon;vclx;webdsnap;adortl;$(DCC_UsePackage)</DCC_UsePackage>
 		</PropertyGroup>
 		<PropertyGroup Condition="'$(Base_Win32)'!=''">
-			<DCC_UsePackage>vcldbx;vclib;inetdbbde;svnui;vclimg;fmi;intrawebdb_120_160;vclactnband;vcldb;vcldsnap;bindcompvcl;vclie;vcltouch;Intraweb_120_160;websnap;vclribbon;VclSmp;vcl;CloudService;dsnapcon;vclx;webdsnap;svn;bdertl;adortl;$(DCC_UsePackage)</DCC_UsePackage>
+			<DCC_UsePackage>vcldbx;vclib;inetdbbde;svnui;vclimg;fmi;intrawebdb_120_160;vclactnband;vcldb;vcldsnap;bindcompvcl;vclie;vcltouch;Intraweb_120_160;websnap;vclribbon;VclSmp;vcl;CloudService;dsnapcon;vclx;webdsnap;svn;bdertl;adortl;frx16;frxADO16;frxBDE16;frxDB16;frxDBX16;frxe16;frxIBX16;frxTee16;dclfrxTee16;fs16;fsADO16;fsBDE16;fsDB16;fsIBX16;fsTee16;$(DCC_UsePackage)</DCC_UsePackage>
 			<VerInfo_IncludeVerInfo>true</VerInfo_IncludeVerInfo>
 			<DCC_Namespace>Winapi;System.Win;Data.Win;Datasnap.Win;Web.Win;Soap.Win;Xml.Win;Bde;$(DCC_Namespace)</DCC_Namespace>
 			<VerInfo_Locale>1033</VerInfo_Locale>
@@ -195,19 +195,6 @@
 						<Source Name="MainSource">ArComp.dpr</Source>
 					</Source>
 					<Excluded_Packages>
-						<Excluded_Packages Name="C:\Users\CPAHOC\OM\private_branch_plattform\client\Components\madCollection\bpl\Win32\madBasic_.bpl">madBasic 1.2.3  -  www.madshi.net</Excluded_Packages>
-						<Excluded_Packages Name="C:\Users\CPAHOC\OM\private_branch_plattform\client\Components\madCollection\bpl\Win32\madDisAsm_.bpl">madDisAsm 2.2.2  -  www.madshi.net</Excluded_Packages>
-						<Excluded_Packages Name="C:\Users\CPAHOC\OM\private_branch_plattform\client\Components\madCollection\bpl\Win32\madExcept_.bpl">madExcept 4.0.6  -  www.madshi.net</Excluded_Packages>
-						<Excluded_Packages Name="C:\Users\CPAHOC\OM\private_branch_plattform\client\Components\madCollection\bpl\Win32\madExceptIde_.bpl">madExceptIde 1.1.0  -  www.madshi.net</Excluded_Packages>
-						<Excluded_Packages Name="C:\Users\CPAHOC\OM\private_branch_plattform\client\Components\madCollection\bpl\Win32\madExceptVcl_.bpl">madExceptVcl 2.1.0  -  www.madshi.net</Excluded_Packages>
-						<Excluded_Packages Name="C:\Users\CPAHOC\OM\private_branch_plattform\client\Components\madCollection\bpl\Win32\madExceptWizard_.bpl">madExceptWizard 3.1.3  -  www.madshi.net</Excluded_Packages>
-						<Excluded_Packages Name="C:\Users\CPAHOC\OM\private_branch_plattform\client\Components\madCollection\bpl\Win32\madHelp_.bpl">madHelp 1.1.1  -  www.madshi.net</Excluded_Packages>
-						<Excluded_Packages Name="C:\Users\CPAHOC\OM\bugfix_om\netFrame\bin\Delphi\CPA_NetFrameComponentsDes160.bpl">CP Solutions - NetFrame Components Designtime</Excluded_Packages>
-						<Excluded_Packages Name="C:\Users\CPAHOC\OM\bugfix_om\netFrame\bin\Delphi\CPA_NetFrameComponentsControlsDes160.bpl">CP Solutions - NetFrame External Components Designtime</Excluded_Packages>
-						<Excluded_Packages Name="C:\Users\CPAHOC\OM\bugfix_om\netFrame\bin\Delphi\CPA_NetFrameComponentsDBDes160.bpl">CP Solutions - NetFrame External DB Components Designtime</Excluded_Packages>
-						<Excluded_Packages Name="C:\Users\CPAHOC\OM\bugfix_om\netFrame\bin\Delphi\CPA_NetFrameComponentsCommunicationDes160.bpl">CP Solutions - NetFrame External Communication Components Designtime</Excluded_Packages>
-						<Excluded_Packages Name="C:\Users\CPAHOC\OM\bugfix_om\netFrame\bin\Delphi\CPA_NetFrameComponentsReportDes160.bpl">CP Solutions - NetFrame External Report Components Designtime</Excluded_Packages>
-						<Excluded_Packages Name="C:\Users\CPAHOC\OM\bugfix_om\netFrame\bin\Delphi\CPA_NetFrameWizardDes160.bpl">CP Solutions - NetFrame Wizards</Excluded_Packages>
 						<Excluded_Packages Name="$(BDSBIN)\dcloffice2k160.bpl">Microsoft Office 2000 Beispiele für gekapselte Komponenten für Automatisierungsserver</Excluded_Packages>
 						<Excluded_Packages Name="$(BDSBIN)\dclofficexp160.bpl">Microsoft Office XP Beispiele für gekapselte Komponenten für Automation Server</Excluded_Packages>
 					</Excluded_Packages>

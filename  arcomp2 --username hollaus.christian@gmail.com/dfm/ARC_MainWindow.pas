@@ -160,7 +160,6 @@ type
     Label15: TLabel;
     checkScoresAutoForward: TCheckBox;
     buttonSaveScore: TButton;
-    ImageList: TImageList;
     Label16: TLabel;
     editRunde: TDBEdit;
     buttonAlleTeilnehmer: TButton;
@@ -223,6 +222,20 @@ type
     buttonTeamEntfernen: TButton;
     buttonSaveTeamwertung: TButton;
     urnierteilnehmermitScheibe1: TMenuItem;
+    LabelTeamName: TLabel;
+    labelVerein: TLabel;
+    labelTeamPerson1: TLabel;
+    labelTeamPerson2: TLabel;
+    labelTeamPerson3: TLabel;
+    menuItemRanglisteTeam: TMenuItem;
+    comboBogenKategorie: TComboBox;
+    Label1: TLabel;
+    queryBogenkategorie: TADOQuery;
+    N1: TMenuItem;
+    N2: TMenuItem;
+    N3: TMenuItem;
+    N4: TMenuItem;
+    ImageList: TImageList;
     procedure Beenden1Click(Sender: TObject);
     procedure Importieren1Click(Sender: TObject);
     procedure menuSchuetzenBearbeitenClick(Sender: TObject);
@@ -293,6 +306,8 @@ type
     procedure buttonTeamEntfernenClick(Sender: TObject);
     procedure buttonSaveTeamwertungClick(Sender: TObject);
     procedure urnierteilnehmermitScheibe1Click(Sender: TObject);
+    procedure menuItemRanglisteTeamClick(Sender: TObject);
+    procedure comboBogenKategorieChange(Sender: TObject);
 
   private
     FTU_ID     : string;
@@ -372,6 +387,54 @@ begin
         aGeschlecht      := aDialog.Geschlecht;
         aTest            := GetCurrentDir;
         frxReport.LoadFromFile('..\Reports\Rangliste.fr3');
+        frxReport.Variables[' ' + 'ArComp'] := Null;
+        frxReport.Variables['TU_ID']        := quotedStr(FTU_ID);
+
+        frxReport.Variables['FILTER_BOGENKATEGORIE'] := boolToInt(aBogenkategorie <> '');
+        frxReport.Variables['PARAM_BOGENKATEGORIE']  := quotedStr(aBogenkategorie);
+
+        frxReport.Variables['FILTER_ALTERSKATEGORIE'] := boolToInt(aAlterskategorie <> '');
+        frxReport.Variables['PARAM_ALTERSKATEGORIE']  := quotedStr(aAlterskategorie);
+
+        frxReport.Variables['FILTER_GESCHLECHT'] := boolToInt(aGeschlecht <> '');
+        frxReport.Variables['PARAM_GESCHLECHT']  := quotedStr(aGeschlecht);
+
+        frxReport.Variables['MIT_LANDESWERTUNG']  := boolToInt(aDialog2.MitLAndeswertung);
+        frxReport.Variables['OHNE_LANDESWERTUNG'] := boolToInt(aDialog2.OhneLAndeswertung);
+
+        //frxReport.DesignReport();
+        frxReport.ShowReport(true);
+      end;
+    end;
+  finally
+    aDialog.Free;
+    aDialog2.Free;
+  end;
+end;
+
+procedure TMainWindow.menuItemRanglisteTeamClick(Sender: TObject);
+var
+  aDialog         : TFormParameterRangliste;
+  aDialog2        : TFormParameterLandeswertung;
+  aAlterskategorie: string;
+  aBogenkategorie : string;
+  aGeschlecht     : string;
+  aTest           : string;
+begin
+  aDialog  := TFormParameterRangliste.create(nil);
+  aDialog2 := TFormParameterLandeswertung.create(nil);
+  try
+    aDialog.setConnection(DBConnection);
+    aDialog2.setConnection(DBConnection);
+    if aDialog.ShowModal = mrOK then
+    begin
+      if aDialog2.ShowModal = mrOK then
+      begin
+        aAlterskategorie := aDialog.Alterskategorien;
+        aBogenkategorie  := aDialog.Bogenkategorien;
+        aGeschlecht      := aDialog.Geschlecht;
+        aTest            := GetCurrentDir;
+        frxReport.LoadFromFile('..\Reports\RanglisteTeam.fr3');
         frxReport.Variables[' ' + 'ArComp'] := Null;
         frxReport.Variables['TU_ID']        := quotedStr(FTU_ID);
 
@@ -571,7 +634,7 @@ var
   aPE_ID3  : string;
 begin
   aVE_ID    := TARC_Tools.getKeyToValue(queryVerein, 'VE_ID', 'VE_NAME', comboVerein.Text);
-  aTeamname := editTeamname.Text;
+  aTeamname := editTeamname.Text + '_NEU';
   aPE_ID1   := TARC_Tools.getKeyToValue(queryTeamPerson1, 'PE_ID', 'NAME', comboTeamPerson1.Text);
   aPE_ID2   := TARC_Tools.getKeyToValue(queryTeamPerson1, 'PE_ID', 'NAME', comboTeamPerson2.Text);
   aPE_ID3   := TARC_Tools.getKeyToValue(queryTeamPerson1, 'PE_ID', 'NAME', comboTeamPerson3.Text);
@@ -691,6 +754,11 @@ begin
   loadScheibeneinteilungInfo();
 end;
 
+procedure TMainWindow.comboBogenKategorieChange(Sender: TObject);
+begin
+  updatePersonenDropdowns();
+end;
+
 procedure TMainWindow.comboFinalealterskategorieChange(Sender: TObject);
 begin
   FBL_Finale.fillComboFinaleGeschlecht(comboFinaleGeschlecht, FTU_ID, comboFinaleBogenkategorie.Text,
@@ -723,7 +791,7 @@ var
   aVE_ID: string;
 begin
   aVE_ID := TARC_Tools.getKeyToValue(queryVerein, 'VE_ID', 'VE_NAME', comboVerein.Text);
-  TARC_DAL_Teamwertung.selectPersonenZuVerein(queryTeamPerson1, aVE_ID, FTU_ID);
+  TARC_DAL_Teamwertung.selectPersonenZuVerein(queryTeamPerson1, aVE_ID, FTU_ID, comboBogenKategorie.Text);
   queryTeamPerson1.Open;
   TARC_Tools.fillComboFromQuery(comboTeamPerson1, queryTeamPerson1, 'PE_ID', 'NAME');
   TARC_Tools.fillComboFromQuery(comboTeamPerson2, queryTeamPerson1, 'PE_ID', 'NAME');
@@ -1398,6 +1466,9 @@ begin
   queryVerein.Open;
   TARC_Tools.fillComboFromQuery(comboVerein, queryVerein, 'VE_ID', 'VE_NAME');
 
+  TARC_DAL_Teamwertung.selectBogenkategorien(queryBogenkategorie);
+  queryBogenkategorie.Open;
+  TARC_Tools.fillComboFromQuery(comboBogenKategorie, queryBogenkategorie, 'BK_ID', 'BK_NAME');
 end;
 
 procedure TMainWindow.loadScheibeneinteilungInfo;

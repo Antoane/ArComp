@@ -15,7 +15,8 @@ type
   private
 
   public
-    class procedure selectPersonenZuVerein(const query: TADOQuery; const VE_ID: string; const TU_ID: string); static;
+    class procedure selectPersonenZuVerein(const query: TADOQuery; const VE_ID: string; const TU_ID: string;
+      const bogenkategorie: string); static;
     class procedure selectVereine(const query: TADOQuery); static;
     class function addTeam(const TU_ID: string; const TE_NAME: string; const VE_ID: string;
       const connection: TADOConnection): string; static;
@@ -23,6 +24,7 @@ type
     class procedure SQL_Teamwertung(const query: TADOQuery; const TU_ID: string); static;
     class procedure selectTeam(const query: TADOQuery; const TE_ID: string);
     class procedure SQL_TeamEntfernen(const TE_ID: string; const connection: TADOConnection);
+    class procedure selectBogenkategorien(const query: TADOQuery); static;
   end;
 
 implementation
@@ -41,8 +43,22 @@ begin
   end;
 end;
 
+class procedure TARC_DAL_Teamwertung.selectBogenkategorien(const query: TADOQuery);
+begin
+  query.Close;
+  with query.SQL do
+  begin
+    clear;
+    add('SELECT');
+    add('  BK_ID,');
+    add('  BK_NAME');
+    add('FROM BOGENKATEGORIE');
+    add('ORDER BY BK_NAME');
+  end;
+end;
+
 class procedure TARC_DAL_Teamwertung.selectPersonenZuVerein(const query: TADOQuery; const VE_ID: string;
-  const TU_ID: string);
+  const TU_ID: string; const bogenkategorie: string);
 begin
   query.Close;
   with query.SQL do
@@ -58,6 +74,10 @@ begin
     add('    ON pe.VE_ID = ve.VE_ID');
     add('WHERE tz.TU_ID = ' + quotedStr(TU_ID));
     add('  AND pe.VE_ID = ' + quotedStr(VE_ID));
+    if trim(bogenkategorie) <> '' then
+    begin
+      add('  AND pe.PE_BOGENKATEGORIE = ' + quotedStr(bogenkategorie));
+    end;
     add('ORDER BY NAME');
   end;
 end;
