@@ -29,7 +29,8 @@ uses
   ARC_DAL_Person in 'pas\DAL\ARC_DAL_Person.pas',
   ARC_ParameterLandeswertung in 'dfm\Parameter\ARC_ParameterLandeswertung.pas' {FormParameterLandeswertung},
   ARC_BL_Finale in 'pas\BL\ARC_BL_Finale.pas',
-  ARC_DAL_Teamwertung in 'pas\DAL\ARC_DAL_Teamwertung.pas';
+  ARC_DAL_Teamwertung in 'pas\DAL\ARC_DAL_Teamwertung.pas',
+  ARC_DBSelect in 'dfm\ARC_DBSelect.pas' {FormDBSelect};
 
 {$R *.res}
 
@@ -37,6 +38,7 @@ begin
   Application.Initialize;
   Application.MainFormOnTaskbar := True;
 
-  Application.CreateForm(TMainWindow, MainWindow);
+//  Application.CreateForm(TMainWindow, MainWindow);
+  Application.CreateForm(TFormDBSelect, FormDBSelect);
   Application.Run;
 end.
