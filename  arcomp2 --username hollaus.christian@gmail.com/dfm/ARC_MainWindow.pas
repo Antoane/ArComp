@@ -249,7 +249,6 @@ type
     procedure Finalberechtigung1Click(Sender: TObject);
     procedure buttonSearchPersonenNichtZugeteiltClick(Sender: TObject);
     procedure buttonZuteilenClick(Sender: TObject);
-    procedure FormCreate(Sender: TObject);
     procedure gridTeilnehmerTitleClick(Column: TColumn);
     procedure gridNichtZugeteiltTitleClick(Column: TColumn);
     procedure buttonSearchPersonenZugeteiltClick(Sender: TObject);
@@ -310,9 +309,10 @@ type
     procedure comboBogenKategorieChange(Sender: TObject);
 
   private
-    FTU_ID     : string;
-    FBL_Turnier: TARC_BL_Turnier;
-    FBL_Finale : TARC_BL_Finale;
+    FTU_ID           : string;
+    FBL_Turnier      : TARC_BL_Turnier;
+    FBL_Finale       : TARC_BL_Finale;
+    FConnectionString: string;
 
     constructor create(aOwner: TComponent); override;
     destructor destroy; override;
@@ -351,14 +351,16 @@ type
     procedure saveTeamwertung;
     procedure insertTeamwertung;
     procedure deleteTeamWertung;
+    procedure setConnectionString(const value: string);
 
     {Private-Deklarationen}
   public
+
+    property ConnectionString: string
+      read   FConnectionString
+      write  setConnectionString;
     {Public-Deklarationen}
   end;
-
-var
-  MainWindow: TMainWindow;
 
 implementation
 
@@ -802,8 +804,6 @@ end;
 constructor TMainWindow.create(aOwner: TComponent);
 begin
   inherited create(aOwner);
-  FBL_Turnier := TARC_BL_Turnier.create(self, DBConnection);
-  FBL_Finale  := TARC_BL_Finale.create(self, DBConnection);
 end;
 
 procedure TMainWindow.gridZugeteiltDblClick(Sender: TObject);
@@ -1031,21 +1031,6 @@ begin
   end;
 end;
 
-procedure TMainWindow.FormCreate(Sender: TObject);
-var
-  aRowList: tStringList;
-begin
-  aRowList := tStringList.create;
-  try
-    aRowList.LoadFromFile('connectionString.txt');
-    DBConnection.ConnectionString := aRowList[0];
-  finally
-    aRowList.Free;
-  end;
-  createMissingTables();
-  sourceFinale.DataSet := FBL_Finale.Finale;
-end;
-
 procedure TMainWindow.FormKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
 begin
   if Key = 17 then isCtrlPressed := true;
@@ -1098,10 +1083,21 @@ end;
 
 procedure TMainWindow.FormShow(Sender: TObject);
 begin
+  FBL_Turnier := TARC_BL_Turnier.create(self, DBConnection);
+  FBL_Finale  := TARC_BL_Finale.create(self, DBConnection);
+  sourceFinale.DataSet := FBL_Finale.Finale;
+
   normiereDatenbank();
   disableComponents();
   alignInfoGrid();
   setStartTabs();
+end;
+
+procedure TMainWindow.setConnectionString(const value: string);
+begin
+  FConnectionString             := value;
+  DBConnection.ConnectionString := FConnectionString;
+  createMissingTables();
 end;
 
 procedure TMainWindow.setStartTabs;
@@ -1448,7 +1444,7 @@ procedure TMainWindow.loadTurnierDaten;
 begin
   queryTurnier.Close;
   queryTurnier.Parameters.ParseSQL(queryTurnier.SQL.Text, true);
-  queryTurnier.Parameters.ParamByName('ID').Value := FTU_ID;
+  queryTurnier.Parameters.ParamByName('ID').value := FTU_ID;
   queryTurnier.Open;
 
   loadScheibeneinteilungInfo();
@@ -1475,7 +1471,7 @@ procedure TMainWindow.loadScheibeneinteilungInfo;
 begin
   queryScheibeneinteilungInfo.Close;
   queryScheibeneinteilungInfo.Parameters.ParseSQL(queryScheibeneinteilungInfo.SQL.Text, true);
-  queryScheibeneinteilungInfo.Parameters.ParamByName('TU_ID').Value := FTU_ID;
+  queryScheibeneinteilungInfo.Parameters.ParamByName('TU_ID').value := FTU_ID;
   queryScheibeneinteilungInfo.Open;
   FBL_Turnier.selectFreieScheibenInfo(queryInfoFreiePlaetze, FTU_ID);
 
@@ -1485,7 +1481,7 @@ procedure TMainWindow.loadBogenkategorieUebersicht;
 begin
   queryBogenkategorieUebersicht.Close;
   queryBogenkategorieUebersicht.Parameters.ParseSQL(queryBogenkategorieUebersicht.SQL.Text, true);
-  queryBogenkategorieUebersicht.Parameters.ParamByName('TU_ID').Value := FTU_ID;
+  queryBogenkategorieUebersicht.Parameters.ParamByName('TU_ID').value := FTU_ID;
   queryBogenkategorieUebersicht.Open;
 end;
 
@@ -1500,8 +1496,8 @@ begin
     end;
     querySelectPersonen.Parameters.Clear;
     querySelectPersonen.Parameters.ParseSQL(querySelectPersonen.SQL.Text, true);
-    querySelectPersonen.Parameters.ParamByName('SEARCHSTRING').Value := '%' + searchString + '%';
-    querySelectPersonen.Parameters.ParamByName('ID').Value           := FTU_ID;
+    querySelectPersonen.Parameters.ParamByName('SEARCHSTRING').value := '%' + searchString + '%';
+    querySelectPersonen.Parameters.ParamByName('ID').value           := FTU_ID;
     querySelectPersonen.Open;
     TARC_Tools.autoSizeColumns(querySelectPersonen, gridTeilnehmer);
   end;
@@ -1518,8 +1514,8 @@ begin
     end;
     queryScheibeneinteilungNichtZugeteilt.Parameters.Clear;
     queryScheibeneinteilungNichtZugeteilt.Parameters.ParseSQL(queryScheibeneinteilungNichtZugeteilt.SQL.Text, true);
-    queryScheibeneinteilungNichtZugeteilt.Parameters.ParamByName('SEARCHSTRING').Value := '%' + searchString + '%';
-    queryScheibeneinteilungNichtZugeteilt.Parameters.ParamByName('ID').Value           := FTU_ID;
+    queryScheibeneinteilungNichtZugeteilt.Parameters.ParamByName('SEARCHSTRING').value := '%' + searchString + '%';
+    queryScheibeneinteilungNichtZugeteilt.Parameters.ParamByName('ID').value           := FTU_ID;
     queryScheibeneinteilungNichtZugeteilt.Open;
     TARC_Tools.autoSizeColumns(queryScheibeneinteilungNichtZugeteilt, gridNichtZugeteilt);
   end;
@@ -1536,8 +1532,8 @@ begin
     end;
     queryScheibeneinteilungZugeteilt.Parameters.Clear;
     queryScheibeneinteilungZugeteilt.Parameters.ParseSQL(queryScheibeneinteilungZugeteilt.SQL.Text, true);
-    queryScheibeneinteilungZugeteilt.Parameters.ParamByName('SEARCHSTRING').Value := '%' + searchString + '%';
-    queryScheibeneinteilungZugeteilt.Parameters.ParamByName('ID').Value           := FTU_ID;
+    queryScheibeneinteilungZugeteilt.Parameters.ParamByName('SEARCHSTRING').value := '%' + searchString + '%';
+    queryScheibeneinteilungZugeteilt.Parameters.ParamByName('ID').value           := FTU_ID;
     queryScheibeneinteilungZugeteilt.Open;
     TARC_Tools.autoSizeColumns(queryScheibeneinteilungZugeteilt, gridZugeteilt);
   end;
