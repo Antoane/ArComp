@@ -18,9 +18,10 @@ type
     class procedure selectDistanzen(const query: TADOQuery; const turnierart: string;
       const bogenklasse, altersklasse, geschlecht: string);
     class procedure insertDistanzen(const query: TADOQuery; const turnierart, bogenklasse, altersklasse,
-      geschlecht: string; const distanz: integer); static;
+      geschlecht: string; const distanz: integer; const Auflage: string; const Sortierung: integer); static;
     class procedure deleteDistanz(query: TADOQuery; DI_ID: string); static;
-    class procedure UpdateDistanz(query: TADOQuery; DI_ID: string; distanz: integer); static;
+    class procedure UpdateDistanz(const query: TADOQuery; const DI_ID: string; const distanz: integer;
+      const Auflage: string; const Sortierung: integer); static;
   end;
 
 implementation
@@ -39,6 +40,8 @@ begin
     add('  di.GE_ID,');
     add('  di.DI_RUNDE,');
     add('  di.DI_DISTANZ,');
+    add('  di.DI_AUFLAGE,');
+    add('  di.DI_SORTIERUNG,');
     add('  ta.TA_NAME,');
     add('  bk.BK_NAME,');
     add('  ak.AK_NAME,');
@@ -79,7 +82,8 @@ begin
 end;
 
 class procedure TARC_DAL_Distanz.insertDistanzen(const query: TADOQuery; const turnierart: string;
-  const bogenklasse: string; const altersklasse: string; const geschlecht: string; const distanz: integer);
+  const bogenklasse: string; const altersklasse: string; const geschlecht: string; const distanz: integer;
+  const Auflage: string; const Sortierung: integer);
 begin
   with query.SQL do
   begin
@@ -91,7 +95,9 @@ begin
     add('  BK_ID,');
     add('  GE_ID,');
     add('  DI_RUNDE,');
-    add('  DI_DISTANZ');
+    add('  DI_DISTANZ,');
+    add('  DI_AUFLAGE,');
+    add('  DI_SORTIERUNG');
     add(')');
     add('SELECT ');
     add('  newID(),');
@@ -100,7 +106,9 @@ begin
     add('  bk.BK_ID, ');
     add('  ge.GE_ID, ');
     add('  isNull(di.DI_RUNDE,0) +1,');
-    add('  ' + IntToStr(distanz));
+    add('  ' + IntToStr(distanz) + ',');
+    add('  ' + quotedstr(Auflage) + ',');
+    add('  ' + IntToStr(Sortierung));
     add('FROM TURNIERART ta');
     add('  FULL OUTER JOIN  ALTERSKATEGORIE ak');
     add('    ON 1=1');
@@ -159,13 +167,17 @@ begin
   end;
 end;
 
-class procedure TARC_DAL_Distanz.UpdateDistanz(query: TADOQuery; DI_ID: string; distanz: integer);
+class procedure TARC_DAL_Distanz.UpdateDistanz(const query: TADOQuery; const DI_ID: string; const distanz: integer;
+  const Auflage: string; const Sortierung: integer);
 begin
   with query.SQL do
   begin
     clear;
     add('UPDATE DISTANZ');
-    add('SET DI_DISTANZ = ' + IntToStr(distanz));
+    add('SET');
+    add('  DI_DISTANZ = ' + IntToStr(distanz) + ',');
+    add('  DI_AUFLAGE = ' + quotedstr(Auflage) + ',');
+    add('  DI_SORTIERUNG = ' + IntToStr(Sortierung));
     add('WHERE DI_ID = ' + quotedstr(DI_ID));
   end;
 end;

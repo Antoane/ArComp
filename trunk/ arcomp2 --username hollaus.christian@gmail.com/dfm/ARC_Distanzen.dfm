@@ -76,6 +76,18 @@ object FormDistanzen: TFormDistanzen
           FieldName = 'DI_DISTANZ'
           Title.Caption = 'Distanz'
           Visible = True
+        end
+        item
+          Expanded = False
+          FieldName = 'DI_AUFLAGE'
+          Title.Caption = 'Auflage'
+          Visible = True
+        end
+        item
+          Expanded = False
+          FieldName = 'DI_SORTIERUNG'
+          Title.Caption = 'Sortierung'
+          Visible = True
         end>
     end
     object Panel5: TPanel
@@ -286,7 +298,7 @@ object FormDistanzen: TFormDistanzen
     Left = 800
     Top = 208
     Bitmap = {
-      494C010109004801C40010001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
+      494C010109004801CC0010001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
       0000000000003600000028000000400000003000000001002000000000000030
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000

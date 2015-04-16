@@ -236,6 +236,7 @@ type
     N3: TMenuItem;
     N4: TMenuItem;
     ImageList: TImageList;
+    Scheibeneinteilungallgemein1: TMenuItem;
     procedure Beenden1Click(Sender: TObject);
     procedure Importieren1Click(Sender: TObject);
     procedure menuSchuetzenBearbeitenClick(Sender: TObject);
@@ -307,6 +308,7 @@ type
     procedure urnierteilnehmermitScheibe1Click(Sender: TObject);
     procedure menuItemRanglisteTeamClick(Sender: TObject);
     procedure comboBogenKategorieChange(Sender: TObject);
+    procedure ScheibeneinteilungUebersichtClick(Sender: TObject);
 
   private
     FTU_ID           : string;
@@ -520,6 +522,8 @@ end;
 procedure TMainWindow.buttonNeuPersonClick(Sender: TObject);
 begin
   addPerson();
+  loadBogenkategorieUebersicht();
+  loadScheibeneinteilungInfo();
 end;
 
 procedure TMainWindow.buttonResetScheibeneinteilungClick(Sender: TObject);
@@ -628,20 +632,22 @@ end;
 
 procedure TMainWindow.insertTeamwertung;
 var
-  aTE_ID   : string;
-  aVE_ID   : string;
-  aTeamname: string;
-  aPE_ID1  : string;
-  aPE_ID2  : string;
-  aPE_ID3  : string;
+  aTE_ID         : string;
+  aVE_ID         : string;
+  aTeamname      : string;
+  aBogenkategorie: string;
+  aPE_ID1        : string;
+  aPE_ID2        : string;
+  aPE_ID3        : string;
 begin
-  aVE_ID    := TARC_Tools.getKeyToValue(queryVerein, 'VE_ID', 'VE_NAME', comboVerein.Text);
-  aTeamname := editTeamname.Text + '_NEU';
-  aPE_ID1   := TARC_Tools.getKeyToValue(queryTeamPerson1, 'PE_ID', 'NAME', comboTeamPerson1.Text);
-  aPE_ID2   := TARC_Tools.getKeyToValue(queryTeamPerson1, 'PE_ID', 'NAME', comboTeamPerson2.Text);
-  aPE_ID3   := TARC_Tools.getKeyToValue(queryTeamPerson1, 'PE_ID', 'NAME', comboTeamPerson3.Text);
+  aVE_ID          := TARC_Tools.getKeyToValue(queryVerein, 'VE_ID', 'VE_NAME', comboVerein.Text);
+  aTeamname       := editTeamname.Text + '_NEU';
+  aPE_ID1         := TARC_Tools.getKeyToValue(queryTeamPerson1, 'PE_ID', 'NAME', comboTeamPerson1.Text);
+  aPE_ID2         := TARC_Tools.getKeyToValue(queryTeamPerson1, 'PE_ID', 'NAME', comboTeamPerson2.Text);
+  aPE_ID3         := TARC_Tools.getKeyToValue(queryTeamPerson1, 'PE_ID', 'NAME', comboTeamPerson3.Text);
+  aBogenkategorie := comboBogenKategorie.Text;
 
-  aTE_ID := TARC_DAL_Teamwertung.addTeam(FTU_ID, aTeamname, aVE_ID, DBConnection);
+  aTE_ID := TARC_DAL_Teamwertung.addTeam(FTU_ID, aTeamname, aBogenkategorie, aVE_ID, DBConnection);
 
   if aPE_ID1 <> '' then
   begin
@@ -665,20 +671,22 @@ end;
 
 procedure TMainWindow.saveTeamwertung;
 var
-  aTE_ID   : string;
-  aVE_ID   : string;
-  aTeamname: string;
-  aPE_ID1  : string;
-  aPE_ID2  : string;
-  aPE_ID3  : string;
+  aTE_ID         : string;
+  aVE_ID         : string;
+  aTeamname      : string;
+  aPE_ID1        : string;
+  aPE_ID2        : string;
+  aPE_ID3        : string;
+  aBogenkategorie: string;
 begin
-  aVE_ID    := TARC_Tools.getKeyToValue(queryVerein, 'VE_ID', 'VE_NAME', comboVerein.Text);
-  aTeamname := editTeamname.Text;
-  aPE_ID1   := TARC_Tools.getKeyToValue(queryTeamPerson1, 'PE_ID', 'NAME', comboTeamPerson1.Text);
-  aPE_ID2   := TARC_Tools.getKeyToValue(queryTeamPerson1, 'PE_ID', 'NAME', comboTeamPerson2.Text);
-  aPE_ID3   := TARC_Tools.getKeyToValue(queryTeamPerson1, 'PE_ID', 'NAME', comboTeamPerson3.Text);
+  aVE_ID          := TARC_Tools.getKeyToValue(queryVerein, 'VE_ID', 'VE_NAME', comboVerein.Text);
+  aTeamname       := editTeamname.Text;
+  aBogenkategorie := comboBogenKategorie.Text;
+  aPE_ID1         := TARC_Tools.getKeyToValue(queryTeamPerson1, 'PE_ID', 'NAME', comboTeamPerson1.Text);
+  aPE_ID2         := TARC_Tools.getKeyToValue(queryTeamPerson1, 'PE_ID', 'NAME', comboTeamPerson2.Text);
+  aPE_ID3         := TARC_Tools.getKeyToValue(queryTeamPerson1, 'PE_ID', 'NAME', comboTeamPerson3.Text);
 
-  aTE_ID := TARC_DAL_Teamwertung.addTeam(FTU_ID, aTeamname, aVE_ID, DBConnection);
+  aTE_ID := TARC_DAL_Teamwertung.addTeam(FTU_ID, aTeamname, aBogenkategorie, aVE_ID, DBConnection);
 
   if aPE_ID1 <> '' then
   begin
@@ -1083,8 +1091,8 @@ end;
 
 procedure TMainWindow.FormShow(Sender: TObject);
 begin
-  FBL_Turnier := TARC_BL_Turnier.create(self, DBConnection);
-  FBL_Finale  := TARC_BL_Finale.create(self, DBConnection);
+  FBL_Turnier          := TARC_BL_Turnier.create(self, DBConnection);
+  FBL_Finale           := TARC_BL_Finale.create(self, DBConnection);
   sourceFinale.DataSet := FBL_Finale.Finale;
 
   normiereDatenbank();
@@ -1346,10 +1354,12 @@ begin
     TARC_DAL_Teamwertung.selectTeam(aQuery, queryTeamwertung.FieldByName('TE_ID').AsString);
     aQuery.Open;
 
-    if aQuery.RecordCount = 3 then
+    if aQuery.RecordCount >= 1 then
     begin
-      editTeamname.Text := aQuery.FieldByName('TE_NAME').AsString;
-      aVE_ID            := aQuery.FieldByName('VE_ID').AsString;
+      editTeamname.Text             := aQuery.FieldByName('TE_NAME').AsString;
+      comboBogenKategorie.ItemIndex := comboBogenKategorie.Items.IndexOf(aQuery.FieldByName('TE_BOGENKATEGORIE')
+        .AsString);
+      aVE_ID := aQuery.FieldByName('VE_ID').AsString;
       if queryVerein.Locate('VE_ID', aVE_ID, []) then
       begin
         comboVerein.ItemIndex := comboVerein.Items.IndexOf(queryVerein.FieldByName('VE_NAME').AsString);
@@ -1505,20 +1515,17 @@ end;
 
 procedure TMainWindow.searchPersonenNichtZugeteilt(searchString: string);
 begin
-
+  queryScheibeneinteilungNichtZugeteilt.Close;
+  if queryScheibeneinteilungNichtZugeteilt.Active and (queryScheibeneinteilungNichtZugeteilt.RecordCount > 0) then
   begin
-    queryScheibeneinteilungNichtZugeteilt.Close;
-    if queryScheibeneinteilungNichtZugeteilt.Active and (queryScheibeneinteilungNichtZugeteilt.RecordCount > 0) then
-    begin
-      queryScheibeneinteilungNichtZugeteilt.Active := false;
-    end;
-    queryScheibeneinteilungNichtZugeteilt.Parameters.Clear;
-    queryScheibeneinteilungNichtZugeteilt.Parameters.ParseSQL(queryScheibeneinteilungNichtZugeteilt.SQL.Text, true);
-    queryScheibeneinteilungNichtZugeteilt.Parameters.ParamByName('SEARCHSTRING').value := '%' + searchString + '%';
-    queryScheibeneinteilungNichtZugeteilt.Parameters.ParamByName('ID').value           := FTU_ID;
-    queryScheibeneinteilungNichtZugeteilt.Open;
-    TARC_Tools.autoSizeColumns(queryScheibeneinteilungNichtZugeteilt, gridNichtZugeteilt);
+    queryScheibeneinteilungNichtZugeteilt.Active := false;
   end;
+  queryScheibeneinteilungNichtZugeteilt.Parameters.Clear;
+  queryScheibeneinteilungNichtZugeteilt.Parameters.ParseSQL(queryScheibeneinteilungNichtZugeteilt.SQL.Text, true);
+  queryScheibeneinteilungNichtZugeteilt.Parameters.ParamByName('SEARCHSTRING').value := '%' + searchString + '%';
+  queryScheibeneinteilungNichtZugeteilt.Parameters.ParamByName('ID').value           := FTU_ID;
+  queryScheibeneinteilungNichtZugeteilt.Open;
+  TARC_Tools.autoSizeColumns(queryScheibeneinteilungNichtZugeteilt, gridNichtZugeteilt);
 end;
 
 procedure TMainWindow.searchPersonenZugeteilt(searchString: string);
@@ -1725,6 +1732,15 @@ begin
   finally
     aDialog.Free;
   end;
+end;
+
+procedure TMainWindow.ScheibeneinteilungUebersichtClick(Sender: TObject);
+begin
+  frxReport.LoadFromFile('..\Reports\Scheibeneinteilung Übersicht.fr3');
+  frxReport.Variables[' ' + 'ArComp'] := Null;
+  frxReport.Variables['TU_ID']        := quotedStr(FTU_ID);
+
+  frxReport.ShowReport(true);
 end;
 
 procedure TMainWindow.Scorekarten1Click(Sender: TObject);

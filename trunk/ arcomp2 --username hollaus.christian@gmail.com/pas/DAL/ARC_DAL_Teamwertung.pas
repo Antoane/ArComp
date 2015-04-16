@@ -18,8 +18,8 @@ type
     class procedure selectPersonenZuVerein(const query: TADOQuery; const VE_ID: string; const TU_ID: string;
       const bogenkategorie: string); static;
     class procedure selectVereine(const query: TADOQuery); static;
-    class function addTeam(const TU_ID: string; const TE_NAME: string; const VE_ID: string;
-      const connection: TADOConnection): string; static;
+    class function addTeam(const TU_ID: string; const TE_NAME: string; const TE_BOGENKATEGORIE: string;
+      const VE_ID: string; const connection: TADOConnection): string; static;
     class procedure addTeamMember(const TE_ID, PE_ID: string; const connection: TADOConnection); static;
     class procedure SQL_Teamwertung(const query: TADOQuery; const TU_ID: string); static;
     class procedure selectTeam(const query: TADOQuery; const TE_ID: string);
@@ -74,10 +74,6 @@ begin
     add('    ON pe.VE_ID = ve.VE_ID');
     add('WHERE tz.TU_ID = ' + quotedStr(TU_ID));
     add('  AND pe.VE_ID = ' + quotedStr(VE_ID));
-    if trim(bogenkategorie) <> '' then
-    begin
-      add('  AND pe.PE_BOGENKATEGORIE = ' + quotedStr(bogenkategorie));
-    end;
     add('ORDER BY NAME');
   end;
 end;
@@ -90,11 +86,12 @@ begin
     clear;
     add('SELECT');
     add('  te.TE_NAME,');
+    add('  te.TE_BOGENKATEGORIE,');
     add('  te.TE_ID,');
     add('  te.VE_ID,');
     add('  tz.PE_ID');
     add('FROM TEAM te');
-    add('  INNER JOIN TEAM_ZU tz');
+    add('  LEFT OUTER JOIN TEAM_ZU tz');
     add('    ON te.TE_ID = tz.TE_ID');
     add('WHERE te.TE_ID = ' + quotedStr(TE_ID));
   end;
@@ -113,16 +110,16 @@ begin
     add('  SUM(isNull(sc.SC_ZEHNER,0)) AS ZEHNER,');
     add('  SUM(isNull(sc.SC_NEUNER,0)) AS NEUNER,');
     add('  SUM(isNull(sc.SC_X,0)) AS X');
-    add('FROM TEAM te');
-    add('  INNER JOIN TEAM_ZU tz');
-    add('    ON te.TE_ID = tz.TE_ID');
-    add('  INNER JOIN TURNIER tu');
-    add('    ON tu.TU_ID = te.TU_ID');
-    add('  INNER JOIN PERSON pe');
-    add('    ON pe.PE_ID = tz.PE_ID');
-    add('  left outer  JOIN SCORES sc');
-    add('    ON sc.PE_ID = pe.PE_ID');
-    add('	  AND sc.TU_ID = tu.TU_ID');
+    add('    FROM TEAM te');
+    add('	  INNER JOIN TURNIER tu');
+    add('        ON tu.TU_ID = te.TU_ID');
+    add('      LEFT OUTER JOIN TEAM_ZU tz');
+    add('        ON te.TE_ID = tz.TE_ID');
+    add('      LEFT OUTER JOIN PERSON pe');
+    add('        ON pe.PE_ID = tz.PE_ID');
+    add('      LEFT OUTER JOIN SCORES sc');
+    add('        ON sc.PE_ID = pe.PE_ID');
+    add('    	  AND sc.TU_ID = tu.TU_ID');
     add('WHERE tu.TU_ID = ' + quotedStr(TU_ID));
     add('GROUP BY ');
     add('  te.TE_ID,');
@@ -135,8 +132,8 @@ begin
   end;
 end;
 
-class function TARC_DAL_Teamwertung.addTeam(const TU_ID: string; const TE_NAME: string; const VE_ID: string;
-  const connection: TADOConnection): string;
+class function TARC_DAL_Teamwertung.addTeam(const TU_ID: string; const TE_NAME: string; const TE_BOGENKATEGORIE: string;
+  const VE_ID: string; const connection: TADOConnection): string;
 var
   aQuery: TADOQuery;
   aTE_ID: string;
@@ -152,12 +149,14 @@ begin
       add('INSERT INTO TEAM(');
       add('  TE_ID,');
       add('  TE_NAME,');
+      add('  TE_BOGENKATEGORIE,');
       add('  VE_ID,');
       add('  TU_ID');
       add(')');
       add('VALUES(');
       add('  ' + quotedStr(aTE_ID) + ',');
       add('  ' + quotedStr(TE_NAME) + ',');
+      add('  ' + quotedStr(TE_BOGENKATEGORIE) + ',');
       add('  ' + quotedStr(VE_ID) + ',');
       add('  ' + quotedStr(TU_ID));
       add(')');
