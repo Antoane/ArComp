@@ -95,12 +95,16 @@ procedure TFormDistanzen.buttonAddClick(Sender: TObject);
 var
   aDistanz    : integer;
   aDistanzText: string;
+  aAuflage    : string;
+  aSortierung : integer;
 begin
   aDistanzText := InputBox('Neue Distanz', 'Bitte geben Sie die Distanz ein', '');
   if TryStrToInt(aDistanzText, aDistanz) then
   begin
+    aAuflage    := '';
+    aSortierung := 0;
     TARC_DAL_Distanz.insertDistanzen(queryInsert, comboTurnierart.Text, comboBogenkategorie.Text,
-      comboAlterskategorie.Text, comboGeschlecht.Text, aDistanz);
+      comboAlterskategorie.Text, comboGeschlecht.Text, aDistanz, aAuflage, aSortierung);
     queryInsert.ExecSQL;
     selectDistanzen();
   end
@@ -219,26 +223,59 @@ end;
 
 procedure TFormDistanzen.gridDistanzenCellClick(Column: TColumn);
 var
-  aDistanzText : string;
-  aDistanz     : integer;
-  sort         : string;
-  selectedIndex: integer;
+  aDistanzText   : string;
+  aDistanz       : integer;
+  sort           : string;
+  selectedIndex  : integer;
+  aAuflage       : string;
+  aSortierungText: string;
+  aSortierung    : integer;
 begin
+  aDistanz    := queryDistanz.FieldByName('DI_DISTANZ').AsInteger;
+  aAuflage    := queryDistanz.FieldByName('DI_AUFLAGE').AsString;
+  aSortierung := queryDistanz.FieldByName('DI_SORTIERUNG').AsInteger;
+
+  selectedIndex := queryDistanz.RecNo;
+  sort          := queryDistanz.sort;
+
   if Column.FieldName = 'DI_DISTANZ' then
   begin
-    selectedIndex := queryDistanz.RecNo;
-    sort          := queryDistanz.sort;
-    aDistanzText  := InputBox('Distanz ändern', 'Bitte geben Sie die Distanz ein', '');
+    aDistanzText := InputBox('Distanz ändern', 'Bitte geben Sie die Distanz ein', '');
     if TryStrToInt(aDistanzText, aDistanz) then
     begin
       queryUpdate.Close;
-      TARC_DAL_Distanz.UpdateDistanz(queryUpdate, queryDistanz.FieldByName('DI_ID').AsString, aDistanz);
+      TARC_DAL_Distanz.UpdateDistanz(queryUpdate, queryDistanz.FieldByName('DI_ID').AsString, aDistanz, aAuflage,
+        aSortierung);
       queryUpdate.ExecSQL;
       selectDistanzen();
-      queryDistanz.sort  := sort;
-      queryDistanz.RecNo := selectedIndex;
     end;
   end;
+
+  if Column.FieldName = 'DI_AUFLAGE' then
+  begin
+    aAuflage := InputBox('Auflage ändern', 'Bitte geben Sie die Auflage ein', '');
+    queryUpdate.Close;
+    TARC_DAL_Distanz.UpdateDistanz(queryUpdate, queryDistanz.FieldByName('DI_ID').AsString, aDistanz, aAuflage,
+      aSortierung);
+    queryUpdate.ExecSQL;
+    selectDistanzen();
+  end;
+
+  if Column.FieldName = 'DI_SORTIERUNG' then
+  begin
+    aSortierungText := InputBox('Sortierung ändern', 'Bitte geben Sie die Sortierung ein', '');
+    if TryStrToInt(aSortierungText, aSortierung) then
+    begin
+      queryUpdate.Close;
+      TARC_DAL_Distanz.UpdateDistanz(queryUpdate, queryDistanz.FieldByName('DI_ID').AsString, aDistanz, aAuflage,
+        aSortierung);
+      queryUpdate.ExecSQL;
+      selectDistanzen();
+    end;
+  end;
+
+  queryDistanz.sort  := sort;
+  queryDistanz.RecNo := selectedIndex;
 end;
 
 procedure TFormDistanzen.gridDistanzenDblClick(Sender: TObject);
