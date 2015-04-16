@@ -1,0 +1,1 @@
+A software for the evaluation of archery competition events. This software currently is designed for private use only.
