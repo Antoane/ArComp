@@ -237,6 +237,12 @@ type
     N4: TMenuItem;
     ImageList: TImageList;
     Scheibeneinteilungallgemein1: TMenuItem;
+    buttonScoresUebernehmen: TButton;
+    queryTeamwertungScoresUebernehmen: TADOQuery;
+    DBEdit1: TDBEdit;
+    DBEdit2: TDBEdit;
+    DBEdit3: TDBEdit;
+    DBEdit4: TDBEdit;
     procedure Beenden1Click(Sender: TObject);
     procedure Importieren1Click(Sender: TObject);
     procedure menuSchuetzenBearbeitenClick(Sender: TObject);
@@ -309,6 +315,7 @@ type
     procedure menuItemRanglisteTeamClick(Sender: TObject);
     procedure comboBogenKategorieChange(Sender: TObject);
     procedure ScheibeneinteilungUebersichtClick(Sender: TObject);
+    procedure buttonScoresUebernehmenClick(Sender: TObject);
 
   private
     FTU_ID           : string;
@@ -573,9 +580,18 @@ end;
 
 procedure TMainWindow.buttonSaveTeamwertungClick(Sender: TObject);
 begin
-  deleteTeamWertung();
   saveTeamwertung();
-  loadTeamWertung();
+end;
+
+procedure TMainWindow.buttonScoresUebernehmenClick(Sender: TObject);
+begin
+  if MessageDlg('Scores aus der Einzelwertung übernehmen? ' + #13#10 +
+    'Alle händisch eingetragenen Werte werden damit überschrieben!', mtConfirmation, mbYesNo, 0) = mrYes then
+  begin
+    TARC_DAL_Teamwertung.SQL_UpdateTeamFromSinglePlayers(queryTeamwertungScoresUebernehmen, FTU_ID);
+    queryTeamwertungScoresUebernehmen.ExecSQL;
+    loadTeamWertung();
+  end;
 end;
 
 procedure TMainWindow.selectNextScheibe;

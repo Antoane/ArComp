@@ -14,7 +14,9 @@ type
 
   private
 
+
   public
+      class procedure SQL_UpdateTeamFromSinglePlayers(const query: TADOQuery; const TU_ID: string); static;
     class procedure selectPersonenZuVerein(const query: TADOQuery; const VE_ID: string; const TU_ID: string;
       const bogenkategorie: string); static;
     class procedure selectVereine(const query: TADOQuery); static;
@@ -97,6 +99,46 @@ begin
   end;
 end;
 
+class procedure TARC_DAL_Teamwertung.SQL_UpdateTeamFromSinglePlayers(const query: TADOQuery; const TU_ID: string);
+begin
+  query.Close;
+  with query.SQL do
+  begin
+    clear;
+    add('UPDATE te');
+    add('SET');
+    add('  TE_SCORE = tmp.SCORE,');
+    add('  TE_ZEHNER = tmp.ZEHNER,');
+    add('  TE_NEUNER = tmp.NEUNER,');
+    add('  TE_X = tmp.X');
+    add('FROM TEAM te');
+    add('  INNER JOIN(');
+    add('    SELECT');
+    add('      te.TE_ID,');
+    add('      te.TE_NAME,');
+    add('      SUM(isNull(sc.SC_SCORE,0)) AS SCORE,');
+    add('      SUM(isNull(sc.SC_ZEHNER,0)) AS ZEHNER,');
+    add('      SUM(isNull(sc.SC_NEUNER,0)) AS NEUNER,');
+    add('      SUM(isNull(sc.SC_X,0)) AS X');
+    add('    FROM TEAM te');
+    add('      INNER JOIN TURNIER tu');
+    add('        ON tu.TU_ID = te.TU_ID');
+    add('      LEFT OUTER JOIN TEAM_ZU tz');
+    add('        ON te.TE_ID = tz.TE_ID');
+    add('      LEFT OUTER JOIN PERSON pe');
+    add('        ON pe.PE_ID = tz.PE_ID');
+    add('      LEFT OUTER JOIN SCORES sc');
+    add('        ON sc.PE_ID = pe.PE_ID');
+    add('      AND sc.TU_ID = tu.TU_ID');
+    add('    WHERE tu.TU_ID = ' + quotedStr(TU_ID));
+    add('    GROUP BY');
+    add('      te.TE_ID,');
+    add('      te.TE_NAME');
+    add('    ) tmp');
+    add('  ON te.TE_ID = tmp.TE_ID');
+  end;
+end;
+
 class procedure TARC_DAL_Teamwertung.SQL_Teamwertung(const query: TADOQuery; const TU_ID: string);
 begin
   query.Close;
@@ -106,29 +148,17 @@ begin
     add('SELECT');
     add('  te.TE_ID,');
     add('  te.TE_NAME,');
-    add('  SUM(isNull(sc.SC_SCORE,0)) AS SCORE,');
-    add('  SUM(isNull(sc.SC_ZEHNER,0)) AS ZEHNER,');
-    add('  SUM(isNull(sc.SC_NEUNER,0)) AS NEUNER,');
-    add('  SUM(isNull(sc.SC_X,0)) AS X');
-    add('    FROM TEAM te');
-    add('	  INNER JOIN TURNIER tu');
-    add('        ON tu.TU_ID = te.TU_ID');
-    add('      LEFT OUTER JOIN TEAM_ZU tz');
-    add('        ON te.TE_ID = tz.TE_ID');
-    add('      LEFT OUTER JOIN PERSON pe');
-    add('        ON pe.PE_ID = tz.PE_ID');
-    add('      LEFT OUTER JOIN SCORES sc');
-    add('        ON sc.PE_ID = pe.PE_ID');
-    add('    	  AND sc.TU_ID = tu.TU_ID');
-    add('WHERE tu.TU_ID = ' + quotedStr(TU_ID));
-    add('GROUP BY ');
-    add('  te.TE_ID,');
-    add('  te.TE_NAME');
+    add('  te.TE_SCORE,');
+    add('  te.TE_ZEHNER,');
+    add('  te.TE_NEUNER,');
+    add('  te.TE_X');
+    add('FROM TEAM te');
+    add('WHERE te.TU_ID = ' + quotedStr(TU_ID));
     add('ORDER BY');
-    add('  SCORE DESC,');
-    add('  ZEHNER DESC,');
-    add('  NEUNER DESC,');
-    add('  X DESC');
+    add('  te.TE_SCORE DESC,');
+    add('  te.TE_ZEHNER DESC,');
+    add('  te.TE_NEUNER DESC,');
+    add('  te.TE_X DESC');
   end;
 end;
 
