@@ -14,9 +14,8 @@ type
 
   private
 
-
   public
-      class procedure SQL_UpdateTeamFromSinglePlayers(const query: TADOQuery; const TU_ID: string); static;
+    class procedure SQL_UpdateTeamFromSinglePlayers(const query: TADOQuery; const TU_ID: string); static;
     class procedure selectPersonenZuVerein(const query: TADOQuery; const VE_ID: string; const TU_ID: string;
       const bogenkategorie: string); static;
     class procedure selectVereine(const query: TADOQuery); static;
@@ -25,6 +24,11 @@ type
     class procedure addTeamMember(const TE_ID, PE_ID: string; const connection: TADOConnection); static;
     class procedure SQL_Teamwertung(const query: TADOQuery; const TU_ID: string); static;
     class procedure selectTeam(const query: TADOQuery; const TE_ID: string);
+    class procedure SQL_UpdateTeamwertung(const query: TADOQuery; const TE_ID: string; const TE_NAME: string;
+      const VE_ID: string; const TE_BOGENKATEGORIE: string; const TE_SCORE: integer; const TE_ZEHNER: integer;
+      const TE_NEUNER: integer; const TE_X: integer);
+    class procedure SQL_UpdateTeamMembers(const query: TADOQuery; const TE_ID: string; const PE_ID1: string;
+      const PE_ID2: string; const PE_ID3: string);
     class procedure SQL_TeamEntfernen(const TE_ID: string; const connection: TADOConnection);
     class procedure selectBogenkategorien(const query: TADOQuery); static;
   end;
@@ -139,6 +143,73 @@ begin
   end;
 end;
 
+class procedure TARC_DAL_Teamwertung.SQL_UpdateTeamMembers(const query: TADOQuery;
+  const TE_ID, PE_ID1, PE_ID2, PE_ID3: string);
+begin
+  query.Close;
+  with query.SQL do
+  begin
+    clear;
+    add('DELETE FROM TEAM_ZU');
+    add('WHERE TE_ID = ' + quotedStr(TE_ID));
+    add('');
+    add('INSERT INTO TEAM_ZU(');
+    add('  TZ_ID,');
+    add('  TE_ID,');
+    add('  PE_ID');
+    add(')');
+    add('VALUES(');
+    add('  newID(),');
+    add('  ' + quotedStr(TE_ID) + ',');
+    add('  ' + quotedStr(PE_ID1));
+    add(')');
+    add('');
+    add('INSERT INTO TEAM_ZU(');
+    add('  TZ_ID,');
+    add('  TE_ID,');
+    add('  PE_ID');
+    add(')');
+    add('VALUES(');
+    add('  newID(),');
+    add('  ' + quotedStr(TE_ID) + ',');
+    add('  ' + quotedStr(PE_ID2));
+    add(')');
+    add('');
+    add('INSERT INTO TEAM_ZU(');
+    add('  TZ_ID,');
+    add('  TE_ID,');
+    add('  PE_ID');
+    add(')');
+    add('VALUES(');
+    add('  newID(),');
+    add('  ' + quotedStr(TE_ID) + ',');
+    add('  ' + quotedStr(PE_ID3));
+    add(')');
+    add('');
+  end;
+end;
+
+class procedure TARC_DAL_Teamwertung.SQL_UpdateTeamwertung(const query: TADOQuery; const TE_ID: string;
+  const TE_NAME: string; const VE_ID: string; const TE_BOGENKATEGORIE: string; const TE_SCORE: integer;
+  const TE_ZEHNER: integer; const TE_NEUNER: integer; const TE_X: integer);
+begin
+  query.Close;
+  with query.SQL do
+  begin
+    clear;
+    add('UPDATE TEAM');
+    add('SET');
+    add('  TE_NAME = ' + quotedStr(TE_NAME) + ',');
+    add('  VE_ID = ' + quotedStr(VE_ID) + ',');
+    add('  TE_BOGENKATEGORIE = ' + quotedStr(TE_BOGENKATEGORIE) + ',');
+    add('  TE_SCORE = ' + intToStr(TE_SCORE) + ',');
+    add('  TE_ZEHNER = ' + intToStr(TE_ZEHNER) + ',');
+    add('  TE_NEUNER = ' + intToStr(TE_NEUNER) + ',');
+    add('  TE_X = ' + intToStr(TE_X));
+    add('WHERE TE_ID = ' + quotedStr(TE_ID));
+  end;
+end;
+
 class procedure TARC_DAL_Teamwertung.SQL_Teamwertung(const query: TADOQuery; const TU_ID: string);
 begin
   query.Close;
@@ -148,6 +219,9 @@ begin
     add('SELECT');
     add('  te.TE_ID,');
     add('  te.TE_NAME,');
+    add('  te.VE_ID,');
+    add('  te.TU_ID,');
+    add('  te.TE_BOGENKATEGORIE,');
     add('  te.TE_SCORE,');
     add('  te.TE_ZEHNER,');
     add('  te.TE_NEUNER,');

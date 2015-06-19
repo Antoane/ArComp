@@ -207,8 +207,6 @@ type
     comboTeamPerson1: TComboBox;
     comboTeamPerson2: TComboBox;
     comboTeamPerson3: TComboBox;
-    editTeamname: TEdit;
-    buttonTeamHinzufuegen: TButton;
     queryTeamPerson1: TADOQuery;
     queryTeamPerson2: TADOQuery;
     queryTeamPerson3: TADOQuery;
@@ -219,7 +217,6 @@ type
     sourceVerein: TDataSource;
     queryTeamwertung: TADOQuery;
     sourceTeamwertung: TDataSource;
-    buttonTeamEntfernen: TButton;
     buttonSaveTeamwertung: TButton;
     urnierteilnehmermitScheibe1: TMenuItem;
     LabelTeamName: TLabel;
@@ -237,12 +234,19 @@ type
     N4: TMenuItem;
     ImageList: TImageList;
     Scheibeneinteilungallgemein1: TMenuItem;
-    buttonScoresUebernehmen: TButton;
     queryTeamwertungScoresUebernehmen: TADOQuery;
-    DBEdit1: TDBEdit;
-    DBEdit2: TDBEdit;
-    DBEdit3: TDBEdit;
-    DBEdit4: TDBEdit;
+    editTeamScore: TDBEdit;
+    editTeamZehner: TDBEdit;
+    editTeamNeuner: TDBEdit;
+    editTeamX: TDBEdit;
+    labeleditTeamScore: TLabel;
+    labeleditTeamZehner: TLabel;
+    labeleditTeamNeuner: TLabel;
+    labeleditTeamX: TLabel;
+    buttonTeamHinzufuegen: TButton;
+    buttonTeamEntfernen: TButton;
+    editTeamName: TDBEdit;
+    buttonScoresUebernehmen: TButton;
     procedure Beenden1Click(Sender: TObject);
     procedure Importieren1Click(Sender: TObject);
     procedure menuSchuetzenBearbeitenClick(Sender: TObject);
@@ -316,6 +320,9 @@ type
     procedure comboBogenKategorieChange(Sender: TObject);
     procedure ScheibeneinteilungUebersichtClick(Sender: TObject);
     procedure buttonScoresUebernehmenClick(Sender: TObject);
+    procedure comboTeamPerson1Change(Sender: TObject);
+    procedure comboTeamPerson2Change(Sender: TObject);
+    procedure comboTeamPerson3Change(Sender: TObject);
 
   private
     FTU_ID           : string;
@@ -361,6 +368,7 @@ type
     procedure insertTeamwertung;
     procedure deleteTeamWertung;
     procedure setConnectionString(const value: string);
+    procedure saveTeamMembers;
 
     {Private-Deklarationen}
   public
@@ -581,6 +589,7 @@ end;
 procedure TMainWindow.buttonSaveTeamwertungClick(Sender: TObject);
 begin
   saveTeamwertung();
+  loadTeamWertung();
 end;
 
 procedure TMainWindow.buttonScoresUebernehmenClick(Sender: TObject);
@@ -657,7 +666,7 @@ var
   aPE_ID3        : string;
 begin
   aVE_ID          := TARC_Tools.getKeyToValue(queryVerein, 'VE_ID', 'VE_NAME', comboVerein.Text);
-  aTeamname       := editTeamname.Text + '_NEU';
+  aTeamname       := editTeamName.Text + '_NEU';
   aPE_ID1         := TARC_Tools.getKeyToValue(queryTeamPerson1, 'PE_ID', 'NAME', comboTeamPerson1.Text);
   aPE_ID2         := TARC_Tools.getKeyToValue(queryTeamPerson1, 'PE_ID', 'NAME', comboTeamPerson2.Text);
   aPE_ID3         := TARC_Tools.getKeyToValue(queryTeamPerson1, 'PE_ID', 'NAME', comboTeamPerson3.Text);
@@ -690,32 +699,56 @@ var
   aTE_ID         : string;
   aVE_ID         : string;
   aTeamname      : string;
-  aPE_ID1        : string;
-  aPE_ID2        : string;
-  aPE_ID3        : string;
   aBogenkategorie: string;
+  aScore         : Integer;
+  a10er          : Integer;
+  a9er           : Integer;
+  aX             : Integer;
+  aQueryUpdate   : TADOQuery;
 begin
-  aVE_ID          := TARC_Tools.getKeyToValue(queryVerein, 'VE_ID', 'VE_NAME', comboVerein.Text);
-  aTeamname       := editTeamname.Text;
-  aBogenkategorie := comboBogenKategorie.Text;
-  aPE_ID1         := TARC_Tools.getKeyToValue(queryTeamPerson1, 'PE_ID', 'NAME', comboTeamPerson1.Text);
-  aPE_ID2         := TARC_Tools.getKeyToValue(queryTeamPerson1, 'PE_ID', 'NAME', comboTeamPerson2.Text);
-  aPE_ID3         := TARC_Tools.getKeyToValue(queryTeamPerson1, 'PE_ID', 'NAME', comboTeamPerson3.Text);
+  queryTeamwertung.DisableControls;
+  try
+    queryTeamwertung.First;
+    while not queryTeamwertung.Eof do
+    begin
+      aTE_ID          := queryTeamwertung.FieldByName('TE_ID').AsString;
+      aTeamname       := queryTeamwertung.FieldByName('TE_NAME').AsString;
+      aVE_ID          := queryTeamwertung.FieldByName('VE_ID').AsString;
+      aBogenkategorie := queryTeamwertung.FieldByName('TE_BOGENKATEGORIE').AsString;
+      aScore          := queryTeamwertung.FieldByName('TE_SCORE').AsInteger;
+      a10er           := queryTeamwertung.FieldByName('TE_ZEHNER').AsInteger;
+      a9er            := queryTeamwertung.FieldByName('TE_NEUNER').AsInteger;
+      aX              := queryTeamwertung.FieldByName('TE_X').AsInteger;
 
-  aTE_ID := TARC_DAL_Teamwertung.addTeam(FTU_ID, aTeamname, aBogenkategorie, aVE_ID, DBConnection);
+      aQueryUpdate := TADOQuery.create(nil);
+      try
+        aQueryUpdate.Connection := DBConnection;
+        TARC_DAL_Teamwertung.SQL_UpdateTeamwertung(aQueryUpdate, aTE_ID, aTeamname, aVE_ID, aBogenkategorie, aScore,
+          a10er, a9er, aX);
+        aQueryUpdate.ExecSQL;
+      finally
+        aQueryUpdate.Free;
+      end;
+      queryTeamwertung.Next;
+    end;
+  finally
+    queryTeamwertung.EnableControls;
+  end;
 
-  if aPE_ID1 <> '' then
-  begin
-    TARC_DAL_Teamwertung.addTeamMember(aTE_ID, aPE_ID1, DBConnection);
-  end;
-  if aPE_ID2 <> '' then
-  begin
-    TARC_DAL_Teamwertung.addTeamMember(aTE_ID, aPE_ID2, DBConnection);
-  end;
-  if aPE_ID3 <> '' then
-  begin
-    TARC_DAL_Teamwertung.addTeamMember(aTE_ID, aPE_ID3, DBConnection);
-  end;
+  {
+   if aPE_ID1 <> '' then
+   begin
+   TARC_DAL_Teamwertung.addTeamMember(aTE_ID, aPE_ID1, DBConnection);
+   end;
+   if aPE_ID2 <> '' then
+   begin
+   TARC_DAL_Teamwertung.addTeamMember(aTE_ID, aPE_ID2, DBConnection);
+   end;
+   if aPE_ID3 <> '' then
+   begin
+   TARC_DAL_Teamwertung.addTeamMember(aTE_ID, aPE_ID3, DBConnection);
+   end;
+  }
 end;
 
 procedure TMainWindow.buttonZumScoreClick(Sender: TObject);
@@ -782,6 +815,8 @@ end;
 
 procedure TMainWindow.comboBogenKategorieChange(Sender: TObject);
 begin
+  queryTeamwertung.Edit;
+  queryTeamwertung.FieldByName('TE_BOGENKATEGORIE').AsString := comboBogenKategorie.Text;
   updatePersonenDropdowns();
 end;
 
@@ -807,8 +842,48 @@ begin
   selectScores();
 end;
 
+procedure TMainWindow.saveTeamMembers;
+var
+  aQueryUpdate: TADOQuery;
+  aPE_ID1     : string;
+  aPE_ID2     : string;
+  aPE_ID3     : string;
+begin
+  aPE_ID1 := TARC_Tools.getKeyToValue(queryTeamPerson1, 'PE_ID', 'NAME', comboTeamPerson1.Text);
+  aPE_ID2 := TARC_Tools.getKeyToValue(queryTeamPerson1, 'PE_ID', 'NAME', comboTeamPerson2.Text);
+  aPE_ID3 := TARC_Tools.getKeyToValue(queryTeamPerson1, 'PE_ID', 'NAME', comboTeamPerson3.Text);
+
+  aQueryUpdate := TADOQuery.create(nil);
+  try
+    aQueryUpdate.Connection := DBConnection;
+    TARC_DAL_Teamwertung.SQL_UpdateTeamMembers(aQueryUpdate, queryTeamwertung.FieldByName('TE_ID').AsString, aPE_ID1,
+      aPE_ID2, aPE_ID3);
+    aQueryUpdate.ExecSQL;
+  finally
+    aQueryUpdate.Free;
+  end;
+end;
+
+procedure TMainWindow.comboTeamPerson1Change(Sender: TObject);
+begin
+  saveTeamMembers();
+end;
+
+procedure TMainWindow.comboTeamPerson2Change(Sender: TObject);
+begin
+  saveTeamMembers();
+end;
+
+procedure TMainWindow.comboTeamPerson3Change(Sender: TObject);
+begin
+  saveTeamMembers();
+end;
+
 procedure TMainWindow.comboVereinChange(Sender: TObject);
 begin
+  queryTeamwertung.Edit;
+  queryTeamwertung.FieldByName('VE_ID').AsString := TARC_Tools.getKeyToValue(queryVerein, 'VE_ID', 'VE_NAME',
+    comboVerein.Text);
   updatePersonenDropdowns();
 end;
 
@@ -1229,7 +1304,7 @@ begin
       selectScores();
       //Runde selektieren
       queryScores.DisableControls;
-      queryScores.first;
+      queryScores.First;
       while not queryScores.Eof do
       begin
         if TryStrToInt(queryScores.FieldByName('DI_RUNDE').AsString, aRundeAusQuery) then
@@ -1242,7 +1317,7 @@ begin
           queryScores.Next;
         end;
       end;
-      if queryScores.Eof then queryScores.first;
+      if queryScores.Eof then queryScores.First;
       queryScores.EnableControls;
 
       //editScore focus setzen
@@ -1372,7 +1447,7 @@ begin
 
     if aQuery.RecordCount >= 1 then
     begin
-      editTeamname.Text             := aQuery.FieldByName('TE_NAME').AsString;
+      editTeamName.Text             := aQuery.FieldByName('TE_NAME').AsString;
       comboBogenKategorie.ItemIndex := comboBogenKategorie.Items.IndexOf(aQuery.FieldByName('TE_BOGENKATEGORIE')
         .AsString);
       aVE_ID := aQuery.FieldByName('VE_ID').AsString;

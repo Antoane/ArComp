@@ -64,7 +64,7 @@
 			<DCC_UsePackage>vclib;vclimg;vclactnband;vcldb;vcldsnap;bindcompvcl;vclie;vcltouch;websnap;VclSmp;vcl;dsnapcon;vclx;webdsnap;adortl;$(DCC_UsePackage)</DCC_UsePackage>
 		</PropertyGroup>
 		<PropertyGroup Condition="'$(Base_Win32)'!=''">
-			<DCC_UsePackage>vcldbx;vclib;inetdbbde;svnui;vclimg;fmi;intrawebdb_120_160;vclactnband;vcldb;vcldsnap;bindcompvcl;vclie;vcltouch;Intraweb_120_160;websnap;vclribbon;VclSmp;vcl;CloudService;dsnapcon;vclx;webdsnap;svn;bdertl;adortl;frx16;frxADO16;frxBDE16;frxDB16;frxDBX16;frxe16;frxIBX16;frxTee16;dclfrxTee16;fs16;fsADO16;fsBDE16;fsDB16;fsIBX16;fsTee16;$(DCC_UsePackage)</DCC_UsePackage>
+			<DCC_UsePackage>vcldbx;vclib;inetdbbde;svnui;vclimg;fmi;intrawebdb_120_160;vclactnband;vcldb;vcldsnap;bindcompvcl;vclie;vcltouch;Intraweb_120_160;websnap;vclribbon;VclSmp;vcl;CloudService;dsnapcon;vclx;webdsnap;svn;bdertl;adortl;fs16;fsADO16;fsBDE16;fsDB16;fsIBX16;fsTee16;CPA_NetFrameCoreRun;CPA_NetFrameComponentsReportRun;CPA_NetFrameComponentsControlsRun;CPA_NetFrameComponentsCommunicationRun;CPA_NetFrameComponentsDBRun;CPA_NetFrameComponentsRun;CPA_NetFrameUtilsRun;CPA_DigitalPen;CPA_Common;$(DCC_UsePackage)</DCC_UsePackage>
 			<VerInfo_IncludeVerInfo>true</VerInfo_IncludeVerInfo>
 			<DCC_Namespace>Winapi;System.Win;Data.Win;Datasnap.Win;Web.Win;Soap.Win;Xml.Win;Bde;$(DCC_Namespace)</DCC_Namespace>
 			<VerInfo_Locale>1033</VerInfo_Locale>
