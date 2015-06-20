@@ -247,6 +247,7 @@ type
     buttonTeamEntfernen: TButton;
     editTeamName: TDBEdit;
     buttonScoresUebernehmen: TButton;
+    MenuItemBenoetigteScheiben: TMenuItem;
     procedure Beenden1Click(Sender: TObject);
     procedure Importieren1Click(Sender: TObject);
     procedure menuSchuetzenBearbeitenClick(Sender: TObject);
@@ -323,6 +324,7 @@ type
     procedure comboTeamPerson1Change(Sender: TObject);
     procedure comboTeamPerson2Change(Sender: TObject);
     procedure comboTeamPerson3Change(Sender: TObject);
+    procedure MenuItemBenoetigteScheibenClick(Sender: TObject);
 
   private
     FTU_ID           : string;
@@ -372,6 +374,7 @@ type
 
     {Private-Deklarationen}
   public
+    procedure CreateParams(var Params: TCreateParams); override;
 
     property ConnectionString: string
       read   FConnectionString
@@ -382,6 +385,16 @@ type
 implementation
 
 {$R *.dfm}
+
+procedure TMainWindow.CreateParams(var Params: TCreateParams);
+begin
+  inherited;
+  if (FormStyle = fsNormal) then
+  begin
+    Params.ExStyle   := Params.ExStyle or WS_EX_APPWINDOW;
+    Params.WndParent := GetDesktopWindow;
+  end;
+end;
 
 procedure TMainWindow.menuItemRanglisteClick(Sender: TObject);
 var
@@ -1566,6 +1579,15 @@ begin
   TARC_DAL_Teamwertung.selectBogenkategorien(queryBogenkategorie);
   queryBogenkategorie.Open;
   TARC_Tools.fillComboFromQuery(comboBogenKategorie, queryBogenkategorie, 'BK_ID', 'BK_NAME');
+end;
+
+procedure TMainWindow.MenuItemBenoetigteScheibenClick(Sender: TObject);
+begin
+  frxReport.LoadFromFile('..\Reports\BenoetigteScheiben.fr3');
+  frxReport.Variables[' ' + 'ArComp'] := Null;
+  frxReport.Variables['TU_ID']        := quotedStr(FTU_ID);
+
+  frxReport.ShowReport(true);
 end;
 
 procedure TMainWindow.loadScheibeneinteilungInfo;
